@@ -1,3 +1,5 @@
+using Pigeon.Models;
+
 namespace Pigeon.Data.Migrations
 {
     using System.Data.Entity.Migrations;
@@ -12,6 +14,39 @@ namespace Pigeon.Data.Migrations
 
         protected override void Seed(PigeonContext context)
         {
+            var data=new PigeonData();
+            var user = new User
+            {
+                UserName = "Pesho123",
+                FirstName = "Pesho",
+                LastName = "Peshov",
+                Age = 23,
+                PhoneNumber = "0999765676",
+                Email = "pesho123@gmail.com"
+            };
+            context.Users.Add(user);
+            var userTwo = new User
+            {
+                UserName = "Ivan123",
+                FirstName = "Ivan",
+                LastName = "Ivanov",
+                Age = 18,
+                PhoneNumber = "0129765676",
+                Email = "ivan123@gmail.com"
+            };
+            context.Users.Add(userTwo);
+            var userThree = new User
+            {
+                UserName = "Kiro123",
+                FirstName = "Kiro",
+                LastName = "Kirov",
+                Age = 25,
+                PhoneNumber = "05459765676",
+                Email = "kiro123@gmail.com"
+            };
+            context.Users.Add(userThree);
+            data.SaveChanges();
+
         }
     }
 }
