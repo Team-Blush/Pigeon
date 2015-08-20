@@ -14,7 +14,7 @@
         [Required]
         public int AuthorId { get; set; }
 
-        public virtual User Author { get; set; }
+        //public virtual User Author { get; set; }
 
         [Required]
         public int PigeonId { get; set; }

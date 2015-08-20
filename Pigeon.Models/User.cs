@@ -1,6 +1,7 @@
 namespace Pigeon.Models
 {
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class User
     {
@@ -28,16 +29,16 @@ namespace Pigeon.Models
         [Range(4, 20)]
         public string PhoneNumber { get; set; }
 
-        //[Column("ProfilePhoto")]
+        [Column("ProfilePhoto")]
         public int ProfilePhotoId { get; set; }
 
         //[ForeignKey("ProfilePhotoId")]
-        public virtual Photo ProfilePhoto { get; set; }
+        //public virtual Photo ProfilePhoto { get; set; }
 
-        //[Column("CoverPhoto")]
+        [Column("CoverPhoto")]
         public int CoverPhotoId { get; set; }
 
         //[ForeignKey("CoverPhotoId")]
-        public virtual Photo CoverPhoto { get; set; }
+        //public virtual Photo CoverPhoto { get; set; }
     }
 }

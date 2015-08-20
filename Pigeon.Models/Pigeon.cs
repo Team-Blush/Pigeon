@@ -28,16 +28,16 @@
 
         public virtual User User { get; set; }
 
-        public virtual ICollection<User> RepigeonedBy
-        {
-            get { return this.repigeonedBy; }
-            set { this.repigeonedBy = value; }
-        }
-        public virtual ICollection<User> FavouritedBy
-        {
-            get { return this.favouritedBy; }
-            set { this.favouritedBy = value; }
-        }
+        //public virtual ICollection<User> RepigeonedBy
+        //{
+        //    get { return this.repigeonedBy; }
+        //    set { this.repigeonedBy = value; }
+        //}
+        //public virtual ICollection<User> FavouritedBy
+        //{
+        //    get { return this.favouritedBy; }
+        //    set { this.favouritedBy = value; }
+        //}
 
         public int FavouritedCount { get; set; }
 
