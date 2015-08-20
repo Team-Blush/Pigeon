@@ -1,18 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-
 namespace Pigeon.Models
 {
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     public class User
     {
         private ICollection<Comment> comments;
         private ICollection<Pigeon> pigeons;
         private ICollection<Photo> coverPhoto;
-        private ICollection<Photo> profilePhoto; 
+        private ICollection<Photo> profilePhoto;
 
         public User()
         {
@@ -26,30 +22,34 @@ namespace Pigeon.Models
         public int Id { get; set; }
 
         [Required]
-        [Range(0, 20)]
+        [MinLength(2)]
+        [MaxLength(20)]
         public string UserName { get; set; }
 
-        [Range(0, 20)]
+        [MinLength(2)]
+        [MaxLength(20)]
         public string FirstName { get; set; }
 
         [Required]
-        [Range(0, 20)]
+        [MinLength(2)]
+        [MaxLength(20)]
         public string LastName { get; set; }
 
         [Required]
-        [Range(5, 50)]
+        [MinLength(5)]
+        [MaxLength(50)]
         public string Email { get; set; }
 
         [Range(0, 100)]
         public int? Age { get; set; }
 
-        [Range(4, 20)]
+        [MinLength(4)]
+        [MaxLength(20)]
         public string PhoneNumber { get; set; }
-
 
         public virtual ICollection<Photo> ProfilePhoto
         {
-            get { return this.profilePhoto;}
+            get { return this.profilePhoto; }
             set { this.profilePhoto = value; }
         }
 
@@ -57,7 +57,7 @@ namespace Pigeon.Models
         {
             get { return this.coverPhoto; }
             set { this.coverPhoto = value; }
-        } 
+        }
 
         public virtual ICollection<Comment> Comments
         {
@@ -69,8 +69,8 @@ namespace Pigeon.Models
         {
             get { return this.pigeons; }
             set { this.pigeons = value; }
-        } 
-        
-       
+        }
+
+
     }
 }

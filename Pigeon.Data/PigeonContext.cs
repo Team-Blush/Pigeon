@@ -25,7 +25,7 @@ namespace Pigeon.Data
 
         public virtual IDbSet<Notification> Notifications { get; set; }
 
-        public void SaveChanges()
+        public new void SaveChanges()
         {
             base.SaveChanges();
         }
@@ -38,14 +38,23 @@ namespace Pigeon.Data
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 
-            modelBuilder.Entity<User>().HasMany(u => u.ProfilePhoto).WithOptional(p => p.UserProfile).Map(m =>
-            {
-                m.MapKey("UserProfileId");
-            }).WillCascadeOnDelete(false);
-            modelBuilder.Entity<User>().HasMany(u => u.CoverPhoto).WithOptional(p => p.UserCover).Map(m =>
-            {
-                m.MapKey("UserCovetId");
-            }).WillCascadeOnDelete(false);
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.ProfilePhoto)
+                .WithOptional(p => p.ProfilePhotoFor)
+                .Map(m =>
+                {
+                    m.MapKey("UserProfileId");
+                })
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.CoverPhoto)
+                .WithOptional(p => p.CoverPhotoFor)
+                .Map(m =>
+                {
+                    m.MapKey("UserCovetId");
+                })
+                .WillCascadeOnDelete(false);
 
             base.OnModelCreating(modelBuilder);
         }

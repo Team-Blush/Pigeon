@@ -8,7 +8,8 @@
         public int Id { get; set; }
 
         [Required]
-        [Range(10, 100)]
+        [MinLength(10)]
+        [MaxLength(100)]
         public string Content { get; set; }
 
         [Required]

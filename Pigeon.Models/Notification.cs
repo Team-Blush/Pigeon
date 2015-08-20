@@ -1,7 +1,6 @@
 ﻿namespace Pigeon.Models
 {
     using System.ComponentModel.DataAnnotations;
-    using System.Data.SqlClient;
 
     public class Notification
     {
@@ -9,7 +8,8 @@
         public int Id { get; set; }
 
         [Required]
-        [Range(5, 50)]
+        [MinLength(5)]
+        [MaxLength(100)]
         public string Content { get; set; }
 
         [Required]

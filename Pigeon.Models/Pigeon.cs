@@ -20,7 +20,8 @@
         public int Id { get; set; }
 
         [Required]
-        [Range(10, 150)]
+        [MinLength(5)]
+        [MaxLength(150)]
         public string Content { get; set; }
 
         //Problem by runing with this property Entity Framework make mistakes.
