@@ -15,5 +15,9 @@ namespace Pigeon.Models
 
         [Required]
         public string Base64Data { get; set; }
+
+        public virtual User UserProfile { get; set; }
+
+        public virtual User UserCover { get; set; }
     }
 }

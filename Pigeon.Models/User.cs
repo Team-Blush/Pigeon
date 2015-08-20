@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+
 namespace Pigeon.Models
 {
     using System.ComponentModel.DataAnnotations;
@@ -5,6 +9,19 @@ namespace Pigeon.Models
 
     public class User
     {
+        private ICollection<Comment> comments;
+        private ICollection<Pigeon> pigeons;
+        private ICollection<Photo> coverPhoto;
+        private ICollection<Photo> profilePhoto; 
+
+        public User()
+        {
+            this.comments = new HashSet<Comment>();
+            this.pigeons = new HashSet<Pigeon>();
+            this.profilePhoto = new HashSet<Photo>();
+            this.coverPhoto = new HashSet<Photo>();
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -29,16 +46,31 @@ namespace Pigeon.Models
         [Range(4, 20)]
         public string PhoneNumber { get; set; }
 
-        [Column("ProfilePhoto")]
-        public int ProfilePhotoId { get; set; }
 
-        //[ForeignKey("ProfilePhotoId")]
-        //public virtual Photo ProfilePhoto { get; set; }
+        public virtual ICollection<Photo> ProfilePhoto
+        {
+            get { return this.profilePhoto;}
+            set { this.profilePhoto = value; }
+        }
 
-        [Column("CoverPhoto")]
-        public int CoverPhotoId { get; set; }
+        public virtual ICollection<Photo> CoverPhoto
+        {
+            get { return this.coverPhoto; }
+            set { this.coverPhoto = value; }
+        } 
 
-        //[ForeignKey("CoverPhotoId")]
-        //public virtual Photo CoverPhoto { get; set; }
+        public virtual ICollection<Comment> Comments
+        {
+            get { return this.comments; }
+            set { this.comments = value; }
+        }
+
+        public virtual ICollection<Pigeon> Pigeons
+        {
+            get { return this.pigeons; }
+            set { this.pigeons = value; }
+        } 
+        
+       
     }
 }

@@ -24,5 +24,20 @@ namespace Test.Data
         public IDbSet<Comment> Comments { get; set; }
 
         public IDbSet<Photo> Photos { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+
+            modelBuilder.Entity<User>().HasMany(u => u.ProfilePhoto).WithOptional(p => p.UserProfile).Map(m =>
+            {
+                m.MapKey("UserProfileId");
+            }).WillCascadeOnDelete(false);
+            modelBuilder.Entity<User>().HasMany(u => u.CoverPhoto).WithOptional(p => p.UserCover).Map(m =>
+            {
+                m.MapKey("UserCovetId");
+            }).WillCascadeOnDelete(false);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

@@ -6,14 +6,14 @@
     public class Pigeon
     {
         private ICollection<Comment> comments;
-        private ICollection<User> repigeonedBy;
-        private ICollection<User> favouritedBy;
+        //private ICollection<User> repigeonedBy;
+        //private ICollection<User> favouritedBy;
 
         public Pigeon()
         {
             this.comments = new HashSet<Comment>();
-            this.repigeonedBy = new HashSet<User>();
-            this.favouritedBy = new HashSet<User>();
+            //this.repigeonedBy = new HashSet<User>();
+            //this.favouritedBy = new HashSet<User>();
         }
 
         [Key]
@@ -23,8 +23,9 @@
         [Range(10, 150)]
         public string Content { get; set; }
 
-        [Required]
-        public int UserId { get; set; }
+        //Problem by runing with this property Entity Framework make mistakes.
+        //[Required]
+        //public int UserId { get; set; }
 
         public virtual User User { get; set; }
 
