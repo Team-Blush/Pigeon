@@ -23,32 +23,41 @@
             this.set = context.Set<T>();
         }
 
-        public void Create(T entity)
+        public void Add(T entity)
         {
-            this.ChangeEntityState(entity, EntityState.Added);
+            this.set.Add(entity);
         }
 
-        public IQueryable<T> Read()
+        public IQueryable<T> GetAll()
         {
             return this.set;
+        }
+
+        public T GetById(int id)
+        {
+            return this.set.Find(id);
         }
 
         public void Update(T entity)
         {
             this.ChangeEntityState(entity, EntityState.Modified);
+        }
 
+        public void UpdateById(int id)
+        {
+            var entity = this.set.Find(id);
+            this.Update(entity);
         }
 
         public void Delete(T entity)
         {
             this.ChangeEntityState(entity, EntityState.Deleted);
-
         }
 
-        public void Detach(T entity)
+        public void DeleteById(int id)
         {
-            this.ChangeEntityState(entity, EntityState.Detached);
-
+            var entity = this.set.Find(id);
+            this.Delete(entity);
         }
 
         private void ChangeEntityState(T entity, EntityState state)

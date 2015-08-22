@@ -5,14 +5,18 @@
     public interface IPigeonRepository<T>
         where T : class
     {
-        void Create(T entity);
+        void Add(T entity);
 
-        IQueryable<T> Read();
+        IQueryable<T> GetAll();
+
+        T GetById(int id);
 
         void Update(T entity);
 
+        void UpdateById(int id);
+
         void Delete(T entity);
 
-        void Detach(T entity);
+        void DeleteById(int id);
     }
 }
