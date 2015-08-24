@@ -1,4 +1,4 @@
-﻿namespace Pigeon.Models
+﻿namespace Pigeon.Models.Enumerations
 {
     public enum NotificationType
     {

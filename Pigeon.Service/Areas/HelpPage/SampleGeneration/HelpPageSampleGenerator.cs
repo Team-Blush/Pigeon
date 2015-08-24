@@ -1,91 +1,93 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Net.Http.Headers;
-using System.Web.Http.Description;
-using System.Xml.Linq;
-using Newtonsoft.Json;
-
-namespace Pigeon.Service.Areas.HelpPage
+namespace Pigeon.Service.Areas.HelpPage.SampleGeneration
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
+    using System.IO;
+    using System.Linq;
+    using System.Net.Http;
+    using System.Net.Http.Formatting;
+    using System.Net.Http.Headers;
+    using System.Web.Http.Description;
+    using System.Xml.Linq;
+    using Newtonsoft.Json;
+
     /// <summary>
-    /// This class will generate the samples for the help page.
+    ///     This class will generate the samples for the help page.
     /// </summary>
     public class HelpPageSampleGenerator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="HelpPageSampleGenerator"/> class.
+        ///     Initializes a new instance of the <see cref="HelpPageSampleGenerator" /> class.
         /// </summary>
         public HelpPageSampleGenerator()
         {
-            ActualHttpMessageTypes = new Dictionary<HelpPageSampleKey, Type>();
-            ActionSamples = new Dictionary<HelpPageSampleKey, object>();
-            SampleObjects = new Dictionary<Type, object>();
+            this.ActualHttpMessageTypes = new Dictionary<HelpPageSampleKey, Type>();
+            this.ActionSamples = new Dictionary<HelpPageSampleKey, object>();
+            this.SampleObjects = new Dictionary<Type, object>();
         }
 
         /// <summary>
-        /// Gets CLR types that are used as the content of <see cref="HttpRequestMessage"/> or <see cref="HttpResponseMessage"/>.
+        ///     Gets CLR types that are used as the content of <see cref="HttpRequestMessage" /> or
+        ///     <see cref="HttpResponseMessage" />.
         /// </summary>
         public IDictionary<HelpPageSampleKey, Type> ActualHttpMessageTypes { get; internal set; }
 
         /// <summary>
-        /// Gets the objects that are used directly as samples for certain actions.
+        ///     Gets the objects that are used directly as samples for certain actions.
         /// </summary>
         public IDictionary<HelpPageSampleKey, object> ActionSamples { get; internal set; }
 
         /// <summary>
-        /// Gets the objects that are serialized as samples by the supported formatters.
+        ///     Gets the objects that are serialized as samples by the supported formatters.
         /// </summary>
         public IDictionary<Type, object> SampleObjects { get; internal set; }
 
         /// <summary>
-        /// Gets the request body samples for a given <see cref="ApiDescription"/>.
+        ///     Gets the request body samples for a given <see cref="ApiDescription" />.
         /// </summary>
-        /// <param name="api">The <see cref="ApiDescription"/>.</param>
+        /// <param name="api">The <see cref="ApiDescription" />.</param>
         /// <returns>The samples keyed by media type.</returns>
         public IDictionary<MediaTypeHeaderValue, object> GetSampleRequests(ApiDescription api)
         {
-            return GetSample(api, SampleDirection.Request);
+            return this.GetSample(api, SampleDirection.Request);
         }
 
         /// <summary>
-        /// Gets the response body samples for a given <see cref="ApiDescription"/>.
+        ///     Gets the response body samples for a given <see cref="ApiDescription" />.
         /// </summary>
-        /// <param name="api">The <see cref="ApiDescription"/>.</param>
+        /// <param name="api">The <see cref="ApiDescription" />.</param>
         /// <returns>The samples keyed by media type.</returns>
         public IDictionary<MediaTypeHeaderValue, object> GetSampleResponses(ApiDescription api)
         {
-            return GetSample(api, SampleDirection.Response);
+            return this.GetSample(api, SampleDirection.Response);
         }
 
         /// <summary>
-        /// Gets the request or response body samples.
+        ///     Gets the request or response body samples.
         /// </summary>
-        /// <param name="api">The <see cref="ApiDescription"/>.</param>
+        /// <param name="api">The <see cref="ApiDescription" />.</param>
         /// <param name="sampleDirection">The value indicating whether the sample is for a request or for a response.</param>
         /// <returns>The samples keyed by media type.</returns>
-        public virtual IDictionary<MediaTypeHeaderValue, object> GetSample(ApiDescription api, SampleDirection sampleDirection)
+        public virtual IDictionary<MediaTypeHeaderValue, object> GetSample(ApiDescription api,
+            SampleDirection sampleDirection)
         {
             if (api == null)
             {
                 throw new ArgumentNullException("api");
             }
-            string controllerName = api.ActionDescriptor.ControllerDescriptor.ControllerName;
-            string actionName = api.ActionDescriptor.ActionName;
-            IEnumerable<string> parameterNames = api.ParameterDescriptions.Select(p => p.Name);
+            var controllerName = api.ActionDescriptor.ControllerDescriptor.ControllerName;
+            var actionName = api.ActionDescriptor.ActionName;
+            var parameterNames = api.ParameterDescriptions.Select(p => p.Name);
             Collection<MediaTypeFormatter> formatters;
-            Type type = ResolveType(api, controllerName, actionName, parameterNames, sampleDirection, out formatters);
+            var type = this.ResolveType(api, controllerName, actionName, parameterNames, sampleDirection, out formatters);
             var samples = new Dictionary<MediaTypeHeaderValue, object>();
 
             // Use the samples provided directly for actions
-            var actionSamples = GetAllActionSamples(controllerName, actionName, parameterNames, sampleDirection);
+            var actionSamples = this.GetAllActionSamples(controllerName, actionName, parameterNames, sampleDirection);
             foreach (var actionSample in actionSamples)
             {
                 samples.Add(actionSample.Key.MediaType, WrapSampleIfString(actionSample.Value));
@@ -93,21 +95,22 @@ namespace Pigeon.Service.Areas.HelpPage
 
             // Do the sample generation based on formatters only if an action doesn't return an HttpResponseMessage.
             // Here we cannot rely on formatters because we don't know what's in the HttpResponseMessage, it might not even use formatters.
-            if (type != null && !typeof(HttpResponseMessage).IsAssignableFrom(type))
+            if (type != null && !typeof (HttpResponseMessage).IsAssignableFrom(type))
             {
-                object sampleObject = GetSampleObject(type);
+                var sampleObject = this.GetSampleObject(type);
                 foreach (var formatter in formatters)
                 {
-                    foreach (MediaTypeHeaderValue mediaType in formatter.SupportedMediaTypes)
+                    foreach (var mediaType in formatter.SupportedMediaTypes)
                     {
                         if (!samples.ContainsKey(mediaType))
                         {
-                            object sample = GetActionSample(controllerName, actionName, parameterNames, type, formatter, mediaType, sampleDirection);
+                            var sample = this.GetActionSample(controllerName, actionName, parameterNames, type,
+                                formatter, mediaType, sampleDirection);
 
                             // If no sample found, try generate sample using formatter and sample object
                             if (sample == null && sampleObject != null)
                             {
-                                sample = WriteSampleObjectUsingFormatter(formatter, sampleObject, type, mediaType);
+                                sample = this.WriteSampleObjectUsingFormatter(formatter, sampleObject, type, mediaType);
                             }
 
                             samples.Add(mediaType, WrapSampleIfString(sample));
@@ -120,7 +123,7 @@ namespace Pigeon.Service.Areas.HelpPage
         }
 
         /// <summary>
-        /// Search for samples that are provided directly through <see cref="ActionSamples"/>.
+        ///     Search for samples that are provided directly through <see cref="ActionSamples" />.
         /// </summary>
         /// <param name="controllerName">Name of the controller.</param>
         /// <param name="actionName">Name of the action.</param>
@@ -130,16 +133,22 @@ namespace Pigeon.Service.Areas.HelpPage
         /// <param name="mediaType">The media type.</param>
         /// <param name="sampleDirection">The value indicating whether the sample is for a request or for a response.</param>
         /// <returns>The sample that matches the parameters.</returns>
-        public virtual object GetActionSample(string controllerName, string actionName, IEnumerable<string> parameterNames, Type type, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType, SampleDirection sampleDirection)
+        public virtual object GetActionSample(string controllerName, string actionName,
+            IEnumerable<string> parameterNames, Type type, MediaTypeFormatter formatter, MediaTypeHeaderValue mediaType,
+            SampleDirection sampleDirection)
         {
             object sample;
 
             // First, try get sample provided for a specific mediaType, controllerName, actionName and parameterNames.
             // If not found, try get the sample provided for a specific mediaType, controllerName and actionName regardless of the parameterNames
             // If still not found, try get the sample provided for a specific type and mediaType 
-            if (ActionSamples.TryGetValue(new HelpPageSampleKey(mediaType, sampleDirection, controllerName, actionName, parameterNames), out sample) ||
-                ActionSamples.TryGetValue(new HelpPageSampleKey(mediaType, sampleDirection, controllerName, actionName, new[] { "*" }), out sample) ||
-                ActionSamples.TryGetValue(new HelpPageSampleKey(mediaType, type), out sample))
+            if (
+                this.ActionSamples.TryGetValue(
+                    new HelpPageSampleKey(mediaType, sampleDirection, controllerName, actionName, parameterNames),
+                    out sample) ||
+                this.ActionSamples.TryGetValue(
+                    new HelpPageSampleKey(mediaType, sampleDirection, controllerName, actionName, new[] {"*"}),
+                    out sample) || this.ActionSamples.TryGetValue(new HelpPageSampleKey(mediaType, type), out sample))
             {
                 return sample;
             }
@@ -148,8 +157,9 @@ namespace Pigeon.Service.Areas.HelpPage
         }
 
         /// <summary>
-        /// Gets the sample object that will be serialized by the formatters. 
-        /// First, it will look at the <see cref="SampleObjects"/>. If no sample object is found, it will try to create one using <see cref="ObjectGenerator"/>.
+        ///     Gets the sample object that will be serialized by the formatters.
+        ///     First, it will look at the <see cref="SampleObjects" />. If no sample object is found, it will try to create one
+        ///     using <see cref="ObjectGenerator" />.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>The sample object.</returns>
@@ -157,10 +167,10 @@ namespace Pigeon.Service.Areas.HelpPage
         {
             object sampleObject;
 
-            if (!SampleObjects.TryGetValue(type, out sampleObject))
+            if (!this.SampleObjects.TryGetValue(type, out sampleObject))
             {
                 // Try create a default sample object
-                ObjectGenerator objectGenerator = new ObjectGenerator();
+                var objectGenerator = new ObjectGenerator();
                 sampleObject = objectGenerator.GenerateObject(type);
             }
 
@@ -168,31 +178,39 @@ namespace Pigeon.Service.Areas.HelpPage
         }
 
         /// <summary>
-        /// Resolves the type of the action parameter or return value when <see cref="HttpRequestMessage"/> or <see cref="HttpResponseMessage"/> is used.
+        ///     Resolves the type of the action parameter or return value when <see cref="HttpRequestMessage" /> or
+        ///     <see cref="HttpResponseMessage" /> is used.
         /// </summary>
-        /// <param name="api">The <see cref="ApiDescription"/>.</param>
+        /// <param name="api">The <see cref="ApiDescription" />.</param>
         /// <param name="controllerName">Name of the controller.</param>
         /// <param name="actionName">Name of the action.</param>
         /// <param name="parameterNames">The parameter names.</param>
         /// <param name="sampleDirection">The value indicating whether the sample is for a request or a response.</param>
         /// <param name="formatters">The formatters.</param>
-        [SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Justification = "This is only used in advanced scenarios.")]
-        public virtual Type ResolveType(ApiDescription api, string controllerName, string actionName, IEnumerable<string> parameterNames, SampleDirection sampleDirection, out Collection<MediaTypeFormatter> formatters)
+        [SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters",
+            Justification = "This is only used in advanced scenarios.")]
+        public virtual Type ResolveType(ApiDescription api, string controllerName, string actionName,
+            IEnumerable<string> parameterNames, SampleDirection sampleDirection,
+            out Collection<MediaTypeFormatter> formatters)
         {
-            if (!Enum.IsDefined(typeof(SampleDirection), sampleDirection))
+            if (!Enum.IsDefined(typeof (SampleDirection), sampleDirection))
             {
-                throw new InvalidEnumArgumentException("sampleDirection", (int)sampleDirection, typeof(SampleDirection));
+                throw new InvalidEnumArgumentException("sampleDirection", (int) sampleDirection,
+                    typeof (SampleDirection));
             }
             if (api == null)
             {
                 throw new ArgumentNullException("api");
             }
             Type type;
-            if (ActualHttpMessageTypes.TryGetValue(new HelpPageSampleKey(sampleDirection, controllerName, actionName, parameterNames), out type) ||
-                ActualHttpMessageTypes.TryGetValue(new HelpPageSampleKey(sampleDirection, controllerName, actionName, new[] { "*" }), out type))
+            if (
+                this.ActualHttpMessageTypes.TryGetValue(
+                    new HelpPageSampleKey(sampleDirection, controllerName, actionName, parameterNames), out type) ||
+                this.ActualHttpMessageTypes.TryGetValue(
+                    new HelpPageSampleKey(sampleDirection, controllerName, actionName, new[] {"*"}), out type))
             {
                 // Re-compute the supported formatters based on type
-                Collection<MediaTypeFormatter> newFormatters = new Collection<MediaTypeFormatter>();
+                var newFormatters = new Collection<MediaTypeFormatter>();
                 foreach (var formatter in api.ActionDescriptor.Configuration.Formatters)
                 {
                     if (IsFormatSupported(sampleDirection, formatter, type))
@@ -207,8 +225,11 @@ namespace Pigeon.Service.Areas.HelpPage
                 switch (sampleDirection)
                 {
                     case SampleDirection.Request:
-                        ApiParameterDescription requestBodyParameter = api.ParameterDescriptions.FirstOrDefault(p => p.Source == ApiParameterSource.FromBody);
-                        type = requestBodyParameter == null ? null : requestBodyParameter.ParameterDescriptor.ParameterType;
+                        var requestBodyParameter =
+                            api.ParameterDescriptions.FirstOrDefault(p => p.Source == ApiParameterSource.FromBody);
+                        type = requestBodyParameter == null
+                            ? null
+                            : requestBodyParameter.ParameterDescriptor.ParameterType;
                         formatters = api.SupportedRequestBodyFormatters;
                         break;
                     case SampleDirection.Response:
@@ -223,15 +244,17 @@ namespace Pigeon.Service.Areas.HelpPage
         }
 
         /// <summary>
-        /// Writes the sample object using formatter.
+        ///     Writes the sample object using formatter.
         /// </summary>
         /// <param name="formatter">The formatter.</param>
         /// <param name="value">The value.</param>
         /// <param name="type">The type.</param>
         /// <param name="mediaType">Type of the media.</param>
         /// <returns></returns>
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "The exception is recorded as InvalidSample.")]
-        public virtual object WriteSampleObjectUsingFormatter(MediaTypeFormatter formatter, object value, Type type, MediaTypeHeaderValue mediaType)
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
+            Justification = "The exception is recorded as InvalidSample.")]
+        public virtual object WriteSampleObjectUsingFormatter(MediaTypeFormatter formatter, object value, Type type,
+            MediaTypeHeaderValue mediaType)
         {
             if (formatter == null)
             {
@@ -242,7 +265,7 @@ namespace Pigeon.Service.Areas.HelpPage
                 throw new ArgumentNullException("mediaType");
             }
 
-            object sample = String.Empty;
+            object sample = string.Empty;
             MemoryStream ms = null;
             HttpContent content = null;
             try
@@ -253,8 +276,8 @@ namespace Pigeon.Service.Areas.HelpPage
                     content = new ObjectContent(type, value, formatter, mediaType);
                     formatter.WriteToStreamAsync(type, value, ms, content, null).Wait();
                     ms.Position = 0;
-                    StreamReader reader = new StreamReader(ms);
-                    string serializedSampleString = reader.ReadToEnd();
+                    var reader = new StreamReader(ms);
+                    var serializedSampleString = reader.ReadToEnd();
                     if (mediaType.MediaType.ToUpperInvariant().Contains("XML"))
                     {
                         serializedSampleString = TryFormatXml(serializedSampleString);
@@ -268,7 +291,7 @@ namespace Pigeon.Service.Areas.HelpPage
                 }
                 else
                 {
-                    sample = new InvalidSample(String.Format(
+                    sample = new InvalidSample(string.Format(
                         CultureInfo.CurrentCulture,
                         "Failed to generate the sample for media type '{0}'. Cannot use formatter '{1}' to write type '{2}'.",
                         mediaType,
@@ -278,7 +301,7 @@ namespace Pigeon.Service.Areas.HelpPage
             }
             catch (Exception e)
             {
-                sample = new InvalidSample(String.Format(
+                sample = new InvalidSample(string.Format(
                     CultureInfo.CurrentCulture,
                     "An exception has occurred while using the formatter '{0}' to generate sample for media type '{1}'. Exception message: {2}",
                     formatter.GetType().Name,
@@ -300,12 +323,13 @@ namespace Pigeon.Service.Areas.HelpPage
             return sample;
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Handling the failure by returning the original string.")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
+            Justification = "Handling the failure by returning the original string.")]
         private static string TryFormatJson(string str)
         {
             try
             {
-                object parsedJson = JsonConvert.DeserializeObject(str);
+                var parsedJson = JsonConvert.DeserializeObject(str);
                 return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
             }
             catch
@@ -315,12 +339,13 @@ namespace Pigeon.Service.Areas.HelpPage
             }
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Handling the failure by returning the original string.")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
+            Justification = "Handling the failure by returning the original string.")]
         private static string TryFormatXml(string str)
         {
             try
             {
-                XDocument xml = XDocument.Parse(str);
+                var xml = XDocument.Parse(str);
                 return xml.ToString();
             }
             catch
@@ -342,15 +367,17 @@ namespace Pigeon.Service.Areas.HelpPage
             return false;
         }
 
-        private IEnumerable<KeyValuePair<HelpPageSampleKey, object>> GetAllActionSamples(string controllerName, string actionName, IEnumerable<string> parameterNames, SampleDirection sampleDirection)
+        private IEnumerable<KeyValuePair<HelpPageSampleKey, object>> GetAllActionSamples(string controllerName,
+            string actionName, IEnumerable<string> parameterNames, SampleDirection sampleDirection)
         {
-            HashSet<string> parameterNamesSet = new HashSet<string>(parameterNames, StringComparer.OrdinalIgnoreCase);
-            foreach (var sample in ActionSamples)
+            var parameterNamesSet = new HashSet<string>(parameterNames, StringComparer.OrdinalIgnoreCase);
+            foreach (var sample in this.ActionSamples)
             {
-                HelpPageSampleKey sampleKey = sample.Key;
-                if (String.Equals(controllerName, sampleKey.ControllerName, StringComparison.OrdinalIgnoreCase) &&
-                    String.Equals(actionName, sampleKey.ActionName, StringComparison.OrdinalIgnoreCase) &&
-                    (sampleKey.ParameterNames.SetEquals(new[] { "*" }) || parameterNamesSet.SetEquals(sampleKey.ParameterNames)) &&
+                var sampleKey = sample.Key;
+                if (string.Equals(controllerName, sampleKey.ControllerName, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(actionName, sampleKey.ActionName, StringComparison.OrdinalIgnoreCase) &&
+                    (sampleKey.ParameterNames.SetEquals(new[] {"*"}) ||
+                     parameterNamesSet.SetEquals(sampleKey.ParameterNames)) &&
                     sampleDirection == sampleKey.SampleDirection)
                 {
                     yield return sample;
@@ -360,7 +387,7 @@ namespace Pigeon.Service.Areas.HelpPage
 
         private static object WrapSampleIfString(object sample)
         {
-            string stringSample = sample as string;
+            var stringSample = sample as string;
             if (stringSample != null)
             {
                 return new TextSample(stringSample);

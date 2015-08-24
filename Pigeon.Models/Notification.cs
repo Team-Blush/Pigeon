@@ -1,6 +1,7 @@
 ﻿namespace Pigeon.Models
 {
     using System.ComponentModel.DataAnnotations;
+    using Enumerations;
 
     public class Notification
     {

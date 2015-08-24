@@ -1,10 +1,12 @@
-@using Pigeon.Service.Areas.HelpPage
-@model InvalidSample
+@model Pigeon.Service.Areas.HelpPage.SampleGeneration.InvalidSample
+
 
 @if (HttpContext.Current.IsDebuggingEnabled)
 {
     <div class="warning-message-container">
+
         <p>@Model.ErrorMessage</p>
+
     </div>
 }
 else

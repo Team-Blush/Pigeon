@@ -2,12 +2,16 @@ namespace Pigeon.Models
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
 
-    public class User
+    public class User : IdentityUser
     {
         private ICollection<Comment> comments;
-        private ICollection<Pigeon> pigeons;
         private ICollection<Photo> coverPhoto;
+        private ICollection<Pigeon> pigeons;
         private ICollection<Photo> profilePhoto;
 
         public User()
@@ -18,13 +22,13 @@ namespace Pigeon.Models
             this.coverPhoto = new HashSet<Photo>();
         }
 
-        [Key]
-        public int Id { get; set; }
+        //[Key]
+        //public int Id { get; set; }
 
-        [Required]
-        [MinLength(2)]
-        [MaxLength(20)]
-        public string UserName { get; set; }
+        //[Required]
+        //[MinLength(2)]
+        //[MaxLength(20)]
+        //public string UserName { get; set; }
 
         [MinLength(2)]
         [MaxLength(20)]
@@ -35,17 +39,17 @@ namespace Pigeon.Models
         [MaxLength(20)]
         public string LastName { get; set; }
 
-        [Required]
-        [MinLength(5)]
-        [MaxLength(50)]
-        public string Email { get; set; }
+        //[Required]
+        //[MinLength(5)]
+        //[MaxLength(50)]
+        //public string Email { get; set; }
 
         [Range(0, 100)]
         public int? Age { get; set; }
 
-        [MinLength(4)]
-        [MaxLength(20)]
-        public string PhoneNumber { get; set; }
+        //[MinLength(4)]
+        //[MaxLength(20)]
+        //public string PhoneNumber { get; set; }
 
         public virtual ICollection<Photo> ProfilePhoto
         {
@@ -71,6 +75,12 @@ namespace Pigeon.Models
             set { this.pigeons = value; }
         }
 
+        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<User> manager,
+            string authenticationType)
+        {
+            var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
 
+            return userIdentity;
+        }
     }
 }

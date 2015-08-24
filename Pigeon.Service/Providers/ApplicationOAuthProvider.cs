@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Owin.Security;
-using Microsoft.Owin.Security.Cookies;
-using Microsoft.Owin.Security.OAuth;
-
-namespace Pigeon.Service.Providers
+﻿namespace Pigeon.Service.Providers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using Microsoft.Owin.Security;
+    using Microsoft.Owin.Security.Cookies;
+    using Microsoft.Owin.Security.OAuth;
+
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
@@ -28,15 +26,15 @@ namespace Pigeon.Service.Providers
                 throw new ArgumentNullException("userManagerFactory");
             }
 
-            _publicClientId = publicClientId;
-            _userManagerFactory = userManagerFactory;
+            this._publicClientId = publicClientId;
+            this._userManagerFactory = userManagerFactory;
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            using (UserManager<IdentityUser> userManager = _userManagerFactory())
+            using (var userManager = this._userManagerFactory())
             {
-                IdentityUser user = await userManager.FindAsync(context.UserName, context.Password);
+                var user = await userManager.FindAsync(context.UserName, context.Password);
 
                 if (user == null)
                 {
@@ -44,12 +42,12 @@ namespace Pigeon.Service.Providers
                     return;
                 }
 
-                ClaimsIdentity oAuthIdentity = await userManager.CreateIdentityAsync(user,
+                var oAuthIdentity = await userManager.CreateIdentityAsync(user,
                     context.Options.AuthenticationType);
-                ClaimsIdentity cookiesIdentity = await userManager.CreateIdentityAsync(user,
+                var cookiesIdentity = await userManager.CreateIdentityAsync(user,
                     CookieAuthenticationDefaults.AuthenticationType);
-                AuthenticationProperties properties = CreateProperties(user.UserName);
-                AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
+                var properties = CreateProperties(user.UserName);
+                var ticket = new AuthenticationTicket(oAuthIdentity, properties);
                 context.Validated(ticket);
                 context.Request.Context.Authentication.SignIn(cookiesIdentity);
             }
@@ -57,7 +55,7 @@ namespace Pigeon.Service.Providers
 
         public override Task TokenEndpoint(OAuthTokenEndpointContext context)
         {
-            foreach (KeyValuePair<string, string> property in context.Properties.Dictionary)
+            foreach (var property in context.Properties.Dictionary)
             {
                 context.AdditionalResponseParameters.Add(property.Key, property.Value);
             }
@@ -78,9 +76,9 @@ namespace Pigeon.Service.Providers
 
         public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
         {
-            if (context.ClientId == _publicClientId)
+            if (context.ClientId == this._publicClientId)
             {
-                Uri expectedRootUri = new Uri(context.Request.Uri, "/");
+                var expectedRootUri = new Uri(context.Request.Uri, "/");
 
                 if (expectedRootUri.AbsoluteUri == context.RedirectUri)
                 {
@@ -95,7 +93,7 @@ namespace Pigeon.Service.Providers
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {
-                { "userName", userName }
+                {"userName", userName}
             };
             return new AuthenticationProperties(data);
         }

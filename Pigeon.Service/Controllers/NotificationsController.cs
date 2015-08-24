@@ -1,16 +1,13 @@
 ﻿namespace Pigeon.Service.Controllers
 {
     using System.Web.Http;
-    using Data;
 
-    public class NotificationsController : ApiController
+    public class NotificationsController : BaseApiController
     {
-        private PigeonData data = new PigeonData();
-
         [HttpGet]
         public IHttpActionResult GetAllNotifications()
         {
-            var notifications = this.data.Notifications.GetAll();
+            var notifications = this.Data.Notifications.GetAll();
             return this.Ok(notifications);
         }
     }

@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Owin;
-using Owin;
+﻿using Microsoft.Owin;
+using Pigeon.Service;
 
-[assembly: OwinStartup(typeof(Pigeon.Service.Startup))]
+[assembly: OwinStartup(typeof (Startup))]
 
 namespace Pigeon.Service
 {
+    using Owin;
+
     public partial class Startup
     {
         public void Configuration(IAppBuilder app)
         {
-            ConfigureAuth(app);
+            this.ConfigureAuth(app);
         }
     }
 }

@@ -2,15 +2,14 @@
 {
     using System.Data.Entity;
     using System.Linq;
-
-    using Pigeon.Data.Contracts;
+    using Contracts;
 
     public class PigeonRepository<T> : IPigeonRepository<T>
         where T : class
     {
-        private IPigeonContext context;
+        private readonly IPigeonContext context;
 
-        private IDbSet<T> set;
+        private readonly IDbSet<T> set;
 
         public PigeonRepository()
             : this(new PigeonContext())

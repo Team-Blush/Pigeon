@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Pigeon.Service.Models.ViewModels
+﻿namespace Pigeon.Service.Models.ViewModels
 {
+    using System.Collections.Generic;
+
     // Models returned by AccountController actions.
 
     public class ExternalLoginViewModel

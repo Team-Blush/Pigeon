@@ -2,8 +2,7 @@
 {
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-
-    using Pigeon.Models;
+    using Models;
 
     public interface IPigeonContext
     {

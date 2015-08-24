@@ -1,17 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Net.Http.Headers;
-
-namespace Pigeon.Service.Areas.HelpPage
+namespace Pigeon.Service.Areas.HelpPage.SampleGeneration
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Net.Http.Headers;
+
     /// <summary>
-    /// This is used to identify the place where the sample should be applied.
+    ///     This is used to identify the place where the sample should be applied.
     /// </summary>
     public class HelpPageSampleKey
     {
         /// <summary>
-        /// Creates a new <see cref="HelpPageSampleKey"/> based on media type and CLR type.
+        ///     Creates a new <see cref="HelpPageSampleKey" /> based on media type and CLR type.
         /// </summary>
         /// <param name="mediaType">The media type.</param>
         /// <param name="type">The CLR type.</param>
@@ -25,25 +25,28 @@ namespace Pigeon.Service.Areas.HelpPage
             {
                 throw new ArgumentNullException("type");
             }
-            ControllerName = String.Empty;
-            ActionName = String.Empty;
-            ParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            ParameterType = type;
-            MediaType = mediaType;
+            this.ControllerName = string.Empty;
+            this.ActionName = string.Empty;
+            this.ParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            this.ParameterType = type;
+            this.MediaType = mediaType;
         }
 
         /// <summary>
-        /// Creates a new <see cref="HelpPageSampleKey"/> based on <see cref="SampleDirection"/>, controller name, action name and parameter names.
+        ///     Creates a new <see cref="HelpPageSampleKey" /> based on <see cref="SampleDirection" />, controller name, action
+        ///     name and parameter names.
         /// </summary>
-        /// <param name="sampleDirection">The <see cref="SampleDirection"/>.</param>
+        /// <param name="sampleDirection">The <see cref="SampleDirection" />.</param>
         /// <param name="controllerName">Name of the controller.</param>
         /// <param name="actionName">Name of the action.</param>
         /// <param name="parameterNames">The parameter names.</param>
-        public HelpPageSampleKey(SampleDirection sampleDirection, string controllerName, string actionName, IEnumerable<string> parameterNames)
+        public HelpPageSampleKey(SampleDirection sampleDirection, string controllerName, string actionName,
+            IEnumerable<string> parameterNames)
         {
-            if (!Enum.IsDefined(typeof(SampleDirection), sampleDirection))
+            if (!Enum.IsDefined(typeof (SampleDirection), sampleDirection))
             {
-                throw new InvalidEnumArgumentException("sampleDirection", (int)sampleDirection, typeof(SampleDirection));
+                throw new InvalidEnumArgumentException("sampleDirection", (int) sampleDirection,
+                    typeof (SampleDirection));
             }
             if (controllerName == null)
             {
@@ -57,29 +60,32 @@ namespace Pigeon.Service.Areas.HelpPage
             {
                 throw new ArgumentNullException("parameterNames");
             }
-            ControllerName = controllerName;
-            ActionName = actionName;
-            ParameterNames = new HashSet<string>(parameterNames, StringComparer.OrdinalIgnoreCase);
-            SampleDirection = sampleDirection;
+            this.ControllerName = controllerName;
+            this.ActionName = actionName;
+            this.ParameterNames = new HashSet<string>(parameterNames, StringComparer.OrdinalIgnoreCase);
+            this.SampleDirection = sampleDirection;
         }
 
         /// <summary>
-        /// Creates a new <see cref="HelpPageSampleKey"/> based on media type, <see cref="SampleDirection"/>, controller name, action name and parameter names.
+        ///     Creates a new <see cref="HelpPageSampleKey" /> based on media type, <see cref="SampleDirection" />, controller
+        ///     name, action name and parameter names.
         /// </summary>
         /// <param name="mediaType">The media type.</param>
-        /// <param name="sampleDirection">The <see cref="SampleDirection"/>.</param>
+        /// <param name="sampleDirection">The <see cref="SampleDirection" />.</param>
         /// <param name="controllerName">Name of the controller.</param>
         /// <param name="actionName">Name of the action.</param>
         /// <param name="parameterNames">The parameter names.</param>
-        public HelpPageSampleKey(MediaTypeHeaderValue mediaType, SampleDirection sampleDirection, string controllerName, string actionName, IEnumerable<string> parameterNames)
+        public HelpPageSampleKey(MediaTypeHeaderValue mediaType, SampleDirection sampleDirection, string controllerName,
+            string actionName, IEnumerable<string> parameterNames)
         {
             if (mediaType == null)
             {
                 throw new ArgumentNullException("mediaType");
             }
-            if (!Enum.IsDefined(typeof(SampleDirection), sampleDirection))
+            if (!Enum.IsDefined(typeof (SampleDirection), sampleDirection))
             {
-                throw new InvalidEnumArgumentException("sampleDirection", (int)sampleDirection, typeof(SampleDirection));
+                throw new InvalidEnumArgumentException("sampleDirection", (int) sampleDirection,
+                    typeof (SampleDirection));
             }
             if (controllerName == null)
             {
@@ -93,81 +99,82 @@ namespace Pigeon.Service.Areas.HelpPage
             {
                 throw new ArgumentNullException("parameterNames");
             }
-            ControllerName = controllerName;
-            ActionName = actionName;
-            MediaType = mediaType;
-            ParameterNames = new HashSet<string>(parameterNames, StringComparer.OrdinalIgnoreCase);
-            SampleDirection = sampleDirection;
+            this.ControllerName = controllerName;
+            this.ActionName = actionName;
+            this.MediaType = mediaType;
+            this.ParameterNames = new HashSet<string>(parameterNames, StringComparer.OrdinalIgnoreCase);
+            this.SampleDirection = sampleDirection;
         }
 
         /// <summary>
-        /// Gets the name of the controller.
+        ///     Gets the name of the controller.
         /// </summary>
         /// <value>
-        /// The name of the controller.
+        ///     The name of the controller.
         /// </value>
         public string ControllerName { get; private set; }
 
         /// <summary>
-        /// Gets the name of the action.
+        ///     Gets the name of the action.
         /// </summary>
         /// <value>
-        /// The name of the action.
+        ///     The name of the action.
         /// </value>
         public string ActionName { get; private set; }
 
         /// <summary>
-        /// Gets the media type.
+        ///     Gets the media type.
         /// </summary>
         /// <value>
-        /// The media type.
+        ///     The media type.
         /// </value>
         public MediaTypeHeaderValue MediaType { get; private set; }
 
         /// <summary>
-        /// Gets the parameter names.
+        ///     Gets the parameter names.
         /// </summary>
         public HashSet<string> ParameterNames { get; private set; }
 
         public Type ParameterType { get; private set; }
 
         /// <summary>
-        /// Gets the <see cref="SampleDirection"/>.
+        ///     Gets the <see cref="SampleDirection" />.
         /// </summary>
         public SampleDirection? SampleDirection { get; private set; }
 
         public override bool Equals(object obj)
         {
-            HelpPageSampleKey otherKey = obj as HelpPageSampleKey;
+            var otherKey = obj as HelpPageSampleKey;
             if (otherKey == null)
             {
                 return false;
             }
 
-            return String.Equals(ControllerName, otherKey.ControllerName, StringComparison.OrdinalIgnoreCase) &&
-                String.Equals(ActionName, otherKey.ActionName, StringComparison.OrdinalIgnoreCase) &&
-                (MediaType == otherKey.MediaType || (MediaType != null && MediaType.Equals(otherKey.MediaType))) &&
-                ParameterType == otherKey.ParameterType &&
-                SampleDirection == otherKey.SampleDirection &&
-                ParameterNames.SetEquals(otherKey.ParameterNames);
+            return string.Equals(this.ControllerName, otherKey.ControllerName, StringComparison.OrdinalIgnoreCase) &&
+                   string.Equals(this.ActionName, otherKey.ActionName, StringComparison.OrdinalIgnoreCase) &&
+                   (this.MediaType == otherKey.MediaType ||
+                    (this.MediaType != null && this.MediaType.Equals(otherKey.MediaType))) &&
+                   this.ParameterType == otherKey.ParameterType && this.SampleDirection == otherKey.SampleDirection &&
+                   this.ParameterNames.SetEquals(otherKey.ParameterNames);
         }
 
         public override int GetHashCode()
         {
-            int hashCode = ControllerName.ToUpperInvariant().GetHashCode() ^ ActionName.ToUpperInvariant().GetHashCode();
-            if (MediaType != null)
+            var hashCode = this.ControllerName.ToUpperInvariant().GetHashCode() ^
+                           this.ActionName.ToUpperInvariant().GetHashCode();
+            if (this.MediaType != null)
             {
-                hashCode ^= MediaType.GetHashCode();
+                hashCode ^= this.MediaType.GetHashCode();
             }
-            if (SampleDirection != null)
+            if (this.SampleDirection != null)
             {
-                hashCode ^= SampleDirection.GetHashCode();
+                hashCode ^= this.SampleDirection.GetHashCode();
             }
-            if (ParameterType != null)
+            if (this.ParameterType != null)
             {
-                hashCode ^= ParameterType.GetHashCode();
+                hashCode ^= this.ParameterType.GetHashCode();
             }
-            foreach (string parameterName in ParameterNames)
+            foreach (var parameterName in this.ParameterNames)
             {
                 hashCode ^= parameterName.ToUpperInvariant().GetHashCode();
             }

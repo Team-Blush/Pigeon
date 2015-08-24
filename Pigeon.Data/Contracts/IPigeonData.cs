@@ -1,6 +1,6 @@
 ﻿namespace Pigeon.Data.Contracts
 {
-    using Pigeon.Models;
+    using Models;
 
     public interface IPigeonData
     {
