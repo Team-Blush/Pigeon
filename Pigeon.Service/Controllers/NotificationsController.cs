@@ -10,7 +10,7 @@
         [HttpGet]
         public IHttpActionResult GetAllNotifications()
         {
-            var notifications = this.data.Notifications.Read();
+            var notifications = this.data.Notifications.GetAll();
             return this.Ok(notifications);
         }
     }
