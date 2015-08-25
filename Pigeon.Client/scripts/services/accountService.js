@@ -15,7 +15,7 @@ define(['app', 'constants', 'requestService'], function (app) {
 
         service.login = function (loginData) {
             var url = serviceUrl + 'token';
-            var headers = { "Accept": "application/json" };
+            var headers = null;
             return requestService.postRequest(url, headers, $.param(loginData));
         };
         
