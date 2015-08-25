@@ -2,6 +2,7 @@
 {
     using System.Net.Http.Headers;
     using System.Web.Http;
+    using System.Web.OData.Extensions;
     using Microsoft.Owin.Security.OAuth;
     using Newtonsoft.Json.Serialization;
 
@@ -13,13 +14,13 @@
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
             config.MapHttpAttributeRoutes();
 
-            //config.EnableCors();
-            //config.AddODataQueryFilter();
+            config.EnableCors();
+            config.AddODataQueryFilter();
 
             config.Routes.MapHttpRoute(
                 "DefaultApi",
                 "api/{controller}/{id}",
-                new {id = RouteParameter.Optional}
+                new { id = RouteParameter.Optional }
                 );
 
             config.Formatters.Remove(config.Formatters.XmlFormatter);
