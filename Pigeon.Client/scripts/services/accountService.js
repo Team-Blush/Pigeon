@@ -15,7 +15,7 @@ define(['app', 'constants', 'requestService'], function (app) {
 
         service.login = function (loginData) {
             var url = serviceUrl + 'token';
-            var headers = null;
+            var headers = { "Content-Type": "application/json" };
             return requestService.postRequest(url, headers, loginData);
         };
         

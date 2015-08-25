@@ -23,7 +23,6 @@
     using Results;
 
     [Authorize]
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {

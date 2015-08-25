@@ -2,6 +2,7 @@
 {
     using System.Net.Http.Headers;
     using System.Web.Http;
+    using System.Web.Http.Cors;
     using System.Web.OData.Extensions;
     using Microsoft.Owin.Security.OAuth;
     using Newtonsoft.Json.Serialization;
@@ -14,7 +15,8 @@
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
             config.MapHttpAttributeRoutes();
 
-            config.EnableCors();
+            var cors = new EnableCorsAttribute("*", "*", "*");
+            config.EnableCors(cors);
             config.AddODataQueryFilter();
 
             config.Routes.MapHttpRoute(
