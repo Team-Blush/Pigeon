@@ -8,11 +8,24 @@
         angularAMD: 'libs/angularAMD.min',
         bootstrap: 'libs/bootstrap',
         jquery: 'libs/jquery-1.9.1',
-        noty: 'libs/noty/jquery.noty',
+        noty: 'libs/jquery.noty',
 
         // controllers
-        HomeController: 'controllers/HomeController'
+        HeaderController: 'controllers/HeaderController',
+        HomeController: 'controllers/HomeController',
+        RegisterController: 'controllers/RegisterController',
+        LoginController: 'controllers/LoginController',
 
+        // services
+        accountService: 'services/accountService',
+        
+        navigationService: 'services/navigationService',
+        notifyService: 'services/notifyService',
+        requestService: 'services/requestService',
+        validationService: 'services/validationService',
+
+        // constants
+        constants: 'constants'
     },
 
     shim: {
