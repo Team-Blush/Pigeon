@@ -10,14 +10,14 @@
                 var loginData = $scope.loginData;
                 if (validationService.validateLoginForm(loginData.username, loginData.password)) {
                     loginData = validationService.escapeHtmlSpecialChars(loginData);
-                    loginData.grantType = constants.grantType;
+                    loginData["grant_type"] = constants.grantType;
                     accountService.login(loginData).then(
-                        function(serverResponse) {
+                        function (serverResponse) {
                             accountService.setCredentials(serverResponse);
                             navigationService.loadHome();
                             notifyService.showInfo("Log In successful.");
                         },
-                        function(serverError) {
+                        function (serverError) {
                             notifyService.showError("Unsuccessful Log In!", serverError);
                         }
                     );
