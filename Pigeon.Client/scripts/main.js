@@ -8,7 +8,7 @@
         angularAMD: 'libs/angularAMD.min',
         bootstrap: 'libs/bootstrap',
         jquery: 'libs/jquery-1.9.1',
-        noty: 'libs/jquery.noty',
+        noty: 'libs/jquery.noty.packaged',
 
         // controllers
         HeaderController: 'controllers/HeaderController',

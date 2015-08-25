@@ -64,7 +64,7 @@
     <Content Include="scripts\controllers\HeaderController.js" />
     <Content Include="scripts\controllers\LoginController.js" />
     <Content Include="scripts\controllers\RegisterController.js" />
-    <Content Include="scripts\libs\jquery.noty.js" />
+    <Content Include="scripts\libs\jquery.noty.packaged.js" />
     <Content Include="scripts\services\navigationService.js" />
     <Content Include="scripts\services\notifyService.js" />
     <Content Include="scripts\services\requestService.js" />
