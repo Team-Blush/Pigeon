@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Pigeon.Data.Migrations
 {
     using System.Data.Entity.Migrations;
@@ -15,6 +17,11 @@ namespace Pigeon.Data.Migrations
         {
             var data = new PigeonData();
 
+            if (data.Users.GetAll().Any())
+            {
+                return;
+            }
+
             var userOne = new User
             {
                 UserName = "Pesho123",
@@ -22,7 +29,7 @@ namespace Pigeon.Data.Migrations
                 LastName = "Peshov",
                 Age = 23,
                 PhoneNumber = "0999765676",
-                Email = "pesho123@gmail.com"
+                Email = "pesho123@gmail.com",
             };
 
             var userTwo = new User

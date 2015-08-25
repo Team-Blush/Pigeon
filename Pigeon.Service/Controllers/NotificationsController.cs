@@ -1,7 +1,7 @@
-﻿namespace Pigeon.Service.Controllers
-{
-    using System.Web.Http;
+﻿using System.Web.Http;
 
+namespace Pigeon.Service.Controllers
+{
     public class NotificationsController : BaseApiController
     {
         [HttpGet]

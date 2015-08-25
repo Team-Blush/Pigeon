@@ -1,4 +1,7 @@
-﻿namespace Pigeon.Data.Contracts
+﻿using System;
+using System.Linq.Expressions;
+
+namespace Pigeon.Data.Contracts
 {
     using System.Linq;
 
@@ -8,6 +11,8 @@
         void Add(T entity);
 
         IQueryable<T> GetAll();
+
+        IQueryable<T> Search(Expression<Func<T, bool>> conditions);
 
         T GetById(int id);
 

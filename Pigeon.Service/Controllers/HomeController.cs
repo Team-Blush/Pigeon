@@ -1,7 +1,7 @@
-﻿namespace Pigeon.Service.Controllers
-{
-    using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
+namespace Pigeon.Service.Controllers
+{
     public class HomeController : Controller
     {
         public ActionResult Index()

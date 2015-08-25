@@ -1,9 +1,9 @@
-﻿namespace Pigeon.Service.Controllers
-{
-    using System.Web.Http;
-    using Data;
-    using Data.Contracts;
+﻿using System.Web.Http;
+using Pigeon.Data;
+using Pigeon.Data.Contracts;
 
+namespace Pigeon.Service.Controllers
+{
     public abstract class BaseApiController : ApiController
     {
         protected BaseApiController()

@@ -1,23 +1,23 @@
-﻿namespace Pigeon.Service.Controllers
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Net.Http;
-    using System.Security.Claims;
-    using System.Security.Cryptography;
-    using System.Threading.Tasks;
-    using System.Web;
-    using System.Web.Http;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.AspNet.Identity.EntityFramework;
-    using Microsoft.Owin.Security;
-    using Microsoft.Owin.Security.Cookies;
-    using Microsoft.Owin.Security.OAuth;
-    using Models.BindingModels;
-    using Models.ViewModels;
-    using Providers;
-    using Results;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.OAuth;
+using Pigeon.Service.Models.BindingModels;
+using Pigeon.Service.Models.ViewModels;
+using Pigeon.Service.Providers;
+using Pigeon.Service.Results;
 
+namespace Pigeon.Service.Controllers
+{
     [Authorize]
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController

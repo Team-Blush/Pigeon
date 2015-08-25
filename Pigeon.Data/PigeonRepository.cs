@@ -1,4 +1,7 @@
-﻿namespace Pigeon.Data
+﻿using System;
+using System.Linq.Expressions;
+
+namespace Pigeon.Data
 {
     using System.Data.Entity;
     using System.Linq;
@@ -30,6 +33,11 @@
         public IQueryable<T> GetAll()
         {
             return this.set;
+        }
+
+        public IQueryable<T> Search(Expression<Func<T, bool>> conditions)
+        {
+            return this.GetAll().Where(conditions);
         }
 
         public T GetById(int id)
