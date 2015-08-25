@@ -12,8 +12,8 @@
         [MaxLength(100)]
         public string Content { get; set; }
 
-        [Required]
-        public int AuthorId { get; set; }
+        //[Required] For test purposes
+        public string AuthorId { get; set; } //Its GUI and can't be int. Should be commented if it's necessary to have AuthorID
 
         public virtual User Author { get; set; }
 
