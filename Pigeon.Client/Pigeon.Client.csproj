@@ -57,6 +57,15 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="content\pigeon.css" />
+    <Content Include="imgs\bg.jpg" />
+    <Content Include="imgs\pigeon.jpg" />
+    <Content Include="scripts\controllers\LoginController.js" />
+    <Content Include="scripts\controllers\RegisterController.js" />
+    <Content Include="templates\register-view.html" />
+    <Content Include="templates\login-view.html" />
+    <Content Include="templates\partial\footer-view.html" />
+    <Content Include="templates\partial\header-view.html" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

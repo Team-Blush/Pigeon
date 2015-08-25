@@ -6,7 +6,8 @@
         angular: 'libs/angular',
         angularRouter: 'libs/angular-route',
         angularAMD: 'libs/angularAMD.min',
-        jquery: 'libs/jquery-1.9.1.intellisense',
+        bootstrap: 'libs/bootstrap',
+        jquery: 'libs/jquery-1.9.1',
         noty: 'libs/noty/jquery.noty',
 
         // controllers
@@ -15,11 +16,11 @@
     },
 
     shim: {
-        noty: ['jquery'],
-        angular: ['jquery'],
+        angularRouter: ['angular'],
         angularAMD: ['angular'],
-        angularRouter: ['angular']
+        bootstrap: ['jquery'],
+        noty: ['jquery']
     }
 });
 
-requirejs(['app']);
+requirejs(['app', 'jquery', 'bootstrap']);

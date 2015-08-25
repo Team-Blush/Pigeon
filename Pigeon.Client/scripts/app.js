@@ -9,6 +9,16 @@
                 controller: 'HomeController',
                 controllerUrl: 'controllers/HomeController'
             }))
+            .when('/login', angularAMD.route({
+                templateUrl: 'templates/login-view.html',
+                controller: 'LoginController',
+                controllerUrl: 'controllers/LoginController'
+            }))
+            .when('/register', angularAMD.route({
+                templateUrl: 'templates/register-view.html',
+                controller: 'RegisterController',
+                controllerUrl: 'controllers/RegisterController'
+            }))
             .otherwise({ redirectTo: "/" });
     });
 
