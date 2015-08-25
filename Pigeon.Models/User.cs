@@ -34,7 +34,6 @@ namespace Pigeon.Models
         [MaxLength(20)]
         public string FirstName { get; set; }
 
-        [Required]
         [MinLength(2)]
         [MaxLength(20)]
         public string LastName { get; set; }

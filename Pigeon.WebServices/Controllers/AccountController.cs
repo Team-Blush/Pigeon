@@ -325,7 +325,7 @@
                 return this.BadRequest(this.ModelState);
             }
 
-            var user = new User {UserName = model.UserName, Email = model.Email};
+            var user = new User {UserName = model.Username, Email = model.Email};
 
             var result = await this.UserManager.CreateAsync(user, model.Password);
 
@@ -354,7 +354,7 @@
                 return this.InternalServerError();
             }
 
-            var user = new User {UserName = model.UserName, Email = model.Email};
+            var user = new User {UserName = model.Username, Email = model.Email};
 
             var result = await this.UserManager.CreateAsync(user);
             if (!result.Succeeded)
