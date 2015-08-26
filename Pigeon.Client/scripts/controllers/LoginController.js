@@ -15,10 +15,10 @@
                         function (serverResponse) {
                             accountService.setCredentials(serverResponse);
                             navigationService.loadHome();
-                            notifyService.showInfo("Log In successful.");
+                            notifyService.showInfo("Login successful.");
                         },
                         function (serverError) {
-                            notifyService.showError("Unsuccessful Log In!", serverError);
+                            notifyService.showError("Unsuccessful Login!", serverError);
                         }
                     );
                 }

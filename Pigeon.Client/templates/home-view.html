@@ -2,7 +2,7 @@
 <title ng-bind="title"></title>
 
 <!-- Header -->
-<div ng-include="'templates/partial/header-view.html'"></div>
+<div ng-include="'templates/partial/header-view.html'" ng-controller="HeaderController"></div>
 
 <div class="container" ng-if="!isLoggedIn">
     <div class="row">

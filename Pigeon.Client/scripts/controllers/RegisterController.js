@@ -18,7 +18,7 @@
                             notifyService.showInfo("Register successful.");
                         },
                         function (serverError) {
-                            notifyService.showError("Unsuccessful Sign Up!", serverError);
+                            notifyService.showError("Unsuccessful Registration!", serverError);
                         }
                     );
                 }

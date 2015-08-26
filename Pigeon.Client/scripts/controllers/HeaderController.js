@@ -4,15 +4,15 @@ define(['app', 'accountService', 'navigationService', 'notifyService'],
                                                         navigationService, notifyService) {
             $scope.isLoggedIn = accountService.isLoggedIn();
 
-            $scope.logout = function() {
+            $scope.logout = function () {
                 accountService.logout().then(
-                    function(serverResponse) {
-                        notifyService.showInfo(serverResponse.message);
+                    function (serverResponse) {
+                        notifyService.showInfo("Logout Successful.");
                         accountService.clearCredentials();
                         navigationService.loadHome();
                         navigationService.reload();
                     },
-                    function(serverError) {
+                    function (serverError) {
                         notifyService.showError("Unsuccessful Logout!", serverError);
                     }
                 );
