@@ -1,7 +1,7 @@
 ﻿using Microsoft.Owin;
 using Pigeon.WebServices;
 
-[assembly: OwinStartup(typeof(Startup))]
+[assembly: OwinStartup(typeof (Startup))]
 
 namespace Pigeon.WebServices
 {

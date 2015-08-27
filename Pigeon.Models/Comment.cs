@@ -8,12 +8,12 @@
         public int Id { get; set; }
 
         [Required]
-        [MinLength(10)]
+        [MinLength(5)]
         [MaxLength(100)]
         public string Content { get; set; }
 
-        //[Required] Cause problems it is not nessesary to be required
-        public string AuthorId { get; set; } //Its GUI and can't be int. Should be commented if it's necessary to have AuthorID
+        [Required]
+        public string AuthorId { get; set; }
 
         public virtual User Author { get; set; }
 

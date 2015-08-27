@@ -1,8 +1,7 @@
-using System.Linq;
-
 namespace Pigeon.Data.Migrations
 {
     using System.Data.Entity.Migrations;
+    using System.Linq;
     using Models;
 
     internal sealed class Configuration : DbMigrationsConfiguration<PigeonContext>
@@ -29,7 +28,7 @@ namespace Pigeon.Data.Migrations
                 LastName = "Peshov",
                 Age = 23,
                 PhoneNumber = "0999765676",
-                Email = "pesho123@gmail.com",
+                Email = "pesho123@gmail.com"
             };
 
             var userTwo = new User

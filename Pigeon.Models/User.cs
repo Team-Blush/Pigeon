@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Pigeon.Models
 {
     using System.Collections.Generic;
@@ -13,6 +11,8 @@ namespace Pigeon.Models
     {
         private ICollection<Comment> comments;
         private ICollection<Photo> coverPhoto;
+        private ICollection<User> followers;
+        private ICollection<User> following;
         private ICollection<Pigeon> pigeons;
         private ICollection<Photo> profilePhoto;
 
@@ -20,8 +20,12 @@ namespace Pigeon.Models
         {
             this.comments = new HashSet<Comment>();
             this.pigeons = new HashSet<Pigeon>();
+
             this.profilePhoto = new HashSet<Photo>();
             this.coverPhoto = new HashSet<Photo>();
+
+            this.followers = new HashSet<User>();
+            this.following = new HashSet<User>();
         }
 
         [MinLength(2)]
@@ -35,9 +39,17 @@ namespace Pigeon.Models
         [Range(0, 100)]
         public int? Age { get; set; }
 
-        public virtual ICollection<User> Followers { get; set; } 
+        public virtual ICollection<User> Followers
+        {
+            get { return this.followers; }
+            set { this.followers = value; }
+        }
 
-        public virtual ICollection<User> Following { get; set; } 
+        public virtual ICollection<User> Following
+        {
+            get { return this.following; }
+            set { this.following = value; }
+        }
 
         public virtual ICollection<Photo> ProfilePhoto
         {

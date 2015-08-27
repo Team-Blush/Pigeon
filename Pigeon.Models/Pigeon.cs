@@ -1,17 +1,18 @@
-﻿using System;
-
-namespace Pigeon.Models
+﻿namespace Pigeon.Models
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
     public class Pigeon
     {
         private ICollection<Comment> comments;
+        private ICollection<PigeonVote> votes;
 
         public Pigeon()
         {
             this.comments = new HashSet<Comment>();
+            this.votes = new HashSet<PigeonVote>();
         }
 
         [Key]
@@ -19,13 +20,18 @@ namespace Pigeon.Models
 
         [Required]
         [MinLength(5)]
-        [MaxLength(150)]
+        [MaxLength(50)]
         public string Title { get; set; }
 
+        [MaxLength(150)]
+        public string Content { get; set; }
+
+        // [Required]
         public string AuthorId { get; set; }
 
         public virtual User Author { get; set; }
 
+        [Required]
         public DateTime CreatedOn { get; set; }
 
         public int FavouritedCount { get; set; }
@@ -34,6 +40,12 @@ namespace Pigeon.Models
         {
             get { return this.comments; }
             set { this.comments = value; }
+        }
+
+        public virtual ICollection<PigeonVote> Votes
+        {
+            get { return this.votes; }
+            set { this.votes = value; }
         }
     }
 }

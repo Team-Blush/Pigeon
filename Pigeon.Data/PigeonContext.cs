@@ -15,8 +15,7 @@ namespace Pigeon.Data
             Database.SetInitializer(migrationStrategy);
         }
 
-        // IdentityContext already has this
-        //public virtual IDbSet<User> Users { get; set; }
+        public virtual IDbSet<PigeonVote> Votes { get; set; }
 
         public virtual IDbSet<Pigeon> Pigeons { get; set; }
 
@@ -52,7 +51,7 @@ namespace Pigeon.Data
             modelBuilder.Entity<User>()
                 .HasMany(u => u.CoverPhoto)
                 .WithOptional(p => p.CoverPhotoFor)
-                .Map(m => { m.MapKey("UserCovetId"); })
+                .Map(m => { m.MapKey("UserCoverId"); })
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<User>()

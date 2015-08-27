@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq.Expressions;
-
-namespace Pigeon.Data.Contracts
+﻿namespace Pigeon.Data.Contracts
 {
+    using System;
     using System.Linq;
+    using System.Linq.Expressions;
 
     public interface IPigeonRepository<T>
         where T : class

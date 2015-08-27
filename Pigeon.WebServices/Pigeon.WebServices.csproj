@@ -234,7 +234,7 @@
     </Compile>
     <Compile Include="Models\BindingModels\AccountBindingModels.cs" />
     <Compile Include="Models\BindingModels\CommentBindingModel.cs" />
-    <Compile Include="Models\BindingModels\PigeonBindigModel.cs" />
+    <Compile Include="Models\BindingModels\PigeonBindingModel.cs" />
     <Compile Include="Models\ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\ViewModels\CommentViewModel.cs" />
     <Compile Include="Models\ViewModels\PigeonViewModel.cs" />
