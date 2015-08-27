@@ -15,14 +15,20 @@
         HomeController: 'controllers/HomeController',
         RegisterController: 'controllers/RegisterController',
         LoginController: 'controllers/LoginController',
+        PigeonController: 'controllers/PigeonController',
 
         // services
         accountService: 'services/accountService',
+        pigeonService: 'services/pigeonService',
         
+        fileReaderService: 'services/fileReaderService',
         navigationService: 'services/navigationService',
         notifyService: 'services/notifyService',
         requestService: 'services/requestService',
         validationService: 'services/validationService',
+
+        // directives
+        ngPictureSelect: 'directives/ngPictureSelect',
 
         // constants
         constants: 'constants'
