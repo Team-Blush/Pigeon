@@ -12,11 +12,11 @@
         {
             this.Content = p.Content;
             this.FavouritedCount = p.FavouritedCount;
-            //User = new UserViewModel()
-            //{
-            //    Name = p.User.FirstName + " " + p.User.LastName,
-            //    Email = p.User.Email
-            //},
+            User = new UserViewModel()
+            {
+                Name = p.User.FirstName + " " + p.User.LastName,
+                Email = p.User.Email
+            };
             this.Comments = p.Comments.Select(c => new CommentViewModel()
             {
                 Content = c.Content,
@@ -38,7 +38,7 @@
         public int FavouritedCount { get; set; }
 
         //Additional functionality by developers preferences
-        //public UserViewModel User { get; set; }
+        public UserViewModel User { get; set; }
 
         public IEnumerable<CommentViewModel> Comments { get; set; }
 
@@ -50,11 +50,11 @@
                 {
                     Content = p.Content,
                     FavouritedCount = p.FavouritedCount,
-                    //User = new UserViewModel()
-                    //{
-                    //    Name = p.User.FirstName + " " + p.User.LastName,
-                    //    Email = p.User.Email
-                    //},
+                    User = new UserViewModel()
+                    {
+                        Name = p.User.FirstName + " " + p.User.LastName,
+                        Email = p.User.Email
+                    },
                     Comments = p.Comments.Select(c => new CommentViewModel()
                     {
                         Content = c.Content,

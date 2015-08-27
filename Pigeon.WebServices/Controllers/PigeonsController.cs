@@ -18,17 +18,17 @@
         public IHttpActionResult ReturnAllPigeonsForUser()
         {
             //Logic when the Account system work
-            //var userId = this.User.Identity.GetUserId();
+            var userId = this.User.Identity.GetUserId();
 
-            //var pigeons = this.Data.Pigeons.Search(p => p.User.Id == userId)
-            //    .Select(PigeonViewModel.Create);
+            var pigeons = this.Data.Pigeons.Search(p => p.User.Id == userId)
+                .Select(PigeonViewModel.Create);
 
-            //if (!pigeons.Any())
-            //{
-            //    return this.Ok("No Pigeons are found.");
-            //}
+            if (!pigeons.Any())
+            {
+                return this.Ok("No Pigeons are found.");
+            }
 
-            var pigeons = this.Data.Pigeons.GetAll().Select(PigeonViewModel.Create);
+            //var pigeons = this.Data.Pigeons.GetAll().Select(PigeonViewModel.Create);
 
             return this.Ok(pigeons);
         }
@@ -61,10 +61,10 @@
             var pigeon = this.Data.Pigeons.GetById(id);
 
             //When the authorization work
-            //if (pigeon.User.Id != userId)
-            //{
-            //    return this.Unauthorized();
-            //}
+            if (pigeon.User.Id != userId)
+            {
+                return this.Unauthorized();
+            }
 
             pigeon.Content = upPigeon.Content;
 
@@ -81,10 +81,10 @@
             var pigeon = this.Data.Pigeons.GetById(id);
 
             //When the authorization work
-            //if (pigeon.User.Id != userId)
-            //{
-            //    return this.Unauthorized();
-            //}
+            if (pigeon.User.Id != userId)
+            {
+                return this.Unauthorized();
+            }
 
             pigeon.FavouritedCount++;
 
@@ -100,11 +100,16 @@
             var userId = this.User.Identity.GetUserId();
             var pigeon = this.Data.Pigeons.GetById(id);
 
+            if (pigeon == null)
+            {
+                return this.BadRequest("No such pigeon");
+            }
+
             //When the authorization work
-            //if (pigeon.User.Id != userId)
-            //{
-            //    return this.Unauthorized();
-            //}
+            if (userId == null || pigeon.User.Id != userId)
+            {
+                return this.Unauthorized();
+            }
             
             this.Data.Pigeons.Delete(pigeon);
             this.Data.SaveChanges();

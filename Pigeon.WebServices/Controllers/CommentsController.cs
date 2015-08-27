@@ -13,8 +13,8 @@
         [Route("api/Comments/pigeon/{id}/comment")]
         public IHttpActionResult AddCommnetToPigeon(int id, CommentBindingModel inputComment)
         {
-            //var userId = this.User.Identity.GetUserId();
-            string userId = null; // for test purposes, must be corrected in the Comment Model
+            var userId = this.User.Identity.GetUserId() ?? "123";
+            //string userId = null; // for test purposes, must be corrected in the Comment Model
             var pigeon = this.Data.Pigeons.GetById(id);
 
             var commentToAdd = new Comment()
@@ -41,11 +41,16 @@
             var userId = this.User.Identity.GetUserId();
             var commentToUpdate = this.Data.Comments.GetById(id);
 
+            if (commentToUpdate == null)
+            {
+                return this.BadRequest("No such comment");
+            }
+            
             //When the authorization work
-            //if (commentToUpdate.Author.Id != userId)
-            //{
-            //    return this.Unauthorized();
-            //}
+            if ( userId == null || commentToUpdate.Author.Id != userId)
+            {
+                return this.Unauthorized();
+            }
 
             commentToUpdate.Content = inputComment.Content;
 
@@ -61,11 +66,16 @@
             var userId = this.User.Identity.GetUserId();
             var commentToDelete = this.Data.Comments.GetById(id);
 
+            if (commentToDelete == null)
+            {
+                return this.BadRequest("No such comment");
+            }
+
             //When the authorization work
-            //if (commentToUpdate.Author.Id != userId)
-            //{
-            //    return this.Unauthorized();
-            //}
+            if (userId == null || commentToDelete.Author.Id != userId)
+            {
+                return this.Unauthorized();
+            }
 
             this.Data.Comments.Delete(commentToDelete);
             this.Data.SaveChanges();
