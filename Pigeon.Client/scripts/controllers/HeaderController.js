@@ -1,7 +1,6 @@
 define(['app', 'accountService', 'navigationService', 'notifyService'],
     function (app) {
-        app.controller('HeaderController', function ($scope, accountService,
-                                                        navigationService, notifyService) {
+        app.controller('HeaderController', function ($scope, accountService, navigationService, notifyService) {
             $scope.isLoggedIn = accountService.isLoggedIn();
 
             $scope.logout = function () {

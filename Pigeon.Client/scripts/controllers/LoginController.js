@@ -1,6 +1,6 @@
 ﻿define(['app', 'constants', 'validationService', 'accountService', 'navigationService', 'notifyService'],
     function (app) {
-        app.controller('LoginController', function ($scope, constants, validationService, accountService,
+        app.controller('LoginController', function ($scope, $rootScope, constants, validationService, accountService,
                                                     navigationService, notifyService) {
             $scope.title = 'Pigeon - Login';
             $scope.loginData = {};
@@ -13,6 +13,7 @@
                     loginData["grant_type"] = constants.grantType;
                     accountService.login(loginData).then(
                         function (serverResponse) {
+                            $rootScope.$broadcast('myDataUpdate');
                             accountService.setCredentials(serverResponse);
                             navigationService.loadHome();
                             notifyService.showInfo("Login successful.");
