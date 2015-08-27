@@ -55,6 +55,26 @@ namespace Pigeon.Data
                 .Map(m => { m.MapKey("UserCovetId"); })
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Following)
+                .WithMany()
+                .Map(m =>
+                {
+                    m.MapLeftKey("FollowingUserId");
+                    m.MapRightKey("FollowerUserId");
+                    m.ToTable("Following");
+                });
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Followers)
+                .WithMany()
+                .Map(m =>
+                {
+                    m.MapLeftKey("FollowerUserId");
+                    m.MapRightKey("FollowingUserId");
+                    m.ToTable("Followers");
+                });
+
             base.OnModelCreating(modelBuilder);
         }
     }

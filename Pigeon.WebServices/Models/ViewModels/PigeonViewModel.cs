@@ -10,12 +10,12 @@
     {
         public PigeonViewModel(Pigeon p)
         {
-            this.Content = p.Content;
+            this.Content = p.Title;
             this.FavouritedCount = p.FavouritedCount;
             this.User = new UserViewModel()
             {
-                Name = p.User.FirstName + " " + p.User.LastName,
-                Email = p.User.Email
+                Name = p.Author.FirstName + " " + p.Author.LastName,
+                Email = p.Author.Email
             };
             this.Comments = p.Comments.Select(c => new CommentViewModel()
             {
@@ -48,12 +48,12 @@
             {
                 return p => new PigeonViewModel()
                 {
-                    Content = p.Content,
+                    Content = p.Title,
                     FavouritedCount = p.FavouritedCount,
                     User = new UserViewModel()
                     {
-                        Name = p.User.FirstName + " " + p.User.LastName,
-                        Email = p.User.Email
+                        Name = p.Author.FirstName + " " + p.Author.LastName,
+                        Email = p.Author.Email
                     },
                     Comments = p.Comments.Select(c => new CommentViewModel()
                     {

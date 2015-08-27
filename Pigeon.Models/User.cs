@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Pigeon.Models
 {
     using System.Collections.Generic;
@@ -22,14 +24,6 @@ namespace Pigeon.Models
             this.coverPhoto = new HashSet<Photo>();
         }
 
-        //[Key]
-        //public int Id { get; set; }
-
-        //[Required]
-        //[MinLength(2)]
-        //[MaxLength(20)]
-        //public string UserName { get; set; }
-
         [MinLength(2)]
         [MaxLength(20)]
         public string FirstName { get; set; }
@@ -38,17 +32,12 @@ namespace Pigeon.Models
         [MaxLength(20)]
         public string LastName { get; set; }
 
-        //[Required]
-        //[MinLength(5)]
-        //[MaxLength(50)]
-        //public string Email { get; set; }
-
         [Range(0, 100)]
         public int? Age { get; set; }
 
-        //[MinLength(4)]
-        //[MaxLength(20)]
-        //public string PhoneNumber { get; set; }
+        public virtual ICollection<User> Followers { get; set; } 
+
+        public virtual ICollection<User> Following { get; set; } 
 
         public virtual ICollection<Photo> ProfilePhoto
         {

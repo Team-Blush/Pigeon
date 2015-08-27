@@ -19,7 +19,7 @@
         {
             var userId = this.User.Identity.GetUserId();
 
-            var pigeons = this.Data.Pigeons.Search(p => p.User.Id == userId)
+            var pigeons = this.Data.Pigeons.Search(p => p.Author.Id == userId)
                 .Select(PigeonViewModel.Create);
 
             if (!pigeons.Any())
@@ -38,8 +38,8 @@
 
             var pigeonToAdd = new Pigeon()
             {
-                User = this.Data.Users.Search(u => u.Id == userId).FirstOrDefault(),
-                Content = inputPigeon.Content,
+                Author = this.Data.Users.Search(u => u.Id == userId).FirstOrDefault(),
+                Title = inputPigeon.Title,
                 FavouritedCount = 0,
                 Comments = new HashSet<Comment>()
             };
@@ -62,12 +62,12 @@
                 return this.BadRequest("Invalid Pigeon to add.");
             }
 
-            if (pigeon.User.Id != userId)
+            if (pigeon.Author.Id != userId)
             {
                 return this.Unauthorized();
             }
 
-            pigeon.Content = upPigeon.Content;
+            pigeon.Title = upPigeon.Title;
 
             this.Data.SaveChanges();
 
@@ -88,7 +88,7 @@
                 return this.BadRequest("No such Pigeon.");
             }
 
-            if (pigeon.User.Id == userId)
+            if (pigeon.Author.Id == userId)
             {
                 return this.BadRequest("You cannot favourite your own Pigeon.");
             }
@@ -112,7 +112,7 @@
                 return this.BadRequest("No such pigeon");
             }
 
-            if (pigeon.User.Id != userId)
+            if (pigeon.Author.Id != userId)
             {
                 return this.Unauthorized();
             }

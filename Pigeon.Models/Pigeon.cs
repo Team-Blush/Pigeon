@@ -1,4 +1,6 @@
-﻿namespace Pigeon.Models
+﻿using System;
+
+namespace Pigeon.Models
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -6,14 +8,10 @@
     public class Pigeon
     {
         private ICollection<Comment> comments;
-        //private ICollection<User> repigeonedBy;
-        //private ICollection<User> favouritedBy;
 
         public Pigeon()
         {
             this.comments = new HashSet<Comment>();
-            //this.repigeonedBy = new HashSet<User>();
-            //this.favouritedBy = new HashSet<User>();
         }
 
         [Key]
@@ -22,24 +20,13 @@
         [Required]
         [MinLength(5)]
         [MaxLength(150)]
-        public string Content { get; set; }
+        public string Title { get; set; }
 
-        //Problem by runing with this property Entity Framework make mistakes.
-        //[Required]
-        //public int UserId { get; set; }
+        public string AuthorId { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual User Author { get; set; }
 
-        //public virtual ICollection<User> RepigeonedBy
-        //{
-        //    get { return this.repigeonedBy; }
-        //    set { this.repigeonedBy = value; }
-        //}
-        //public virtual ICollection<User> FavouritedBy
-        //{
-        //    get { return this.favouritedBy; }
-        //    set { this.favouritedBy = value; }
-        //}
+        public DateTime CreatedOn { get; set; }
 
         public int FavouritedCount { get; set; }
 
