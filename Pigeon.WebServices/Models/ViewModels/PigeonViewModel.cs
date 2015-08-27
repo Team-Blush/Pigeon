@@ -12,7 +12,7 @@
         {
             this.Content = p.Content;
             this.FavouritedCount = p.FavouritedCount;
-            User = new UserViewModel()
+            this.User = new UserViewModel()
             {
                 Name = p.User.FirstName + " " + p.User.LastName,
                 Email = p.User.Email

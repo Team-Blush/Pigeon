@@ -6,23 +6,22 @@
     using Models.BindingModels;
     using Pigeon.Models;
 
-    //[Authorize] //When the account system work all of the pigeons should be accessible from registert users
+    [Authorize]
     public class CommentsController : BaseApiController
     {
         [HttpPost]
-        [Route("api/Comments/pigeon/{id}/comment")]
+        [Route("api/pigeon/{id}/comments")]
         public IHttpActionResult AddCommnetToPigeon(int id, CommentBindingModel inputComment)
         {
-            var userId = this.User.Identity.GetUserId() ?? "123";
-            //string userId = null; // for test purposes, must be corrected in the Comment Model
+            var userId = this.User.Identity.GetUserId();
             var pigeon = this.Data.Pigeons.GetById(id);
 
             var commentToAdd = new Comment()
             {
                 Content = inputComment.Content,
-                Author = this.Data.Users.Search(u => u.Id == userId).FirstOrDefault(),
+                // Author = this.Data.Users.Search(u => u.Id == userId).FirstOrDefault(),
                 AuthorId = userId,
-                Pigeon = pigeon,
+                // Pigeon = pigeon,
                 PigeonId = pigeon.Id
             };
 
@@ -35,19 +34,23 @@
         }
 
         [HttpPut]
-        [Route("api/Comments/updatecomment/{id}")]
+        [Route("api/comments/{id}")]
         public IHttpActionResult UpdateComment(int id, CommentBindingModel inputComment)
         {
             var userId = this.User.Identity.GetUserId();
             var commentToUpdate = this.Data.Comments.GetById(id);
 
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest("Invalid comment to add.");
+            }
+
             if (commentToUpdate == null)
             {
-                return this.BadRequest("No such comment");
+                return this.BadRequest("No such comment.");
             }
-            
-            //When the authorization work
-            if ( userId == null || commentToUpdate.Author.Id != userId)
+
+            if (commentToUpdate.AuthorId != userId)
             {
                 return this.Unauthorized();
             }
@@ -60,19 +63,20 @@
         }
 
         [HttpDelete]
-        [Route("api/Comments/deletecomment/{id}")]
+        [Route("api/comments/{id}")]
         public IHttpActionResult DeleteComment(int id)
         {
             var userId = this.User.Identity.GetUserId();
-            var commentToDelete = this.Data.Comments.GetById(id);
+            var commentToDelete = this.Data.Comments
+                .Search(c => c.Id == id)
+                .FirstOrDefault();
 
             if (commentToDelete == null)
             {
-                return this.BadRequest("No such comment");
+                return this.BadRequest("No such comment.");
             }
 
-            //When the authorization work
-            if (userId == null || commentToDelete.Author.Id != userId)
+            if (commentToDelete.AuthorId != userId)
             {
                 return this.Unauthorized();
             }

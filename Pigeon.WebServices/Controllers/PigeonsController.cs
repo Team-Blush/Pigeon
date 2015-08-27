@@ -9,15 +9,14 @@
     using Models.ViewModels;
     using Pigeon.Models;
 
-    //[Authorize] //When the account system work all of the pigeons should be accessible from registert users
+    [Authorize]
     public class PigeonsController : BaseApiController
     {
         [HttpGet]
-        [Route("api/Pigeon/allpigeons")]
-        [EnableQuery] // Odata enable for easy pagenation
+        [Route("api/pigeons")]
+        [EnableQuery]
         public IHttpActionResult ReturnAllPigeonsForUser()
         {
-            //Logic when the Account system work
             var userId = this.User.Identity.GetUserId();
 
             var pigeons = this.Data.Pigeons.Search(p => p.User.Id == userId)
@@ -28,13 +27,11 @@
                 return this.Ok("No Pigeons are found.");
             }
 
-            //var pigeons = this.Data.Pigeons.GetAll().Select(PigeonViewModel.Create);
-
             return this.Ok(pigeons);
         }
 
         [HttpPost]
-        [Route("api/Pigeon/addpigeon")]
+        [Route("api/pigeons")]
         public IHttpActionResult AddPigeon(PigeonBindigModel inputPigeon)
         {
             var userId = this.User.Identity.GetUserId();
@@ -54,13 +51,17 @@
         }
 
         [HttpPut]
-        [Route("api/Pigeon/updatepigeon/{id}")]
+        [Route("api/pigeons/update/{id}")]
         public IHttpActionResult UpdatePigeon(int id, PigeonBindigModel upPigeon)
         {
             var userId = this.User.Identity.GetUserId();
             var pigeon = this.Data.Pigeons.GetById(id);
 
-            //When the authorization work
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest("Invalid Pigeon to add.");
+            }
+
             if (pigeon.User.Id != userId)
             {
                 return this.Unauthorized();
@@ -74,16 +75,22 @@
         }
 
         [HttpPut]
-        [Route("api/Pigeon/fauvorited/{id}")]
-        public IHttpActionResult FauvoritedPigeonAdd(int id)
+        [Route("api/pigeons/favourite/{id}")]
+        public IHttpActionResult FauvoritedPigeonsAdd(int id)
         {
             var userId = this.User.Identity.GetUserId();
-            var pigeon = this.Data.Pigeons.GetById(id);
+            var pigeon = this.Data.Pigeons
+                .Search(p => p.Id == id)
+                .FirstOrDefault();
 
-            //When the authorization work
-            if (pigeon.User.Id != userId)
+            if (pigeon == null)
             {
-                return this.Unauthorized();
+                return this.BadRequest("No such Pigeon.");
+            }
+
+            if (pigeon.User.Id == userId)
+            {
+                return this.BadRequest("You cannot favourite your own Pigeon.");
             }
 
             pigeon.FavouritedCount++;
@@ -94,7 +101,7 @@
         }
 
         [HttpDelete]
-        [Route("api/Pigeon/deletepigeon/{id}")]
+        [Route("api/pigeons/{id}")]
         public IHttpActionResult DeletePigeon(int id)
         {
             var userId = this.User.Identity.GetUserId();
@@ -105,12 +112,11 @@
                 return this.BadRequest("No such pigeon");
             }
 
-            //When the authorization work
-            if (userId == null || pigeon.User.Id != userId)
+            if (pigeon.User.Id != userId)
             {
                 return this.Unauthorized();
             }
-            
+
             this.Data.Pigeons.Delete(pigeon);
             this.Data.SaveChanges();
 

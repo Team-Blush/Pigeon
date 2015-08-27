@@ -18,7 +18,7 @@
 
             config.Routes.MapHttpRoute(
                 "DefaultApi",
-                "api/{controller}/{id}",
+                "api/{controller}/{action}/{id}",
                 new {id = RouteParameter.Optional});
 
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
