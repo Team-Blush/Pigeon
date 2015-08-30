@@ -56,6 +56,15 @@
                 Votes = new HashSet<PigeonVote>()
             };
 
+            var pigeonPhotoData = inputPigeon.ImageData;
+            if (pigeonPhotoData != null)
+            {
+                var photo = new Photo { Base64Data = inputPigeon.ImageData };
+
+                this.Data.Photos.Add(photo);
+                pigeonToAdd.Photo = photo;
+            }
+
             this.Data.Pigeons.Add(pigeonToAdd);
             this.Data.SaveChanges();
 

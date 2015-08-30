@@ -10,7 +10,7 @@ namespace Pigeon.Models
         [MaxLength(30)]
         public string Title { get; set; }
 
-        [Required]
+        // [Required]
         public string Url { get; set; }
 
         [Required]

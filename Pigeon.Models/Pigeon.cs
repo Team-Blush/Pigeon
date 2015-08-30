@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class Pigeon
     {
@@ -30,6 +31,10 @@
         public string AuthorId { get; set; }
 
         public virtual User Author { get; set; }
+
+        public int PhotoId { get; set; }
+
+        public virtual Photo Photo { get; set; }
 
         [Required]
         public DateTime CreatedOn { get; set; }
