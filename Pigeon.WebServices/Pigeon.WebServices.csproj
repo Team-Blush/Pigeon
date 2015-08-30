@@ -229,12 +229,14 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\PigeonsController.cs" />
+    <Compile Include="Models\BindingModels\PigeonVoteBindingModel.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\BindingModels\AccountBindingModels.cs" />
     <Compile Include="Models\BindingModels\CommentBindingModel.cs" />
     <Compile Include="Models\BindingModels\PigeonBindingModel.cs" />
+    <Compile Include="Models\BindingModels\VoteValue.cs" />
     <Compile Include="Models\ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\ViewModels\CommentViewModel.cs" />
     <Compile Include="Models\ViewModels\PigeonViewModel.cs" />

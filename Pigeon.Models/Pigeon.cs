@@ -32,7 +32,7 @@
 
         public virtual User Author { get; set; }
 
-        public int PhotoId { get; set; }
+        public int? PhotoId { get; set; }
 
         public virtual Photo Photo { get; set; }
 

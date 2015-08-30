@@ -12,6 +12,8 @@
 
         IPigeonRepository<Photo> Photos { get; }
 
+        IPigeonRepository<PigeonVote> Votes { get; }
+
         IPigeonRepository<Notification> Notifications { get; }
 
         void SaveChanges();

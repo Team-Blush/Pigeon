@@ -73,7 +73,7 @@
 
         [HttpPut]
         [Route("update/{id}")]
-        public IHttpActionResult UpdatePigeon(int id, PigeonBindingModel upPigeon)
+        public IHttpActionResult UpdatePigeon(int id, PigeonBindingModel updatedPigeon)
         {
             var userId = this.User.Identity.GetUserId();
             var pigeon = this.Data.Pigeons
@@ -95,8 +95,9 @@
                 return this.Unauthorized();
             }
 
-            pigeon.Content = upPigeon.Content;
+            pigeon.Content = updatedPigeon.Content;
 
+            this.Data.Pigeons.Update(pigeon);
             this.Data.SaveChanges();
 
             return this.Ok(new PigeonViewModel(pigeon));
@@ -123,9 +124,73 @@
 
             pigeon.FavouritedCount++;
 
+            this.Data.Pigeons.Update(pigeon);
             this.Data.SaveChanges();
 
             return this.Ok(new PigeonViewModel(pigeon));
+        }
+
+        [HttpPost]
+        [Route("vote/{id}")]
+        public IHttpActionResult VoteForPigeon(int id, PigeonVoteBindingModel voteModel)
+        {
+            var userId = this.User.Identity.GetUserId();
+            var pigeon = this.Data.Pigeons
+                .Search(p => p.Id == id)
+                .FirstOrDefault();
+
+            if (pigeon == null)
+            {
+                return this.BadRequest("No such Pigeon.");
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest("Invalid vote value.");
+            }
+
+            var existingVote = this.Data.Votes
+                .Search(v => v.UserId == userId && v.PigeonId == id)
+                .FirstOrDefault();
+
+            if (existingVote != null)
+            {
+                if ((existingVote.Value && voteModel.Value == VoteValue.Up) ||
+                    (!existingVote.Value && voteModel.Value == VoteValue.Down))
+                {
+                    return this.BadRequest("You can vote positively once per pigeon.");
+                }
+
+                if (existingVote.Value && voteModel.Value == VoteValue.Down)
+                {
+                    existingVote.Value = false;
+                    this.Data.Votes.Update(existingVote);
+                }
+
+                if (!existingVote.Value && voteModel.Value == VoteValue.Up)
+                {
+                    existingVote.Value = true;
+                    this.Data.Votes.Update(existingVote);
+                }
+            }
+            else
+            {
+                var vote = new PigeonVote
+                {
+                    UserId = userId,
+                    PigeonId = pigeon.Id,
+                    Pigeon = pigeon,
+                    Value = voteModel.Value == VoteValue.Up
+                };
+
+                pigeon.Votes.Add(vote);
+                this.Data.Votes.Add(vote);
+            }
+
+            this.Data.Pigeons.Update(pigeon);
+            this.Data.SaveChanges();
+
+            return this.Ok("Successfully voted for pigeon.");
         }
 
         [HttpDelete]

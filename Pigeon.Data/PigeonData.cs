@@ -42,6 +42,11 @@
             get { return this.GetRepository<Photo>(); }
         }
 
+        public IPigeonRepository<PigeonVote> Votes
+        {
+            get { return this.GetRepository<PigeonVote>(); }
+        }
+
         public IPigeonRepository<Notification> Notifications
         {
             get { return this.GetRepository<Notification>(); }
@@ -54,15 +59,15 @@
 
         private IPigeonRepository<T> GetRepository<T>() where T : class
         {
-            var typeOfModel = typeof (T);
+            var typeOfModel = typeof(T);
             if (!this.repositories.ContainsKey(typeOfModel))
             {
-                var type = typeof (PigeonRepository<T>);
+                var type = typeof(PigeonRepository<T>);
 
                 this.repositories.Add(typeOfModel, Activator.CreateInstance(type, this.context));
             }
 
-            return (IPigeonRepository<T>) this.repositories[typeOfModel];
+            return (IPigeonRepository<T>)this.repositories[typeOfModel];
         }
     }
 }
