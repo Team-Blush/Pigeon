@@ -1,5 +1,6 @@
 ﻿namespace Pigeon.Models
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
 
     public class Comment
@@ -11,6 +12,9 @@
         [MinLength(5)]
         [MaxLength(100)]
         public string Content { get; set; }
+
+        [Required]
+        public DateTime CreatedOn { get; set; }
 
         [Required]
         public string AuthorId { get; set; }

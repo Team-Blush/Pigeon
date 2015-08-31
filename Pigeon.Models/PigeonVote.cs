@@ -1,5 +1,6 @@
 ﻿namespace Pigeon.Models
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
 
     public class PigeonVote
@@ -9,6 +10,9 @@
 
         [Required]
         public bool Value { get; set; }
+
+        [Required]
+        public DateTime VotedOn { get; set; }
 
         [Required]
         public int PigeonId { get; set; }

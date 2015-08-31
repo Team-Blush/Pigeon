@@ -8,34 +8,25 @@
 
     public class PigeonViewModel
     {
+        public PigeonViewModel()
+        {
+        }
+
         public PigeonViewModel(Pigeon pigeonDbModel)
         {
             this.Title = pigeonDbModel.Title;
             this.Content = pigeonDbModel.Content;
+            this.CreatedOn = pigeonDbModel.CreatedOn;
             this.FavouritedCount = pigeonDbModel.FavouritedCount;
-            this.Author = new UserViewModel
-            {
-                Name = pigeonDbModel.Author.FirstName + " " + pigeonDbModel.Author.LastName,
-                Email = pigeonDbModel.Author.Email
-            };
-            this.Comments = pigeonDbModel.Comments.Select(c => new CommentViewModel
-            {
-                Content = c.Content,
-                Author = new UserViewModel
-                {
-                    Name = c.Author.FirstName + " " + c.Author.LastName,
-                    Email = c.Author.Email
-                }
-            });
-        }
-
-        public PigeonViewModel()
-        {
+            this.Author = new UserViewModel(pigeonDbModel.Author);
+            this.Comments = pigeonDbModel.Comments.AsQueryable().Select(CommentViewModel.Create);
         }
 
         public string Title { get; set; }
 
         public string Content { get; set; }
+
+        public DateTime CreatedOn { get; set; }
 
         public int FavouritedCount { get; set; }
 
@@ -46,29 +37,7 @@
 
         public static Expression<Func<Pigeon, PigeonViewModel>> Create
         {
-            get
-            {
-                return p => new PigeonViewModel
-                {
-                    Title = p.Title,
-                    Content = p.Content,
-                    FavouritedCount = p.FavouritedCount,
-                    Author = new UserViewModel
-                    {
-                        Name = p.Author.FirstName + " " + p.Author.LastName,
-                        Email = p.Author.Email
-                    },
-                    Comments = p.Comments.Select(c => new CommentViewModel
-                    {
-                        Content = c.Content,
-                        Author = new UserViewModel
-                        {
-                            Name = c.Author.FirstName + " " + c.Author.LastName,
-                            Email = c.Author.Email
-                        }
-                    })
-                };
-            }
+            get { return p => new PigeonViewModel(p); }
         }
     }
 }

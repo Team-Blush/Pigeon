@@ -1,5 +1,6 @@
 ﻿namespace Pigeon.WebServices.Controllers
 {
+    using System;
     using System.Linq;
     using System.Web.Http;
     using Microsoft.AspNet.Identity;
@@ -15,10 +16,7 @@
         [Route]
         public IHttpActionResult GetPigeonComments(int pigeonId)
         {
-            var userId = this.User.Identity.GetUserId();
-            var pigeon = this.Data.Pigeons
-                .Search(p => p.Author.Id == userId)
-                .FirstOrDefault();
+            var pigeon = this.Data.Pigeons.GetById(pigeonId);
 
             if (pigeon == null)
             {
@@ -40,9 +38,7 @@
         public IHttpActionResult AddCommentToPigeon(int pigeonId, CommentBindingModel inputComment)
         {
             var userId = this.User.Identity.GetUserId();
-            var pigeon = this.Data.Pigeons
-                .Search(p => p.Id == pigeonId)
-                .FirstOrDefault();
+            var pigeon = this.Data.Pigeons.GetById(pigeonId);
 
             if (pigeon == null)
             {
@@ -53,7 +49,8 @@
             {
                 Content = inputComment.Content,
                 AuthorId = userId,
-                PigeonId = pigeon.Id
+                PigeonId = pigeon.Id,
+                CreatedOn = DateTime.Now
             };
 
             this.Data.Comments.Add(commentToAdd);
@@ -69,9 +66,7 @@
         public IHttpActionResult UpdatePigeonComment(int pigeonId, int commentId, CommentBindingModel inputComment)
         {
             var userId = this.User.Identity.GetUserId();
-            var pigeon = this.Data.Pigeons
-                .Search(p => p.Id == pigeonId)
-                .FirstOrDefault();
+            var pigeon = this.Data.Pigeons.GetById(pigeonId);
 
             if (pigeon == null)
             {
@@ -108,9 +103,7 @@
         public IHttpActionResult DeletePigeonComment(int pigeonId, int commentId)
         {
             var userId = this.User.Identity.GetUserId();
-            var pigeon = this.Data.Pigeons
-                .Search(p => p.Id == pigeonId)
-                .FirstOrDefault();
+            var pigeon = this.Data.Pigeons.GetById(pigeonId);
 
             if (pigeon == null)
             {

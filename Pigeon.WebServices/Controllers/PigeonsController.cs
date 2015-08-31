@@ -15,14 +15,16 @@
     public class PigeonsController : BaseApiController
     {
         [HttpGet]
-        [Route]
+        [Route("own")]
         [EnableQuery]
-        public IHttpActionResult GetUserPigeons()
+        public IHttpActionResult GetUserOwnPigeons()
         {
             var userId = this.User.Identity.GetUserId();
 
             var pigeons = this.Data.Pigeons
                 .Search(p => p.Author.Id == userId)
+                .OrderByDescending(p => p.CreatedOn)
+                .Take(10)
                 .Select(PigeonViewModel.Create);
 
             if (!pigeons.Any())
@@ -31,6 +33,51 @@
             }
 
             return this.Ok(pigeons);
+        }
+
+        [HttpGet]
+        [Route("news")]
+        [EnableQuery]
+        public IHttpActionResult GetUserNewsPigeons()
+        {
+            var userId = this.User.Identity.GetUserId();
+
+            var user = this.Data.Users.GetAll().First(u => u.Id == userId);
+
+            if (!user.Followers.Any())
+            {
+                return this.Ok("Follow someone to see their Pigeons.");
+            }
+
+            var newsPigeons = this.Data.Pigeons.GetAll()
+                .Where(p => user.Following.Select(uf => uf.Id).Contains(p.AuthorId))
+                .OrderByDescending(p => p.CreatedOn)
+                .Take(10)
+                .Select(PigeonViewModel.Create);
+
+            if (!newsPigeons.Any())
+            {
+                return this.Ok("No Pigeons found.");
+            }
+
+            return this.Ok(newsPigeons);
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        [EnableQuery]
+        public IHttpActionResult GetPigeonById(int id)
+        {
+            var pigeon = this.Data.Pigeons.GetById(id);
+
+            if (pigeon == null)
+            {
+                return this.BadRequest("No such Pigeon.");
+            }
+
+            var pigeonViewModel = new PigeonViewModel(pigeon);
+
+            return this.Ok(pigeonViewModel);
         }
 
         [HttpPost]
@@ -68,7 +115,9 @@
             this.Data.Pigeons.Add(pigeonToAdd);
             this.Data.SaveChanges();
 
-            return this.Ok(new PigeonViewModel(pigeonToAdd));
+            var pigeonViewModel = new PigeonViewModel(pigeonToAdd);
+
+            return this.Ok(pigeonViewModel);
         }
 
         [HttpPut]
@@ -76,9 +125,7 @@
         public IHttpActionResult UpdatePigeon(int id, PigeonBindingModel updatedPigeon)
         {
             var userId = this.User.Identity.GetUserId();
-            var pigeon = this.Data.Pigeons
-                .Search(p => p.Id == id)
-                .FirstOrDefault();
+            var pigeon = this.Data.Pigeons.GetById(id);
 
             if (!this.ModelState.IsValid)
             {
@@ -108,9 +155,7 @@
         public IHttpActionResult AddPigeonToFavourited(int id)
         {
             var userId = this.User.Identity.GetUserId();
-            var pigeon = this.Data.Pigeons
-                .Search(p => p.Id == id)
-                .FirstOrDefault();
+            var pigeon = this.Data.Pigeons.GetById(id);
 
             if (pigeon == null)
             {
@@ -135,9 +180,7 @@
         public IHttpActionResult VoteForPigeon(int id, PigeonVoteBindingModel voteModel)
         {
             var userId = this.User.Identity.GetUserId();
-            var pigeon = this.Data.Pigeons
-                .Search(p => p.Id == id)
-                .FirstOrDefault();
+            var pigeon = this.Data.Pigeons.GetById(id);
 
             if (pigeon == null)
             {
@@ -198,9 +241,7 @@
         public IHttpActionResult DeletePigeon(int id)
         {
             var userId = this.User.Identity.GetUserId();
-            var pigeon = this.Data.Pigeons
-                .Search(p => p.Id == id)
-                .FirstOrDefault();
+            var pigeon = this.Data.Pigeons.GetById(id);
 
             if (pigeon == null)
             {
