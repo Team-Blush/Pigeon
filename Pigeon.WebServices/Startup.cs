@@ -5,6 +5,9 @@ using Pigeon.WebServices;
 
 namespace Pigeon.WebServices
 {
+    using System.Threading.Tasks;
+    using System.Web.Cors;
+    using System.Web.Http;
     using Microsoft.Owin.Cors;
     using Owin;
 
@@ -12,9 +15,25 @@ namespace Pigeon.WebServices
     {
         public void Configuration(IAppBuilder app)
         {
-            app.UseCors(CorsOptions.AllowAll);
+            app.UseCors(new CorsOptions
+            {
+                PolicyProvider = new CorsPolicyProvider
+                {
+                    PolicyResolver = request =>
+                    {
+                        if (request.Path.StartsWithSegments(new PathString(TokenEndpointPath)))
+                        {
+                            return Task.FromResult(new CorsPolicy {AllowAnyOrigin = true});
+                        }
+
+                        return Task.FromResult<CorsPolicy>(null);
+                    }
+                }
+            });
 
             this.ConfigureAuth(app);
+
+            GlobalConfiguration.Configuration.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
         }
     }
 }

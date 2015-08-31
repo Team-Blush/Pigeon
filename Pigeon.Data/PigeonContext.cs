@@ -15,24 +15,26 @@ namespace Pigeon.Data
             Database.SetInitializer(migrationStrategy);
         }
 
-        public virtual IDbSet<PigeonVote> Votes { get; set; }
+        public IDbSet<PigeonVote> Votes { get; set; }
 
-        public virtual IDbSet<Pigeon> Pigeons { get; set; }
+        public IDbSet<Pigeon> Pigeons { get; set; }
 
-        public virtual IDbSet<Comment> Comments { get; set; }
+        public IDbSet<Comment> Comments { get; set; }
 
-        public virtual IDbSet<Photo> Photos { get; set; }
+        public IDbSet<Photo> Photos { get; set; }
 
-        public virtual IDbSet<Notification> Notifications { get; set; }
+        public IDbSet<UserSession> UserSessions { get; set; }
 
-        public new void SaveChanges()
-        {
-            base.SaveChanges();
-        }
+        public IDbSet<Notification> Notifications { get; set; }
 
         public new IDbSet<TEntity> Set<TEntity>() where TEntity : class
         {
             return base.Set<TEntity>();
+        }
+
+        public new void SaveChanges()
+        {
+            base.SaveChanges();
         }
 
         public static PigeonContext Create()
@@ -43,13 +45,13 @@ namespace Pigeon.Data
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-                .HasMany(u => u.ProfilePhoto)
+                .HasMany(u => u.ProfilePhotos)
                 .WithOptional(p => p.ProfilePhotoFor)
                 .Map(m => { m.MapKey("UserProfileId"); })
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<User>()
-                .HasMany(u => u.CoverPhoto)
+                .HasMany(u => u.CoverPhotos)
                 .WithOptional(p => p.CoverPhotoFor)
                 .Map(m => { m.MapKey("UserCoverId"); })
                 .WillCascadeOnDelete(false);

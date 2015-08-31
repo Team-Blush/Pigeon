@@ -2,11 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Security.Claims;
     using System.Threading.Tasks;
-    using Microsoft.AspNet.Identity.Owin;
+    using Data;
+    using Microsoft.AspNet.Identity.EntityFramework;
     using Microsoft.Owin.Security;
     using Microsoft.Owin.Security.Cookies;
     using Microsoft.Owin.Security.OAuth;
+    using Pigeon.Models;
 
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
@@ -24,7 +27,8 @@
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
+            var userManager = new ApplicationUserManager(
+                new UserStore<User>(new PigeonContext()));
 
             var user = await userManager.FindAsync(context.UserName, context.Password);
 
@@ -34,10 +38,16 @@
                 return;
             }
 
+
             var oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,
                 OAuthDefaults.AuthenticationType);
             var cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
                 CookieAuthenticationDefaults.AuthenticationType);
+
+            oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+            cookiesIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+            oAuthIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+            cookiesIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
             var properties = CreateProperties(user.UserName);
             var ticket = new AuthenticationTicket(oAuthIdentity, properties);
@@ -87,6 +97,7 @@
             {
                 {"userName", userName}
             };
+
             return new AuthenticationProperties(data);
         }
     }

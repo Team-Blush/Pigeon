@@ -27,6 +27,11 @@
             get { return this.GetRepository<User>(); }
         }
 
+        public IPigeonRepository<UserSession> UserSessions
+        {
+            get { return this.GetRepository<UserSession>(); }
+        }
+
         public IPigeonRepository<Pigeon> Pigeons
         {
             get { return this.GetRepository<Pigeon>(); }
@@ -52,22 +57,22 @@
             get { return this.GetRepository<Notification>(); }
         }
 
-        public void SaveChanges()
+        public int SaveChanges()
         {
-            this.context.SaveChanges();
+            return this.context.SaveChanges();
         }
 
         private IPigeonRepository<T> GetRepository<T>() where T : class
         {
-            var typeOfModel = typeof(T);
+            var typeOfModel = typeof (T);
             if (!this.repositories.ContainsKey(typeOfModel))
             {
-                var type = typeof(PigeonRepository<T>);
+                var type = typeof (PigeonRepository<T>);
 
                 this.repositories.Add(typeOfModel, Activator.CreateInstance(type, this.context));
             }
 
-            return (IPigeonRepository<T>)this.repositories[typeOfModel];
+            return (IPigeonRepository<T>) this.repositories[typeOfModel];
         }
     }
 }

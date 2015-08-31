@@ -6,6 +6,8 @@
     {
         IPigeonRepository<User> Users { get; }
 
+        IPigeonRepository<UserSession> UserSessions { get; }
+
         IPigeonRepository<Pigeon> Pigeons { get; }
 
         IPigeonRepository<Comment> Comments { get; }
@@ -16,6 +18,6 @@
 
         IPigeonRepository<Notification> Notifications { get; }
 
-        void SaveChanges();
+        int SaveChanges();
     }
 }

@@ -10,7 +10,6 @@
                 var loginData = $scope.loginData;
                 if (validationService.validateLoginForm(loginData.username, loginData.password)) {
                     loginData = validationService.escapeHtmlSpecialChars(loginData);
-                    loginData["grant_type"] = constants.grantType;
                     accountService.login(loginData).then(
                         function (serverResponse) {
                             $rootScope.$broadcast('myDataUpdate');

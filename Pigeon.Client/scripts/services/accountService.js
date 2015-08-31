@@ -8,19 +8,19 @@ define(['app', 'constants', 'requestService'], function (app) {
         };
 
         service.register = function (registerData) {
-            var url = serviceUrl + 'api/account/register';
+            var url = serviceUrl + 'api/users/register';
             var headers = null;
             return requestService.postRequest(url, headers, registerData);
         };
 
         service.login = function (loginData) {
-            var url = serviceUrl + 'token';
+            var url = serviceUrl + 'api/users/login';
             var headers = null;
-            return requestService.postRequest(url, headers, $.param(loginData));
+            return requestService.postRequest(url, headers, loginData);
         };
         
         service.logout = function () {
-            var url = serviceUrl + 'api/account/logout';
+            var url = serviceUrl + 'api/users/logout';
             var headers = requestService.getHeaders();
             return requestService.postRequest(url, headers);
         };
@@ -38,7 +38,7 @@ define(['app', 'constants', 'requestService'], function (app) {
         };
 
         service.getMe = function () {
-            var url = serviceUrl + "api/account/userinfo";
+            var url = serviceUrl + "api/profile";
             var headers = requestService.getHeaders();
             return requestService.getRequest(url, headers);
         };

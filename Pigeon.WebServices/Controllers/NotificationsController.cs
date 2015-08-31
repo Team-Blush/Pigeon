@@ -2,7 +2,9 @@
 {
     using System.Linq;
     using System.Web.Http;
+    using UserSessionUtils;
 
+    [SessionAuthorize]
     public class NotificationsController : BaseApiController
     {
         [HttpGet]

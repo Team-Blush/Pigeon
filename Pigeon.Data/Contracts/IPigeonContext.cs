@@ -8,6 +8,8 @@
     {
         IDbSet<User> Users { get; set; }
 
+        IDbSet<UserSession> UserSessions { get; set; }
+
         IDbSet<Pigeon> Pigeons { get; set; }
 
         IDbSet<Comment> Comments { get; set; }
@@ -16,7 +18,7 @@
 
         IDbSet<Notification> Notifications { get; set; }
 
-        void SaveChanges();
+        int SaveChanges();
 
         IDbSet<TEntity> Set<TEntity>() where TEntity : class;
 

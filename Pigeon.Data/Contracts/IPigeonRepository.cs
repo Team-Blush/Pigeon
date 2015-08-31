@@ -7,20 +7,20 @@
     public interface IPigeonRepository<T>
         where T : class
     {
-        void Add(T entity);
-
         IQueryable<T> GetAll();
 
         IQueryable<T> Search(Expression<Func<T, bool>> conditions);
 
-        T GetById(int id);
+        T GetById(object id);
+
+        void Add(T entity);
 
         void Update(T entity);
-
-        void UpdateById(int id);
 
         void Delete(T entity);
 
         void DeleteById(int id);
+
+        int SaveChanges();
     }
 }

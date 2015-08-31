@@ -7,8 +7,9 @@
     using Models.BindingModels;
     using Models.ViewModels;
     using Pigeon.Models;
+    using UserSessionUtils;
 
-    [Authorize]
+    [SessionAuthorize]
     [RoutePrefix("api/pigeons/{pigeonId}/comments")]
     public class CommentsController : BaseApiController
     {
@@ -23,14 +24,17 @@
                 return this.BadRequest("No such Pigeon.");
             }
 
-            var pigeonComments = pigeon.Comments.AsQueryable().Select(CommentViewModel.Create);
-
-            if (!pigeonComments.Any())
+            if (!pigeon.Comments.Any())
             {
                 return this.Ok("No comments for the Pigeon.");
             }
 
-            return this.Ok(pigeonComments);
+            var pigeonCommentViews = pigeon.Comments
+                .AsQueryable()
+                .Select(CommentViewModel.Create)
+                .ToList();
+
+            return this.Ok(pigeonCommentViews);
         }
 
         [HttpPost]
@@ -58,7 +62,12 @@
 
             this.Data.SaveChanges();
 
-            return this.Ok();
+            var commentViewMode = this.Data.Comments.GetAll()
+                .Where(c => c.Id == commentToAdd.Id)
+                .Select(CommentViewModel.Create)
+                .FirstOrDefault();
+
+            return this.Ok(commentViewMode);
         }
 
         [HttpPut]
@@ -95,7 +104,12 @@
 
             this.Data.SaveChanges();
 
-            return this.Ok("Comment updated successfully.");
+            var commentViewMode = this.Data.Comments.GetAll()
+                .Where(c => c.Id == commentToUpdate.Id)
+                .Select(CommentViewModel.Create)
+                .FirstOrDefault();
+
+            return this.Ok(commentViewMode);
         }
 
         [HttpDelete]
@@ -126,7 +140,7 @@
             this.Data.Comments.Delete(commentToDelete);
             this.Data.SaveChanges();
 
-            return this.Ok();
+            return this.Ok("Successfully deleted comment.");
         }
     }
 }

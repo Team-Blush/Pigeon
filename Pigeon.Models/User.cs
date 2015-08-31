@@ -4,25 +4,26 @@ namespace Pigeon.Models
     using System.ComponentModel.DataAnnotations;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using Enumerations;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
 
     public class User : IdentityUser
     {
         private ICollection<Comment> comments;
-        private ICollection<Photo> coverPhoto;
+        private ICollection<Photo> coverPhotos;
         private ICollection<User> followers;
         private ICollection<User> following;
         private ICollection<Pigeon> pigeons;
-        private ICollection<Photo> profilePhoto;
+        private ICollection<Photo> profilePhotos;
 
         public User()
         {
             this.comments = new HashSet<Comment>();
             this.pigeons = new HashSet<Pigeon>();
 
-            this.profilePhoto = new HashSet<Photo>();
-            this.coverPhoto = new HashSet<Photo>();
+            this.profilePhotos = new HashSet<Photo>();
+            this.coverPhotos = new HashSet<Photo>();
 
             this.followers = new HashSet<User>();
             this.following = new HashSet<User>();
@@ -39,6 +40,8 @@ namespace Pigeon.Models
         [Range(0, 100)]
         public int? Age { get; set; }
 
+        public Gender Gender { get; set; }
+
         public virtual ICollection<User> Followers
         {
             get { return this.followers; }
@@ -51,16 +54,16 @@ namespace Pigeon.Models
             set { this.following = value; }
         }
 
-        public virtual ICollection<Photo> ProfilePhoto
+        public virtual ICollection<Photo> ProfilePhotos
         {
-            get { return this.profilePhoto; }
-            set { this.profilePhoto = value; }
+            get { return this.profilePhotos; }
+            set { this.profilePhotos = value; }
         }
 
-        public virtual ICollection<Photo> CoverPhoto
+        public virtual ICollection<Photo> CoverPhotos
         {
-            get { return this.coverPhoto; }
-            set { this.coverPhoto = value; }
+            get { return this.coverPhotos; }
+            set { this.coverPhotos = value; }
         }
 
         public virtual ICollection<Comment> Comments
@@ -75,10 +78,13 @@ namespace Pigeon.Models
             set { this.pigeons = value; }
         }
 
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<User> manager,
-            string authenticationType)
+        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(
+            UserManager<User> manager, string authenticationType)
         {
             var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
+
+            userIdentity.AddClaim(new Claim(ClaimTypes.Name, userIdentity.Name));
+            userIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, this.Id));
 
             return userIdentity;
         }

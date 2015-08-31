@@ -1,4 +1,4 @@
-namespace Pigeon.WebServices.Models.BindingModels
+namespace Pigeon.Models.Enumerations
 {
     public enum VoteValue
     {

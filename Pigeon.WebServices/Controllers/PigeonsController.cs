@@ -9,8 +9,10 @@
     using Models.BindingModels;
     using Models.ViewModels;
     using Pigeon.Models;
+    using Pigeon.Models.Enumerations;
+    using UserSessionUtils;
 
-    [Authorize]
+    [SessionAuthorize]
     [RoutePrefix("api/pigeons")]
     public class PigeonsController : BaseApiController
     {
@@ -68,16 +70,17 @@
         [EnableQuery]
         public IHttpActionResult GetPigeonById(int id)
         {
-            var pigeon = this.Data.Pigeons.GetById(id);
+            var pigeon = this.Data.Pigeons.GetAll()
+                .Where(p => p.Id == id)
+                .Select(PigeonViewModel.Create)
+                .FirstOrDefault();
 
             if (pigeon == null)
             {
                 return this.BadRequest("No such Pigeon.");
             }
 
-            var pigeonViewModel = new PigeonViewModel(pigeon);
-
-            return this.Ok(pigeonViewModel);
+            return this.Ok(pigeon);
         }
 
         [HttpPost]
@@ -106,7 +109,7 @@
             var pigeonPhotoData = inputPigeon.ImageData;
             if (pigeonPhotoData != null)
             {
-                var photo = new Photo { Base64Data = inputPigeon.ImageData };
+                var photo = new Photo {Base64Data = inputPigeon.ImageData};
 
                 this.Data.Photos.Add(photo);
                 pigeonToAdd.Photo = photo;
@@ -115,7 +118,10 @@
             this.Data.Pigeons.Add(pigeonToAdd);
             this.Data.SaveChanges();
 
-            var pigeonViewModel = new PigeonViewModel(pigeonToAdd);
+            var pigeonViewModel = this.Data.Pigeons.GetAll()
+                .Where(p => p.Id == pigeonToAdd.Id)
+                .Select(PigeonViewModel.Create)
+                .FirstOrDefault();
 
             return this.Ok(pigeonViewModel);
         }
@@ -125,29 +131,34 @@
         public IHttpActionResult UpdatePigeon(int id, PigeonBindingModel updatedPigeon)
         {
             var userId = this.User.Identity.GetUserId();
-            var pigeon = this.Data.Pigeons.GetById(id);
+            var pigeonToUpdate = this.Data.Pigeons.GetById(id);
 
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest("Invalid Pigeon data.");
             }
 
-            if (pigeon == null)
+            if (pigeonToUpdate == null)
             {
                 return this.BadRequest("No such Pigeon.");
             }
 
-            if (pigeon.Author.Id != userId)
+            if (pigeonToUpdate.Author.Id != userId)
             {
                 return this.Unauthorized();
             }
 
-            pigeon.Content = updatedPigeon.Content;
+            pigeonToUpdate.Content = updatedPigeon.Content;
 
-            this.Data.Pigeons.Update(pigeon);
+            this.Data.Pigeons.Update(pigeonToUpdate);
             this.Data.SaveChanges();
 
-            return this.Ok(new PigeonViewModel(pigeon));
+            var pigeonViewModel = this.Data.Pigeons.GetAll()
+                .Where(p => p.Id == pigeonToUpdate.Id)
+                .Select(PigeonViewModel.Create)
+                .FirstOrDefault();
+
+            return this.Ok(pigeonViewModel);
         }
 
         [HttpPut]
@@ -155,24 +166,29 @@
         public IHttpActionResult AddPigeonToFavourited(int id)
         {
             var userId = this.User.Identity.GetUserId();
-            var pigeon = this.Data.Pigeons.GetById(id);
+            var pigeonToUpdate = this.Data.Pigeons.GetById(id);
 
-            if (pigeon == null)
+            if (pigeonToUpdate == null)
             {
                 return this.BadRequest("No such Pigeon.");
             }
 
-            if (pigeon.Author.Id == userId)
+            if (pigeonToUpdate.Author.Id == userId)
             {
                 return this.BadRequest("You cannot favourite your own Pigeon.");
             }
 
-            pigeon.FavouritedCount++;
+            pigeonToUpdate.FavouritedCount++;
 
-            this.Data.Pigeons.Update(pigeon);
+            this.Data.Pigeons.Update(pigeonToUpdate);
             this.Data.SaveChanges();
 
-            return this.Ok(new PigeonViewModel(pigeon));
+            var pigeonViewModel = this.Data.Pigeons.GetAll()
+                .Where(p => p.Id == pigeonToUpdate.Id)
+                .Select(PigeonViewModel.Create)
+                .FirstOrDefault();
+
+            return this.Ok(pigeonViewModel);
         }
 
         [HttpPost]

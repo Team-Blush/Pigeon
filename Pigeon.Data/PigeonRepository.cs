@@ -24,11 +24,6 @@
             this.set = context.Set<T>();
         }
 
-        public void Add(T entity)
-        {
-            this.set.Add(entity);
-        }
-
         public IQueryable<T> GetAll()
         {
             return this.set;
@@ -39,20 +34,19 @@
             return this.GetAll().Where(conditions);
         }
 
-        public T GetById(int id)
+        public T GetById(object id)
         {
             return this.set.Find(id);
+        }
+
+        public void Add(T entity)
+        {
+            this.set.Add(entity);
         }
 
         public void Update(T entity)
         {
             this.ChangeEntityState(entity, EntityState.Modified);
-        }
-
-        public void UpdateById(int id)
-        {
-            var entity = this.set.Find(id);
-            this.Update(entity);
         }
 
         public void Delete(T entity)
@@ -64,6 +58,11 @@
         {
             var entity = this.set.Find(id);
             this.Delete(entity);
+        }
+
+        public int SaveChanges()
+        {
+            return this.context.SaveChanges();
         }
 
         private void ChangeEntityState(T entity, EntityState state)

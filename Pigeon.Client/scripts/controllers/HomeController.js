@@ -16,7 +16,7 @@
                         accountService.saveMyData(data);
                         $rootScope.myDataUpdate = false;
                         $scope.myData = accountService.loadMyData();
-                        $scope.title = $scope.myData.userName + ' - ' + $scope.title;
+                        $scope.title = $scope.myData.username + ' - ' + $scope.title;
                     },
                     function (error) {
                         console.error(error);
@@ -24,7 +24,7 @@
             } else {
                 $scope.myData = accountService.loadMyData();
                 if ($scope.isLoggedIn) {
-                    $scope.title = $scope.myData.userName + ' - ' + $scope.title;
+                    $scope.title = $scope.myData.username + ' - ' + $scope.title;
                 }
             }
         });
