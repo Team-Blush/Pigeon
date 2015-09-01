@@ -1,6 +1,6 @@
-﻿namespace Pigeon.WebServices.Models.ViewModels
+﻿namespace Pigeon.WebServices.Models.Comments
 {
-    public class PigeonAuthorViewModel
+    public class CommentAuthorViewModel
     {
         public string Id { get; set; }
 
@@ -9,7 +9,5 @@
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
-
-        public string ProfilePhotoData { get; set; }
     }
 }

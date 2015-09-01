@@ -1,4 +1,4 @@
-﻿namespace Pigeon.WebServices.Models.BindingModels
+﻿namespace Pigeon.WebServices.Models.Users
 {
     using System.ComponentModel.DataAnnotations;
 

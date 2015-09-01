@@ -1,4 +1,4 @@
-namespace Pigeon.WebServices.Models.BindingModels
+namespace Pigeon.WebServices.Models.Pigeons
 {
     using System.ComponentModel.DataAnnotations;
     using Pigeon.Models.Enumerations;

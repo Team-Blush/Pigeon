@@ -1,13 +1,16 @@
-﻿namespace Pigeon.WebServices.Models.ViewModels
+﻿namespace Pigeon.WebServices.Models.Pigeons
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
+    using Comments;
     using Pigeon.Models;
 
     public class PigeonViewModel
     {
+        public int Id { get; set; }
+
         public string Title { get; set; }
 
         public string Content { get; set; }
@@ -27,6 +30,7 @@
             {
                 return p => new PigeonViewModel
                 {
+                    Id = p.Id,
                     Title = p.Title,
                     Content = p.Content,
                     CreatedOn = p.CreatedOn,

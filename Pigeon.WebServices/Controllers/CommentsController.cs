@@ -4,8 +4,7 @@
     using System.Linq;
     using System.Web.Http;
     using Microsoft.AspNet.Identity;
-    using Models.BindingModels;
-    using Models.ViewModels;
+    using Models.Comments;
     using Pigeon.Models;
     using UserSessionUtils;
 
@@ -72,7 +71,7 @@
 
         [HttpPut]
         [Route("{commentId}")]
-        public IHttpActionResult UpdatePigeonComment(int pigeonId, int commentId, CommentBindingModel inputComment)
+        public IHttpActionResult EditPigeonComment(int pigeonId, int commentId, CommentBindingModel inputComment)
         {
             var userId = this.User.Identity.GetUserId();
             var pigeon = this.Data.Pigeons.GetById(pigeonId);
@@ -140,7 +139,10 @@
             this.Data.Comments.Delete(commentToDelete);
             this.Data.SaveChanges();
 
-            return this.Ok("Successfully deleted comment.");
+            return this.Ok(new
+            {
+                message = "Successfully deleted comment."
+            });
         }
     }
 }

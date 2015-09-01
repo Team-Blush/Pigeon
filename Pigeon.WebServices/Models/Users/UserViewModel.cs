@@ -1,6 +1,7 @@
-﻿namespace Pigeon.WebServices.Models.ViewModels
+﻿namespace Pigeon.WebServices.Models.Users
 {
     using System.Linq;
+    using PhotoUtils;
     using Pigeon.Models;
     using Pigeon.Models.Enumerations;
 
@@ -16,6 +17,8 @@
 
         public string LastName { get; set; }
 
+        public int? Age { get; set; }
+
         public Gender Gender { get; set; }
 
         public string ProfilePhotoData { get; set; }
@@ -28,20 +31,8 @@
 
         public static UserViewModel Create(User user, User loggedUser)
         {
-            string profilePhotoData = null;
-            string coverPhotoData = null;
-
-            if (user.ProfilePhotos.Any())
-            {
-                profilePhotoData = user.ProfilePhotos
-                    .FirstOrDefault(pp => pp.ProfilePhotoFor == user).Base64Data;
-            }
-
-            if (user.CoverPhotos.Any())
-            {
-                coverPhotoData = user.CoverPhotos
-                    .FirstOrDefault(pp => pp.CoverPhotoFor == user).Base64Data;
-            }
+            var profilePhotoData = PhotoUtils.CheckForProfilePhotoData(user);
+            var coverPhotoData = PhotoUtils.CheckForCoverPhotoData(user);
 
             return new UserViewModel
             {
@@ -50,6 +41,7 @@
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                Age = user.Age,
                 Gender = user.Gender,
                 ProfilePhotoData = profilePhotoData,
                 CoverPhotoData = coverPhotoData,

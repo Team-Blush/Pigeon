@@ -12,8 +12,7 @@
     using Microsoft.AspNet.Identity.EntityFramework;
     using Microsoft.Owin.Security;
     using Microsoft.Owin.Testing;
-    using Models.BindingModels;
-    using Models.ViewModels;
+    using Models.Users;
     using Pigeon.Models;
     using UserSessionUtils;
 
@@ -39,7 +38,7 @@
             get { return this.Request.GetOwinContext().Authentication; }
         }
 
-        // POST api/User/Register
+        // POST api/user/register
         [HttpPost]
         [AllowAnonymous]
         [Route("register")]
@@ -89,7 +88,7 @@
             return loginResult;
         }
 
-        // POST api/User/Login
+        // POST api/user/login
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
@@ -105,8 +104,6 @@
                 return this.BadRequest("Invalid user data");
             }
 
-            // Invoke the "token" OWIN service to perform the login (POST /api/token)
-            // Use Microsoft.Owin.Testing.TestServer to perform in-memory HTTP POST request
             var testServer = TestServer.Create<Startup>();
             var requestParams = new List<KeyValuePair<string, string>>
             {
@@ -121,7 +118,6 @@
 
             if (tokenServiceResponse.StatusCode == HttpStatusCode.OK)
             {
-                // Sucessful login --> create user session in the database
                 var responseString = await tokenServiceResponse.Content.ReadAsStringAsync();
                 var jsSerializer = new JavaScriptSerializer();
                 var responseData =
@@ -132,23 +128,18 @@
                 var userSessionManager = new UserSessionManager(owinContext);
                 userSessionManager.CreateUserSession(username, authToken);
 
-                // Cleanup: delete expired sessions from the database
                 userSessionManager.DeleteExpiredSessions();
             }
 
             return this.ResponseMessage(tokenServiceResponse);
         }
 
-        // POST api/User/Logout
+        // POST api/user/logout
         [HttpPost]
         [Route("logout")]
         public IHttpActionResult Logout()
         {
-            // This does not actually perform logout! The OWIN OAuth implementation
-            // does not support "revoke OAuth token" (logout) by design.
             this.Authentication.SignOut(DefaultAuthenticationTypes.ExternalBearer);
-
-            // Delete the user's session from the database (revoke its bearer token)
             var owinContext = this.Request.GetOwinContext();
             var userSessionManager = new UserSessionManager(owinContext);
             userSessionManager.InvalidateUserSession();
@@ -159,48 +150,126 @@
             });
         }
 
+        // GET api/user/{username}
         [HttpGet]
         [Route("{username}")]
-        public IHttpActionResult GetUser(string username)
+        public IHttpActionResult GetUserInfo(string username)
         {
             var targetUser = this.Data.Users.GetAll()
                 .FirstOrDefault(u => u.UserName == username);
+
             if (targetUser == null)
             {
                 return this.NotFound();
             }
 
             var loggedUserId = this.User.Identity.GetUserId();
-            if (loggedUserId == null)
-            {
-                return this.BadRequest("Invalid session token.");
-            }
-
             var loggedUser = this.Data.Users.GetById(loggedUserId);
 
             return this.Ok(UserViewModel.Create(targetUser, loggedUser));
         }
 
+        // GET api/user/{username}/preview
         [HttpGet]
         [Route("{username}/preview")]
-        public IHttpActionResult GetPreview(string username)
+        public IHttpActionResult GetUserInfoPreview(string username)
         {
             var targetUser = this.Data.Users.GetAll()
                 .FirstOrDefault(u => u.UserName == username);
+
             if (targetUser == null)
             {
                 return this.NotFound();
             }
 
             var loggedUserId = this.User.Identity.GetUserId();
-            if (loggedUserId == null)
-            {
-                return this.BadRequest("Invalid session token.");
-            }
-
             var loggedUser = this.Data.Users.GetById(loggedUserId);
 
             return this.Ok(UserPreviewViewModel.Create(targetUser, loggedUser));
+        }
+
+        // GET api/user/{username}/follow
+        [HttpPut]
+        [Route("{username}/follow")]
+        public IHttpActionResult FollowUser(string username)
+        {
+            var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUserUsername = this.User.Identity.GetUserName();
+
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
+            var targetUser = this.Data.Users.GetAll()
+                .FirstOrDefault(u => u.UserName == username);
+
+            if (targetUser == null)
+            {
+                return this.NotFound();
+            }
+
+            if (loggedUserUsername == username)
+            {
+                return this.BadRequest("Cannot follow yourself.");
+            }
+
+            if (loggedUser.Following.Contains(targetUser) &&
+                targetUser.Followers.Contains(loggedUser))
+            {
+                return this.BadRequest("Already following that user.");
+            }
+
+            loggedUser.Following.Add(targetUser);
+            targetUser.Followers.Add(loggedUser);
+
+            this.Data.Users.Update(loggedUser);
+            this.Data.Users.Update(targetUser);
+
+            this.Data.SaveChanges();
+
+            return this.Ok(new
+            {
+                message = "Successfully followed user."
+            });
+        }
+
+        // GET api/user/{username}/unfollow
+        [HttpPut]
+        [Route("{username}/unfollow")]
+        public IHttpActionResult UnfollowUser(string username)
+        {
+            var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUserUsername = this.User.Identity.GetUserName();
+
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
+            var targetUser = this.Data.Users.GetAll()
+                .FirstOrDefault(u => u.UserName == username);
+
+            if (targetUser == null)
+            {
+                return this.NotFound();
+            }
+
+            if (loggedUserUsername == username)
+            {
+                return this.BadRequest("Cannot unfollow yourself.");
+            }
+
+            if (!loggedUser.Following.Contains(targetUser) &&
+                !targetUser.Followers.Contains(loggedUser))
+            {
+                return this.BadRequest("Cannot unfollow someone you havent followed.");
+            }
+
+            loggedUser.Following.Remove(targetUser);
+            targetUser.Followers.Remove(loggedUser);
+
+            this.Data.Users.Update(loggedUser);
+            this.Data.Users.Update(targetUser);
+
+            this.Data.SaveChanges();
+
+            return this.Ok(new
+            {
+                message = "Successfully unfollowed user."
+            });
         }
     }
 }

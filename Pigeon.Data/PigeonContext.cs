@@ -76,6 +76,16 @@ namespace Pigeon.Data
                     m.ToTable("Followers");
                 });
 
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.FavouritePigeons)
+                .WithMany(p => p.FavouritedBy)
+                .Map(m =>
+                {
+                    m.MapLeftKey("UserId");
+                    m.MapRightKey("PigeonId");
+                    m.ToTable("UsersPigeons");
+                });
+
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -1,6 +1,7 @@
-﻿namespace Pigeon.WebServices.Models.ViewModels
+﻿namespace Pigeon.WebServices.Models.Users
 {
     using System.Linq;
+    using PhotoUtils;
     using Pigeon.Models;
     using Pigeon.Models.Enumerations;
 
@@ -22,17 +23,11 @@
 
         public bool IsFollowing { get; set; }
 
-        public static UserViewModel Create(User user, User loggedUser)
+        public static UserPreviewViewModel Create(User user, User loggedUser)
         {
-            string profilePhotoData = null;
+            string profilePhotoData = PhotoUtils.CheckForProfilePhotoData(user);
 
-            if (user.ProfilePhotos.Any())
-            {
-                profilePhotoData = user.ProfilePhotos
-                    .FirstOrDefault(pp => pp.ProfilePhotoFor == user).Base64Data;
-            }
-
-            return new UserViewModel
+            return new UserPreviewViewModel
             {
                 Id = user.Id,
                 Username = user.UserName,

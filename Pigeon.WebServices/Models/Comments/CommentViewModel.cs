@@ -1,4 +1,4 @@
-﻿namespace Pigeon.WebServices.Models.ViewModels
+﻿namespace Pigeon.WebServices.Models.Comments
 {
     using System;
     using System.Linq.Expressions;
@@ -6,6 +6,8 @@
 
     public class CommentViewModel
     {
+        public int Id { get; set; }
+
         public string Content { get; set; }
 
         public DateTime CreatedOn { get; set; }
@@ -18,6 +20,7 @@
             {
                 return p => new CommentViewModel
                 {
+                    Id = p.Id,
                     Content = p.Content,
                     CreatedOn = p.CreatedOn,
                     Author = new CommentAuthorViewModel

@@ -8,11 +8,13 @@
     {
         private ICollection<Comment> comments;
         private ICollection<PigeonVote> votes;
+        private ICollection<User> favouritedBy;
 
         public Pigeon()
         {
             this.comments = new HashSet<Comment>();
             this.votes = new HashSet<PigeonVote>();
+            this.favouritedBy = new HashSet<User>();
         }
 
         [Key]
@@ -39,6 +41,12 @@
         public DateTime CreatedOn { get; set; }
 
         public int FavouritedCount { get; set; }
+
+        public virtual ICollection<User> FavouritedBy
+        {
+            get { return this.favouritedBy; }
+            set { this.favouritedBy = value; }
+        }
 
         public virtual ICollection<Comment> Comments
         {

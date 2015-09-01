@@ -1,4 +1,4 @@
-﻿namespace Pigeon.WebServices.Models.BindingModels
+﻿namespace Pigeon.WebServices.Models.Comments
 {
     using System.ComponentModel.DataAnnotations;
 

@@ -10,17 +10,21 @@ namespace Pigeon.Models
 
     public class User : IdentityUser
     {
+        private ICollection<Pigeon> pigeons;
+        private ICollection<Pigeon> favouritePigeons;
         private ICollection<Comment> comments;
+
         private ICollection<Photo> coverPhotos;
+        private ICollection<Photo> profilePhotos;
+
         private ICollection<User> followers;
         private ICollection<User> following;
-        private ICollection<Pigeon> pigeons;
-        private ICollection<Photo> profilePhotos;
 
         public User()
         {
-            this.comments = new HashSet<Comment>();
             this.pigeons = new HashSet<Pigeon>();
+            this.favouritePigeons = new HashSet<Pigeon>();
+            this.comments = new HashSet<Comment>();
 
             this.profilePhotos = new HashSet<Photo>();
             this.coverPhotos = new HashSet<Photo>();
@@ -76,6 +80,12 @@ namespace Pigeon.Models
         {
             get { return this.pigeons; }
             set { this.pigeons = value; }
+        }
+
+        public virtual ICollection<Pigeon> FavouritePigeons
+        {
+            get { return this.favouritePigeons; }
+            set { this.favouritePigeons = value; }
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(
