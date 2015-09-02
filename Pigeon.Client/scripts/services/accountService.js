@@ -62,13 +62,13 @@ define(['app', 'constants', 'requestService'], function (app) {
         };
 
         service.editProfile = function (editProfileData) {
-            var url = serviceUrl;
+            var url = serviceUrl + 'api/profile/edit';
             var headers = requestService.getHeaders();
             return requestService.putRequest(url, headers, editProfileData);
         };
 
         service.changePassword = function (changePasswordData) {
-            var url = serviceUrl + '/changepassword';
+            var url = serviceUrl + 'api/profile/changePassword';
             var headers = requestService.getHeaders();
             return requestService.putRequest(url, headers, changePasswordData);
         };

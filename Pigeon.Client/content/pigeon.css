@@ -101,7 +101,20 @@ hr {
 }
 
 .img-preview {
-    max-width: 600px;
+    margin: 10px auto;
+    max-width: 500px;
+}
+
+.img-profile {
+    margin: 10px auto;
+    max-height: 200px;
+    max-width: 200px;
+}
+
+.img-cover {
+    margin: 10px auto;
+    max-height: 200px;
+    max-width: 500px;
 }
 
 textarea {

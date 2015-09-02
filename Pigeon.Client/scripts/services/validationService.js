@@ -2,6 +2,35 @@ define(['app', 'notifyService'], function (app) {
     app.factory('validationService', function (notifyService) {
         var service = {};
 
+        function escapeHtmlSpecialChars(text) {
+            var map = {
+                '<': '&lt;',
+                '>': '&gt;'
+            };
+
+            return text.replace(/[<>]/g, function (m) {
+                return map[m];
+            });
+        }
+
+        service.escapeHtmlSpecialChars = function (input, isString) {
+            if (isString) {
+                return escapeHtmlSpecialChars(input);
+            } else {
+                var outputObject = {};
+                for (var key in input) {
+                    if (input.hasOwnProperty(key)) {
+                        if (key !== 'profilePhotoData' && key !== 'coverPhotoData') {
+                            outputObject[key] = escapeHtmlSpecialChars(input[key]);
+                        } else {
+                            outputObject[key] = input[key];
+                        }
+                    }
+                }
+                return outputObject;
+            }
+        };
+
         service.validatePictureType = function (picture) {
             if (picture.type !== 'image/jpeg') {
                 notifyService.showError("The picture format must be .jpg!");
@@ -60,40 +89,27 @@ define(['app', 'notifyService'], function (app) {
             return true;
         }
 
-        function escapeHtmlSpecialChars(text) {
-            var map = {
-                '<': '&lt;',
-                '>': '&gt;'
-            };
-
-            return text.replace(/[<>]/g, function (m) {
-                return map[m];
-            });
+        function validateName(name) {
+            if (name.length < 4 || name.length > 32) {
+                notifyService.showError("The name must be from 4 to 32 characters long.");
+                return false;
+            }
+            return true;
         }
 
-        service.escapeHtmlSpecialChars = function (input, isString) {
-            if (isString) {
-                return escapeHtmlSpecialChars(input);
-            } else {
-                var outputObject = {};
-                for (var key in input) {
-                    if (input.hasOwnProperty(key)) {
-                        if (key !== 'gender' && key !== 'profileImageData' && key !== 'coverImageData') {
-                            outputObject[key] = escapeHtmlSpecialChars(input[key]);
-                        } else {
-                            outputObject[key] = input[key];
-                        }
-                    }
-                }
-                return outputObject;
+        function validateAge(age) {
+            if (age < 18) {
+                notifyService.showError("Your age cannot be under 18.");
+                return false;
             }
+            return true;
         };
 
         service.validateLoginForm = function (username, password) {
             return (validateUsername(username) && validatePassword(password));
         };
 
-        service.validateRegisterForm = function (username, email, password, confirmPassword, name) {
+        service.validateRegisterForm = function (username, email, password, confirmPassword) {
             return (validateUsername(username) && validateEmailAddress(email) && validatePassword(password) &&
                 validateConfirmPasswordMatch(password, confirmPassword));
         };
@@ -102,10 +118,10 @@ define(['app', 'notifyService'], function (app) {
             return (validatePassword(newPassword) && validateConfirmPasswordMatch(newPassword, confirmPassword));
         };
 
-        service.validateEditProfileForm = function (name, email) {
-            return (validateName(name) && validateEmailAddress(email));
+        service.validateEditProfileForm = function (firstName, lastName, email, age) {
+            return (validateName(firstName) && validateName(lastName) && validateEmailAddress(email) && validateAge(age));
         };
-        
+
         return service;
     });
 });
