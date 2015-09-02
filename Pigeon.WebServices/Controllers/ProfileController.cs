@@ -46,6 +46,8 @@
                 Username = loggedUser.UserName,
                 FirstName = loggedUser.FirstName,
                 LastName = loggedUser.LastName,
+                Email = loggedUser.Email,
+                Age = loggedUser.Age,
                 Gender = loggedUser.Gender,
                 ProfilePhotoData = profilePhotoData,
                 CoverPhotoData = coverPhotoData
@@ -137,22 +139,22 @@
                 this.Data.Photos.Update(loggedUserPhotos[1]);
             }
 
-            if (profileBindingModel.ProfileImageData != null)
+            if (profileBindingModel.ProfilePhotoData != null)
             {
                 Photo newProfilePhoto = new Photo
                 {
-                    Base64Data = profileBindingModel.ProfileImageData,
+                    Base64Data = profileBindingModel.ProfilePhotoData,
                     ProfilePhotoFor = loggedUser
                 };
                 this.Data.Photos.Add(newProfilePhoto);
                 loggedUser.ProfilePhotos.Add(newProfilePhoto);
             }
 
-            if (profileBindingModel.CoverImageData != null)
+            if (profileBindingModel.CoverPhotoData != null)
             {
                 Photo newCoverPhoto = new Photo
                 {
-                    Base64Data = profileBindingModel.ProfileImageData,
+                    Base64Data = profileBindingModel.CoverPhotoData,
                     CoverPhotoFor = loggedUser
                 };
                 this.Data.Photos.Add(newCoverPhoto);

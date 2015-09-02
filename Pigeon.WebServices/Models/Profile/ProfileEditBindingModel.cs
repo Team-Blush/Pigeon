@@ -10,8 +10,8 @@
 
         public int? Age { get; set; }
 
-        public string ProfileImageData { get; set; }
+        public string ProfilePhotoData { get; set; }
 
-        public string CoverImageData { get; set; }
+        public string CoverPhotoData { get; set; }
     }
 }
