@@ -73,6 +73,12 @@ define(['app', 'constants', 'requestService'], function (app) {
             return requestService.putRequest(url, headers, changePasswordData);
         };
 
+        service.loadUserFullData = function (username) {
+            var url = serviceUrl + 'api/users/' + username;
+            var headers = requestService.getHeaders();
+            return requestService.getRequest(url, headers);
+        };
+
         return service;
     });
 });

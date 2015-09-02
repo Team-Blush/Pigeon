@@ -64,7 +64,9 @@
     <Content Include="scripts\controllers\HeaderController.js" />
     <Content Include="scripts\controllers\LoginController.js" />
     <Content Include="scripts\controllers\PigeonController.js" />
+    <Content Include="scripts\controllers\ProfileController.js" />
     <Content Include="scripts\controllers\RegisterController.js" />
+    <Content Include="scripts\controllers\UserController.js" />
     <Content Include="scripts\directives\ngPictureSelect.js" />
     <Content Include="scripts\libs\jquery.noty.packaged.js" />
     <Content Include="scripts\services\fileReaderService.js" />
@@ -117,6 +119,8 @@
     <Content Include="scripts\libs\r.js" />
     <Content Include="scripts\libs\require.js" />
     <Content Include="templates\home-view.html" />
+    <Content Include="templates\user\profile-view.html" />
+    <Content Include="templates\user\user-view.html" />
     <Content Include="Web.config" />
     <Content Include="scripts\libs\jquery-1.9.1.min.map" />
   </ItemGroup>

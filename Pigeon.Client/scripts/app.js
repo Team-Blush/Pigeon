@@ -19,6 +19,16 @@
                 controller: 'RegisterController',
                 controllerUrl: 'controllers/RegisterController'
             }))
+            .when('/:username', angularAMD.route({
+                templateUrl: 'templates/user/user-view.html',
+                controller: 'UserController',
+                controllerUrl: 'controllers/UserController'
+            }))
+            .when('/edit/profile', angularAMD.route({
+                templateUrl: 'templates/user/profile-view.html',
+                controller: 'ProfileController',
+                controllerUrl: 'controllers/ProfileController'
+            }))
             .otherwise({ redirectTo: "/" });
     });
 
