@@ -10,6 +10,14 @@
 <div class="container" ng-if="isLoggedIn">
     <div class="row">
         <div class="box">
+            <img class="img-wall-profile" ng-src="{{myData.profilePhotoData}}" />
+            
+            <img class="img-wall-cover" ng-src="{{myData.coverPhotoData}}"/>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="box">
             <div class="row" ng-controller="PigeonController">
                 <div class="col-lg-6 col-lg-offset-3 text-center">
                     <form role="form">
@@ -18,7 +26,7 @@
                                 <label>Title</label>
                                 <input type="text" class="form-control" ng-model="pigeonData.title">
                             </div>
-                            <img class="img-preview" ng-src="{{pigeonData.imageData}}" />
+                            <img class="img-preview" ng-src="{{pigeonData.imageData}}"/>
                             <div class="form-group col-lg-12">
                                 <label>Message</label>
                                 <textarea class="form-control" rows="3" ng-model="pigeonData.content"></textarea>

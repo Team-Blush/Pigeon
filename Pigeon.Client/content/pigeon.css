@@ -111,10 +111,23 @@ hr {
     max-width: 200px;
 }
 
+.img-wall-profile {
+    position: absolute;
+    margin: 100px 0 100px 50px;
+    max-height: 200px;
+    width: auto;
+}
+
 .img-cover {
     margin: 10px auto;
     max-height: 200px;
     max-width: 500px;
+}
+
+.img-wall-cover {
+    margin: 10px auto;
+    max-height: 400px;
+    width: 100%;
 }
 
 textarea {

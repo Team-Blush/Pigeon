@@ -12,10 +12,8 @@
                 },
                 function (serverError) {
                     console.error(serverError);
-
                 }
             );
-            
         });
     }
 );
