@@ -31,8 +31,8 @@
 
         public static UserViewModel Create(User user, User loggedUser)
         {
-            var profilePhotoData = PhotoUtils.CheckForProfilePhotoData(user);
-            var coverPhotoData = PhotoUtils.CheckForCoverPhotoData(user);
+            var profilePhoto = PhotoUtils.CheckForProfilePhotoData(user);
+            var coverPhoto = PhotoUtils.CheckForCoverPhotoData(user);
 
             return new UserViewModel
             {
@@ -43,8 +43,8 @@
                 LastName = user.LastName,
                 Age = user.Age,
                 Gender = user.Gender,
-                ProfilePhotoData = profilePhotoData,
-                CoverPhotoData = coverPhotoData,
+                ProfilePhotoData = profilePhoto.Base64Data,
+                CoverPhotoData = coverPhoto.Base64Data,
                 IsFollowed = user.Followers
                     .Any(u => u.Id == loggedUser.Id),
                 IsFollowing = user.Following

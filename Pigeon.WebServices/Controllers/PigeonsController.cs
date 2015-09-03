@@ -15,7 +15,7 @@
     [RoutePrefix("api/pigeons")]
     public class PigeonsController : BaseApiController
     {
-        // GET api/pigeons
+        // GET api/pigeons/own
         [HttpGet]
         [Route("own")]
         [EnableQuery]
@@ -69,6 +69,31 @@
             return this.Ok(newsPigeons);
         }
 
+        // GET api/pigeons/favourites
+        [HttpGet]
+        [Route("favourites")]
+        [EnableQuery]
+        public IHttpActionResult GetUserFavouritePigeons()
+        {
+            var userId = this.User.Identity.GetUserId();
+            var user = this.Data.Users.GetById(userId);
+
+            var favouritePigeons = user.FavouritePigeons
+                .AsQueryable()
+                .Select(PigeonViewModel.Create)
+                .ToList();
+
+            if (!favouritePigeons.Any())
+            {
+                return this.Ok(new
+                {
+                    message = "You have no favourite pigeons at this time."
+                });
+            }
+
+            return this.Ok(favouritePigeons);
+        }
+
         // GET api/pigeons/{id}
         [HttpGet]
         [Route("{id}")]
@@ -114,7 +139,7 @@
             var pigeonPhotoData = inputPigeon.ImageData;
             if (pigeonPhotoData != null)
             {
-                var photo = new Photo { Base64Data = inputPigeon.ImageData };
+                var photo = new Photo {Base64Data = inputPigeon.ImageData};
 
                 this.Data.Photos.Add(photo);
                 pigeonToAdd.Photo = photo;
@@ -131,9 +156,9 @@
             return this.Ok(pigeonViewModel);
         }
 
-        // POST api/pigeons/vote/{id}
+        // POST api/pigeons/{id}/vote
         [HttpPost]
-        [Route("vote/{id}")]
+        [Route("{id}/vote")]
         public IHttpActionResult VoteForPigeon(int id, PigeonVoteBindingModel voteModel)
         {
             var userId = this.User.Identity.GetUserId();
@@ -197,9 +222,9 @@
             });
         }
 
-        // PUT api/pigeons/update/{id}
+        // PUT api/pigeons/{id}/update
         [HttpPut]
-        [Route("edit/{id}")]
+        [Route("{id}/edit")]
         public IHttpActionResult EditPigeon(int id, PigeonBindingModel updatedPigeon)
         {
             var userId = this.User.Identity.GetUserId();
@@ -233,46 +258,49 @@
             return this.Ok(pigeonViewModel);
         }
 
-        // PUT api/pigeons/favourite/{id}
+        // PUT api/pigeons/{id}/favourite
         [HttpPut]
-        [Route("favourite/{id}")]
+        [Route("{id}/favourite")]
         public IHttpActionResult FavouritePigeon(int id)
         {
             var userId = this.User.Identity.GetUserId();
             var user = this.Data.Users.GetById(userId);
 
-            var pigeonToFavurite = this.Data.Pigeons.GetById(id);
+            var pigeonToFavourite = this.Data.Pigeons.GetById(id);
 
-            if (pigeonToFavurite == null)
+            if (pigeonToFavourite == null)
             {
                 return this.BadRequest("No such Pigeon.");
             }
 
-            if (pigeonToFavurite.Author.Id == userId)
+            if (pigeonToFavourite.Author.Id == userId)
             {
                 return this.BadRequest("You cannot favourite your own Pigeon.");
             }
 
-            pigeonToFavurite.FavouritedBy.Add(user);
-            user.FavouritePigeons.Add(pigeonToFavurite);
+            if (user.FavouritePigeons.Contains(pigeonToFavourite))
+            {
+                return this.BadRequest("Pigeon already favourited.");
+            }
 
-            pigeonToFavurite.FavouritedCount++;
+            pigeonToFavourite.FavouritedBy.Add(user);
+            user.FavouritePigeons.Add(pigeonToFavourite);
 
-            this.Data.Pigeons.Update(pigeonToFavurite);
+            pigeonToFavourite.FavouritedCount++;
+
+            this.Data.Pigeons.Update(pigeonToFavourite);
             this.Data.Users.Update(user);
             this.Data.SaveChanges();
 
-            var pigeonViewModel = this.Data.Pigeons.GetAll()
-                .Where(p => p.Id == pigeonToFavurite.Id)
-                .Select(PigeonViewModel.Create)
-                .FirstOrDefault();
-
-            return this.Ok(pigeonViewModel);
+            return this.Ok(new
+            {
+                message = "Successfully favourited Pigeon."
+            });
         }
 
-        // PUT api/pigeons/unfavourite/{id}
+        // PUT api/pigeons/{id}/unfavourite
         [HttpPut]
-        [Route("unfavourite/{id}")]
+        [Route("{id}/unfavourite")]
         public IHttpActionResult UnFavouritePigeon(int id)
         {
             var userId = this.User.Identity.GetUserId();
@@ -289,6 +317,11 @@
                 return this.BadRequest("You cannot unfavourite your own Pigeon.");
             }
 
+            if (!user.FavouritePigeons.Contains(pigeonToUnfavourite))
+            {
+                return this.BadRequest("Cannot unfavourite a non-favourite Pigeon.");
+            }
+
             pigeonToUnfavourite.FavouritedBy.Remove(user);
             user.FavouritePigeons.Remove(pigeonToUnfavourite);
 
@@ -298,12 +331,10 @@
             this.Data.Users.Update(user);
             this.Data.SaveChanges();
 
-            var pigeonViewModel = this.Data.Pigeons.GetAll()
-                .Where(p => p.Id == pigeonToUnfavourite.Id)
-                .Select(PigeonViewModel.Create)
-                .FirstOrDefault();
-
-            return this.Ok(pigeonViewModel);
+            return this.Ok(new
+            {
+                message = "Successfully unfavourited Pigeon."
+            });
         }
 
         // DELETE api/pigeons/{id}
@@ -340,7 +371,7 @@
             if (pigeon.Photo != null)
             {
                 if (pigeon.Photo.CoverPhotoFor == null &&
-                pigeon.Photo.ProfilePhotoFor == null)
+                    pigeon.Photo.ProfilePhotoFor == null)
                 {
                     this.Data.Photos.Delete(pigeon.Photo);
                 }

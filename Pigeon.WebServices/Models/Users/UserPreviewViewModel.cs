@@ -25,7 +25,7 @@
 
         public static UserPreviewViewModel Create(User user, User loggedUser)
         {
-            string profilePhotoData = PhotoUtils.CheckForProfilePhotoData(user);
+            var profilePhoto = PhotoUtils.CheckForProfilePhotoData(user);
 
             return new UserPreviewViewModel
             {
@@ -34,7 +34,7 @@
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Gender = user.Gender,
-                ProfilePhotoData = profilePhotoData,
+                ProfilePhotoData = profilePhoto.Base64Data,
                 IsFollowed = user.Followers
                     .Any(u => u.Id == loggedUser.Id),
                 IsFollowing = user.Following

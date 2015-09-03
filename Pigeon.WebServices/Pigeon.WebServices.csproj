@@ -254,6 +254,7 @@
     <Compile Include="Models\Comments\CommentViewModel.cs" />
     <Compile Include="Models\Pigeons\PigeonAuthorViewModel.cs" />
     <Compile Include="Models\Pigeons\PigeonViewModel.cs" />
+    <Compile Include="Models\Users\UserFollowerPreviewViewModel.cs" />
     <Compile Include="Models\Users\UserPreviewViewModel.cs" />
     <Compile Include="Models\Users\UserViewModel.cs" />
     <Compile Include="PhotoUtils\PhotoUtils.cs" />
@@ -273,6 +274,8 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Resources\Default-Cover.jpg" />
+    <Content Include="Resources\Default-Profile.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />

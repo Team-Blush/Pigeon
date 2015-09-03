@@ -26,8 +26,8 @@
 
         public static ProfileViewModel Create(User userDbModel)
         {
-            var profilePhotoData = PhotoUtils.CheckForProfilePhotoData(userDbModel);
-            var coverPhotoData = PhotoUtils.CheckForCoverPhotoData(userDbModel);
+            var profilePhoto = PhotoUtils.CheckForProfilePhotoData(userDbModel);
+            var coverPhoto = PhotoUtils.CheckForCoverPhotoData(userDbModel);
 
             return new ProfileViewModel
             {
@@ -38,8 +38,8 @@
                 LastName = userDbModel.LastName,
                 Age = userDbModel.Age,
                 Gender = userDbModel.Gender,
-                ProfilePhotoData = profilePhotoData,
-                CoverPhotoData = coverPhotoData
+                ProfilePhotoData = profilePhoto.Base64Data,
+                CoverPhotoData = coverPhoto.Base64Data
             };
         }
     }

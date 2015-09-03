@@ -37,8 +37,8 @@
             var loggedUserId = this.User.Identity.GetUserId();
             var loggedUser = this.Data.Users.GetById(loggedUserId);
 
-            var profilePhotoData = PhotoUtils.CheckForProfilePhotoData(loggedUser);
-            var coverPhotoData = PhotoUtils.CheckForCoverPhotoData(loggedUser);
+            var profilePhoto = PhotoUtils.CheckForProfilePhotoData(loggedUser);
+            var coverPhoto = PhotoUtils.CheckForCoverPhotoData(loggedUser);
 
             return this.Ok(new UserViewModel
             {
@@ -49,8 +49,8 @@
                 Email = loggedUser.Email,
                 Age = loggedUser.Age,
                 Gender = loggedUser.Gender,
-                ProfilePhotoData = profilePhotoData,
-                CoverPhotoData = coverPhotoData
+                ProfilePhotoData = profilePhoto.Base64Data,
+                CoverPhotoData = coverPhoto.Base64Data
             });
         }
 
@@ -81,7 +81,7 @@
             loggedUser.FirstName = profileBindingModel.FirstName;
             loggedUser.LastName = profileBindingModel.LastName;
             loggedUser.Email = profileBindingModel.Email;
-            loggedUser.Age = profileBindingModel.Age;
+            loggedUser.Age = profileBindingModel.Age ?? null;
 
             this.EditUserPhotoContent(loggedUser, profileBindingModel);
 
@@ -96,7 +96,7 @@
         // PUT api/profile/changePassword
         [HttpPut]
         [Route("changePassword")]
-        public async Task<IHttpActionResult> EditProfileInfo(ChangePasswordBindingModel passChangeBindingModel)
+        public async Task<IHttpActionResult> ChangeProfilePassword(ChangePasswordBindingModel passChangeBindingModel)
         {
             if (!this.ModelState.IsValid)
             {
@@ -141,7 +141,7 @@
 
             if (profileBindingModel.ProfilePhotoData != null)
             {
-                Photo newProfilePhoto = new Photo
+                var newProfilePhoto = new Photo
                 {
                     Base64Data = profileBindingModel.ProfilePhotoData,
                     ProfilePhotoFor = loggedUser
@@ -152,7 +152,7 @@
 
             if (profileBindingModel.CoverPhotoData != null)
             {
-                Photo newCoverPhoto = new Photo
+                var newCoverPhoto = new Photo
                 {
                     Base64Data = profileBindingModel.CoverPhotoData,
                     CoverPhotoFor = loggedUser
