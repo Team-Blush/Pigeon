@@ -1,6 +1,7 @@
 ﻿namespace Pigeon.WebServices.Models.Comments
 {
     using System;
+    using System.Linq;
     using System.Linq.Expressions;
     using Pigeon.Models;
 
@@ -18,17 +19,19 @@
         {
             get
             {
-                return p => new CommentViewModel
+                return comment => new CommentViewModel
                 {
-                    Id = p.Id,
-                    Content = p.Content,
-                    CreatedOn = p.CreatedOn,
+                    Id = comment.Id,
+                    Content = comment.Content,
+                    CreatedOn = comment.CreatedOn,
                     Author = new CommentAuthorViewModel
                     {
-                        Id = p.AuthorId,
-                        Username = p.Author.UserName,
-                        FirstName = p.Author.FirstName,
-                        LastName = p.Author.LastName
+                        Id = comment.AuthorId,
+                        Username = comment.Author.UserName,
+                        FirstName = comment.Author.FirstName,
+                        LastName = comment.Author.LastName,
+                        ProfilePhotoData = comment.Author.ProfilePhotos
+                            .FirstOrDefault(pp => pp.ProfilePhotoFor == comment.Author).Base64Data
                     }
                 };
             }

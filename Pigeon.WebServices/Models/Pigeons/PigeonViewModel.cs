@@ -30,24 +30,28 @@
         {
             get
             {
-                return p => new PigeonViewModel
+                return pigeon => new PigeonViewModel
                 {
-                    Id = p.Id,
-                    Title = p.Title,
-                    Content = p.Content,
-                    Photo = p.Photo,
-                    CreatedOn = p.CreatedOn,
-                    FavouritedCount = p.FavouritedCount,
+                    Id = pigeon.Id,
+                    Title = pigeon.Title,
+                    Content = pigeon.Content,
+                    Photo = pigeon.Photo,
+                    CreatedOn = pigeon.CreatedOn,
+                    FavouritedCount = pigeon.FavouritedCount,
                     Author = new PigeonAuthorViewModel
                     {
-                        Id = p.Author.Id,
-                        Username = p.Author.UserName,
-                        FirstName = p.Author.FirstName,
-                        LastName = p.Author.LastName,
-                        ProfilePhotoData = p.Author.ProfilePhotos
-                            .FirstOrDefault(pp => pp.ProfilePhotoFor == p.Author).Base64Data
+                        Id = pigeon.Author.Id,
+                        Username = pigeon.Author.UserName,
+                        FirstName = pigeon.Author.FirstName,
+                        LastName = pigeon.Author.LastName,
+                        ProfilePhotoData = pigeon.Author.ProfilePhotos
+                            .FirstOrDefault(pp => pp.ProfilePhotoFor == pigeon.Author).Base64Data
                     },
-                    Comments = p.Comments.AsQueryable().Select(CommentViewModel.Create)
+                    Comments = pigeon.Comments
+                        .AsQueryable()
+                        .OrderByDescending(c => c.CreatedOn)
+                        .Take(3)
+                        .Select(CommentViewModel.Create)
                 };
             }
         }

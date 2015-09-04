@@ -1,4 +1,4 @@
-﻿namespace Pigeon.MockingTests
+﻿namespace Pigeon.Tests
 {
     using Data.Contracts;
     using Models;

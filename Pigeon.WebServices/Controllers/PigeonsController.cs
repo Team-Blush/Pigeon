@@ -15,17 +15,24 @@
     [RoutePrefix("api/pigeons")]
     public class PigeonsController : BaseApiController
     {
-        // GET api/pigeons/own
+        // GET api/pigeons/{username}
         [HttpGet]
-        [Route("own")]
+        [Route("{username}")]
         [EnableQuery]
-        public IHttpActionResult GetUserOwnPigeons()
+        public IHttpActionResult GetUserPigeons(string username)
         {
-            var userId = this.User.Identity.GetUserId();
-            var pigeons = this.Data.Pigeons
-                .Search(p => p.Author.Id == userId)
-                .OrderByDescending(p => p.CreatedOn)
-                .Take(10)
+            var user = this.Data.Users.GetAll()
+                .FirstOrDefault(u => u.UserName == username);
+
+            if (user == null)
+            {
+                return this.NotFound();
+            }
+
+            var pigeons = this.Data.Pigeons.GetAll()
+                .Where(pigeon => pigeon.AuthorId == user.Id)
+                .OrderByDescending(pigeon => pigeon.CreatedOn)
+                .Take(5)
                 .Select(PigeonViewModel.Create);
 
             if (!pigeons.Any())
@@ -43,7 +50,7 @@
         [HttpGet]
         [Route("news")]
         [EnableQuery]
-        public IHttpActionResult GetUserNewsPigeons()
+        public IHttpActionResult GetNewsPigeons()
         {
             var userId = this.User.Identity.GetUserId();
             var user = this.Data.Users.GetById(userId);
@@ -139,7 +146,7 @@
             var pigeonPhotoData = inputPigeon.ImageData;
             if (pigeonPhotoData != null)
             {
-                var photo = new Photo {Base64Data = inputPigeon.ImageData};
+                var photo = new Photo { Base64Data = inputPigeon.ImageData };
 
                 this.Data.Photos.Add(photo);
                 pigeonToAdd.Photo = photo;

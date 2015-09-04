@@ -21,13 +21,13 @@
         {
             get
             {
-                return user => new UserFollowerPreviewViewModel
+                return follower => new UserFollowerPreviewViewModel
                 {
-                    Id = user.Id,
-                    Username = user.UserName,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(user).Base64Data
+                    Id = follower.Id,
+                    Username = follower.UserName,
+                    FirstName = follower.FirstName,
+                    LastName = follower.LastName,
+                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(follower).Base64Data
                 };
             }
         }
