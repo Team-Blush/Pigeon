@@ -6,7 +6,7 @@
     using Data;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
-    using Models.Profile;
+    using Models.Profiles;
     using Models.Users;
     using PhotoUtils;
     using Pigeon.Models;

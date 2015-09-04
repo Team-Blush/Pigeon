@@ -1,4 +1,4 @@
-﻿namespace Pigeon.WebServices.Models.Profile
+﻿namespace Pigeon.WebServices.Models.Profiles
 {
     using PhotoUtils;
     using Pigeon.Models;

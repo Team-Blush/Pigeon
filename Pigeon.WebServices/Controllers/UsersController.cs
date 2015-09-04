@@ -210,7 +210,7 @@
             var loggedUserFollowers = targetUser.Followers.AsQueryable()
                 .OrderBy(f => f.FirstName + f.LastName)
                 .Take(10)
-                .Select(UserFollowerPreviewViewModel.GetModel);
+                .Select(UserFollowerPreviewViewModel.Create);
 
             if (!loggedUserFollowers.Any())
             {
@@ -240,7 +240,7 @@
             var loggedUserFollowing = targetUser.Following.AsQueryable()
                 .OrderBy(f => f.FirstName + f.LastName)
                 .Take(10)
-                .Select(UserFollowerPreviewViewModel.GetModel);
+                .Select(UserFollowerPreviewViewModel.Create);
 
             if (!loggedUserFollowing.Any())
             {

@@ -17,7 +17,7 @@
 
         public string ProfilePhotoData { get; set; }
 
-        public static Expression<Func<User, UserFollowerPreviewViewModel>> GetModel
+        public static Expression<Func<User, UserFollowerPreviewViewModel>> Create
         {
             get
             {

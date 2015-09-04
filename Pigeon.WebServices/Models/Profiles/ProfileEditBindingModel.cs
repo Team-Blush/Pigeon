@@ -1,4 +1,4 @@
-﻿namespace Pigeon.WebServices.Models.Profile
+﻿namespace Pigeon.WebServices.Models.Profiles
 {
     public class ProfileEditBindingModel
     {

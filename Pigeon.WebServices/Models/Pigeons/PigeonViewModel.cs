@@ -15,6 +15,8 @@
 
         public string Content { get; set; }
 
+        public Photo Photo { get; set; }
+
         public DateTime CreatedOn { get; set; }
 
         public int FavouritedCount { get; set; }
@@ -33,6 +35,7 @@
                     Id = p.Id,
                     Title = p.Title,
                     Content = p.Content,
+                    Photo = p.Photo,
                     CreatedOn = p.CreatedOn,
                     FavouritedCount = p.FavouritedCount,
                     Author = new PigeonAuthorViewModel
