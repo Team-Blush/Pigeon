@@ -17,8 +17,14 @@
     <div class="row">
         <div class="box" ng-controller="PigeonController" ng-init="loadOwnPigeons()">
             <div class="row">
-                <div class="col-lg-12 text-center">
+                <div class="col-lg-4 text-center">
                     <button type="button" class="btn btn-default" ng-click="expandCreatePigeon()">Create Pigeon</button>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <button type="button" class="btn btn-default">All Pigeons</button>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <button type="button" class="btn btn-default">Favorite Pigeons</button>
                 </div>
             </div>
             <div class="row" ng-if="isCreatePigeonExpanded">
@@ -49,7 +55,7 @@
                     <h4>
                         {{pigeon.title}}
                     </h4>
-                    <img class="img-responsive img-border img-full" ng-src="{{pigeon.photo}}" alt="">
+                    <img class="img-responsive img-border img-full" ng-src="{{pigeon.photo.base64Data}}">
 
                     <div class="row">
                         <p>{{pigeon.content}}</p>

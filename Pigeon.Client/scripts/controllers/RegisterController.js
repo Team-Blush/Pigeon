@@ -1,6 +1,6 @@
 ﻿define(['app', 'validationService', 'accountService', 'navigationService', 'notifyService'],
     function (app) {
-        app.controller('RegisterController', function ($scope, validationService, accountService,
+        app.controller('RegisterController', function ($scope, $rootScope, validationService, accountService,
                                                      navigationService, notifyService) {
             $scope.title = 'Pigeon - Register';
             $scope.registerData = {};
@@ -13,6 +13,7 @@
                     registerData = validationService.escapeHtmlSpecialChars(registerData);
                     accountService.register(registerData).then(
                         function (serverResponse) {
+                            $rootScope.$broadcast('myDataUpdate');
                             accountService.setCredentials(serverResponse);
                             navigationService.loadHome();
                             notifyService.showInfo("Register successful.");
