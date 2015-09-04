@@ -9,6 +9,12 @@ define(['app', 'constants', 'requestService'], function (app) {
             return requestService.postRequest(url, headers, postData);
         };
 
+        service.loadOwnPigeons = function() {
+            var url = serviceUrl + '/own';
+            var headers = requestService.getHeaders();
+            return requestService.getRequest(url, headers);
+        }
+
         return service;
     });
 });

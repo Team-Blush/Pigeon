@@ -5,6 +5,15 @@
             $scope.myData = accountService.loadMyData();
             $scope.changePasswordData = {};
             $scope.title = $scope.myData.username + ' - Profile';
+            if ($scope.myData.firstName === 'null') {
+                $scope.myData.firstName = '';
+            }
+            if ($scope.myData.lastName === 'null') {
+                $scope.myData.lastName = '';
+            }
+            if ($scope.myData.age === 'null') {
+                $scope.myData.age = '';
+            }
 
             $scope.editProfile = function () {
                 var myData = $scope.myData;
