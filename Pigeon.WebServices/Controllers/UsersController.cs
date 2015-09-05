@@ -39,7 +39,7 @@
             get { return this.Request.GetOwinContext().Authentication; }
         }
 
-        // POST api/user/register
+        // POST api/users/register
         [HttpPost]
         [AllowAnonymous]
         [Route("register")]
@@ -93,7 +93,7 @@
             return loginResult;
         }
 
-        // POST api/user/login
+        // POST api/users/login
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
@@ -139,7 +139,7 @@
             return this.ResponseMessage(tokenServiceResponse);
         }
 
-        // POST api/user/logout
+        // POST api/users/logout
         [HttpPost]
         [Route("logout")]
         public IHttpActionResult Logout()
@@ -155,7 +155,7 @@
             });
         }
 
-        // GET api/user/{username}
+        // GET api/users/{username}
         [HttpGet]
         [Route("{username}")]
         public IHttpActionResult GetUserInfo(string username)
@@ -174,7 +174,7 @@
             return this.Ok(UserViewModel.Create(targetUser, loggedUser));
         }
 
-        // GET api/user/{username}/preview
+        // GET api/users/{username}/preview
         [HttpGet]
         [Route("{username}/preview")]
         public IHttpActionResult GetUserInfoPreview(string username)
@@ -193,7 +193,7 @@
             return this.Ok(UserPreviewViewModel.Create(targetUser, loggedUser));
         }
 
-        // GET api/user/{username}/followers
+        // GET api/users/{username}/followers
         [HttpGet]
         [EnableQuery]
         [Route("{username}/followers")]
@@ -223,7 +223,7 @@
             return this.Ok(loggedUserFollowers);
         }
 
-        // GET api/user/{username}/following
+        // GET api/users/{username}/following
         [HttpGet]
         [EnableQuery]
         [Route("{username}/following")]
@@ -253,7 +253,7 @@
             return this.Ok(loggedUserFollowing);
         }
 
-        // GET api/user/{username}/follow
+        // GET api/users/{username}/follow
         [HttpPut]
         [Route("{username}/follow")]
         public IHttpActionResult FollowUser(string username)
@@ -295,7 +295,7 @@
             });
         }
 
-        // GET api/user/{username}/unfollow
+        // GET api/users/{username}/unfollow
         [HttpPut]
         [Route("{username}/unfollow")]
         public IHttpActionResult UnfollowUser(string username)

@@ -15,9 +15,9 @@
     [RoutePrefix("api/pigeons")]
     public class PigeonsController : BaseApiController
     {
-        // GET api/pigeons/{username}
+        // GET api/pigeons/{username}/all
         [HttpGet]
-        [Route("{username}")]
+        [Route("{username}/all")]
         [EnableQuery]
         public IHttpActionResult GetUserPigeons(string username)
         {
