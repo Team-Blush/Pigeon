@@ -1,4 +1,4 @@
-﻿define(['app', 'HeaderController', 'PigeonController', 'accountService', 'ngPictureSelect'],
+﻿define(['app', 'HeaderController', 'accountService', 'ngPictureSelect'],
     function (app) {
         app.controller('HomeController', function ($scope, $rootScope, accountService) {
             $scope.title = 'Welcome to Pigeon';

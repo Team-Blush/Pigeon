@@ -23,11 +23,6 @@
                 return this.BadRequest("No such Pigeon.");
             }
 
-            if (!pigeon.Comments.Any())
-            {
-                return this.Ok("No comments for the Pigeon.");
-            }
-
             var pigeonCommentViews = pigeon.Comments
                 .AsQueryable()
                 .Select(CommentViewModel.Create)

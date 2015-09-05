@@ -15,13 +15,13 @@
         HomeController: 'controllers/HomeController',
         RegisterController: 'controllers/RegisterController',
         LoginController: 'controllers/LoginController',
-        PigeonController: 'controllers/PigeonController',
         UserController: 'controllers/UserController',
         ProfileController: 'controllers/ProfileController',
 
         // services
         accountService: 'services/accountService',
         pigeonService: 'services/pigeonService',
+        commentService: 'services/commentService',
         
         fileReaderService: 'services/fileReaderService',
         navigationService: 'services/navigationService',

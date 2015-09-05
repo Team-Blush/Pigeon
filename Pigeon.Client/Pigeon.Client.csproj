@@ -63,12 +63,12 @@
     <Content Include="scripts\constants.js" />
     <Content Include="scripts\controllers\HeaderController.js" />
     <Content Include="scripts\controllers\LoginController.js" />
-    <Content Include="scripts\controllers\PigeonController.js" />
     <Content Include="scripts\controllers\ProfileController.js" />
     <Content Include="scripts\controllers\RegisterController.js" />
     <Content Include="scripts\controllers\UserController.js" />
     <Content Include="scripts\directives\ngPictureSelect.js" />
     <Content Include="scripts\libs\jquery.noty.packaged.js" />
+    <Content Include="scripts\services\commentService.js" />
     <Content Include="scripts\services\fileReaderService.js" />
     <Content Include="scripts\services\navigationService.js" />
     <Content Include="scripts\services\notifyService.js" />

@@ -3,10 +3,10 @@ define(['app', 'constants', 'requestService'], function (app) {
         var service = {};
         var serviceUrl = constants.baseServiceUrl + 'api/pigeons';
 
-        service.createPigeon = function (postData) {
+        service.createPigeon = function (pigeonData) {
             var url = serviceUrl;
             var headers = requestService.getHeaders();
-            return requestService.postRequest(url, headers, postData);
+            return requestService.postRequest(url, headers, pigeonData);
         };
 
         service.loadUserPigeons = function(username) {

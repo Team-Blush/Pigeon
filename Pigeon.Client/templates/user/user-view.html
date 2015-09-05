@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="box" ng-controller="PigeonController" ng-init="loadUserPigeons()">
+        <div class="box" ng-init="loadUserPigeons()">
             <div class="row" ng-if="userData.username == myData.username">
                 <div class="col-lg-4 text-center">
                     <button type="button" class="btn btn-default" ng-click="expandCreatePigeon()">Create Pigeon</button>
@@ -35,7 +35,7 @@
                                 <label>Title</label>
                                 <input type="text" class="form-control" ng-model="pigeonData.title">
                             </div>
-                            <img class="img-preview" ng-src="{{pigeonData.imageData}}"/>
+                            <img class="img-preview" ng-src="{{pigeonData.imageData}}" />
                             <div class="form-group col-lg-12">
                                 <label>Message</label>
                                 <textarea class="form-control" rows="3" ng-model="pigeonData.content"></textarea>
@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 text-center" ng-repeat="pigeon in pigeonsData">
+                <div class="col-lg-8 col-lg-offset-2 text-center" ng-repeat="pigeon in pigeonsData" ng-init="loadPigeonComments(pigeon)">
                     <h4>
                         {{pigeon.title}}
                     </h4>
@@ -85,23 +85,17 @@
                             <div class="row">
                                 <div class="form-group col-lg-12">
                                     <label>Comment</label>
-                                    <textarea class="form-control" rows="3"></textarea>
+                                    <textarea class="form-control" rows="3" ng-model="commentData.content"></textarea>
                                 </div>
                                 <div class="form-group col-lg-12">
-                                    <button type="submit" class="btn btn-default">Comment</button>
+                                    <button type="submit" class="btn btn-default" ng-click="createComment(pigeon)">Comment</button>
                                 </div>
                             </div>
                         </form>
-                        <hr>
-                        <p>Comment 1</p>
-                        <hr>
-                        <p>Comment 2</p>
-                        <hr>
-                        <p>Comment 3</p>
-                        <hr>
-                        <div class="form-group col-lg-12">
-                            <input type="hidden" name="save" value="contact">
-                            <button type="submit" class="btn btn-default">More</button>
+                        <hr />
+                        <div class="row" ng-repeat="comment in pigeon.comments track by $index">
+                            <p>{{comment.content}}</p>
+                            <hr />
                         </div>
                     </div>
                 </div>

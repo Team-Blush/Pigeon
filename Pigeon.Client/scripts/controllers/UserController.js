@@ -1,12 +1,25 @@
-﻿define(['app', 'HeaderController', 'PigeonController', 'accountService', 'pigeonService', 'ngPictureSelect'],
+﻿define(['app', 'HeaderController', 'accountService', 'pigeonService', 'commentService', 'ngPictureSelect'],
     function (app) {
-        app.controller('UserController', function ($scope, $routeParams, accountService, pigeonService) {
+        app.controller('UserController', function ($scope, $routeParams, accountService, pigeonService, commentService) {
             $scope.isLoggedIn = accountService.isLoggedIn();
             $scope.myData = accountService.loadMyData();
             $scope.userData = {};
             $scope.pigeonData = {};
             $scope.pigeonsData = [];
+            $scope.commentData = {};
             $scope.userData.username = $routeParams.username;
+            $scope.isCreatePigeonExpanded = false;
+            $scope.isCommentsExpanded = false;
+
+            $scope.expandComments = function (pigeonId) {
+                $scope.expandCommentsPigeonId = pigeonId;
+                $scope.isCommentsExpanded = !$scope.isCommentsExpanded;
+
+            }
+
+            $scope.expandCreatePigeon = function () {
+                $scope.isCreatePigeonExpanded = !$scope.isCreatePigeonExpanded;
+            }
 
             accountService.loadUserFullData($scope.userData.username).then(
                 function (serverData) {
@@ -55,15 +68,38 @@
 
             $scope.loadUserPigeons = function () {
                 pigeonService.loadUserPigeons($scope.userData.username).then(
-                    function (serverResponse) {
-                        serverResponse.forEach(function (pigeon) {
+                    function (serverData) {
+                        serverData.forEach(function (pigeon) {
                             parsePigeonDate(pigeon);
                         });
-                        $scope.pigeonsData = serverResponse;
+                        $scope.pigeonsData = serverData;
                     },
                     function (serverError) {
                         console.error(serverError);
                     });
+            }
+
+            $scope.createComment = function (pigeon) {
+                commentService.createComment(pigeon.id, $scope.commentData).then(
+                    function (serverData) {
+                        pigeon.comments.push(serverData);
+                        $scope.commentData = {};
+                    },
+                    function (serverError) {
+                        console.error(serverError);
+                    }
+                );
+            }
+
+            $scope.loadPigeonComments = function (pigeon) {
+                commentService.loadPigeonComments(pigeon.id).then(
+                    function (serverData) {
+                        pigeon.comments = serverData;
+                    },
+                    function (serverError) {
+                        console.error(serverError);
+                    }
+                );
             }
         });
     }

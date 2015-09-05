@@ -1,4 +1,4 @@
-﻿define(['app', 'HeaderController', 'PigeonController', 'accountService', 'validationService', 'navigationService', 'notifyService', 'ngPictureSelect'],
+﻿define(['app', 'HeaderController', 'accountService', 'validationService', 'navigationService', 'notifyService', 'ngPictureSelect'],
     function (app) {
         app.controller('ProfileController', function ($scope, $rootScope, accountService, validationService, navigationService, notifyService) {
             $scope.isLoggedIn = accountService.isLoggedIn();
