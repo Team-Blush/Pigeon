@@ -56,7 +56,6 @@
             $scope.loadUserPigeons = function () {
                 pigeonService.loadUserPigeons($scope.userData.username).then(
                     function (serverResponse) {
-                        console.log(serverResponse);
                         serverResponse.forEach(function (pigeon) {
                             parsePigeonDate(pigeon);
                         });

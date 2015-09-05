@@ -16,7 +16,7 @@
     </div>
     <div class="row">
         <div class="box" ng-controller="PigeonController" ng-init="loadUserPigeons()">
-            <div class="row">
+            <div class="row" ng-if="userData.username == myData.username">
                 <div class="col-lg-4 text-center">
                     <button type="button" class="btn btn-default" ng-click="expandCreatePigeon()">Create Pigeon</button>
                 </div>
