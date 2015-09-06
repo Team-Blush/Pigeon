@@ -12,7 +12,10 @@ namespace Pigeon.Models
     {
         private ICollection<Pigeon> pigeons;
         private ICollection<Pigeon> favouritePigeons;
+
         private ICollection<Comment> comments;
+
+        private ICollection<PigeonVote> votes;
 
         private ICollection<Photo> coverPhotos;
         private ICollection<Photo> profilePhotos;
@@ -46,16 +49,28 @@ namespace Pigeon.Models
 
         public Gender Gender { get; set; }
 
-        public virtual ICollection<User> Followers
+        public virtual ICollection<Pigeon> Pigeons
         {
-            get { return this.followers; }
-            set { this.followers = value; }
+            get { return this.pigeons; }
+            set { this.pigeons = value; }
         }
 
-        public virtual ICollection<User> Following
+        public virtual ICollection<Pigeon> FavouritePigeons
         {
-            get { return this.following; }
-            set { this.following = value; }
+            get { return this.favouritePigeons; }
+            set { this.favouritePigeons = value; }
+        }
+
+        public virtual ICollection<Comment> Comments
+        {
+            get { return this.comments; }
+            set { this.comments = value; }
+        }
+
+        public virtual ICollection<PigeonVote> Votes
+        {
+            get { return this.votes; }
+            set { this.votes = value; }
         }
 
         public virtual ICollection<Photo> ProfilePhotos
@@ -70,22 +85,16 @@ namespace Pigeon.Models
             set { this.coverPhotos = value; }
         }
 
-        public virtual ICollection<Comment> Comments
+        public virtual ICollection<User> Followers
         {
-            get { return this.comments; }
-            set { this.comments = value; }
+            get { return this.followers; }
+            set { this.followers = value; }
         }
 
-        public virtual ICollection<Pigeon> Pigeons
+        public virtual ICollection<User> Following
         {
-            get { return this.pigeons; }
-            set { this.pigeons = value; }
-        }
-
-        public virtual ICollection<Pigeon> FavouritePigeons
-        {
-            get { return this.favouritePigeons; }
-            set { this.favouritePigeons = value; }
+            get { return this.following; }
+            set { this.following = value; }
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(

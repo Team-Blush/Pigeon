@@ -6,6 +6,7 @@
     using System.Web.Http;
     using System.Web.OData;
     using Microsoft.AspNet.Identity;
+    using Models.Comments;
     using Models.Pigeons;
     using Pigeon.Models;
     using Pigeon.Models.Enumerations;
@@ -24,6 +25,9 @@
             var user = this.Data.Users.GetAll()
                 .FirstOrDefault(u => u.UserName == username);
 
+            var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
+
             if (user == null)
             {
                 return this.NotFound();
@@ -34,6 +38,9 @@
                 .OrderByDescending(pigeon => pigeon.CreatedOn)
                 .Take(5)
                 .Select(PigeonViewModel.Create);
+
+            this.CheckIfUserVotedForPigeon(pigeons, loggedUser);
+            this.CheckIfUserFavouritedPigeon(pigeons, loggedUser);
 
             if (!pigeons.Any())
             {
@@ -52,9 +59,9 @@
         [EnableQuery]
         public IHttpActionResult GetNewsPigeons()
         {
-            var userId = this.User.Identity.GetUserId();
-            var user = this.Data.Users.GetById(userId);
-            if (!user.Followers.Any())
+            var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
+            if (!loggedUser.Followers.Any())
             {
                 return this.Ok(new
                 {
@@ -63,10 +70,13 @@
             }
 
             var newsPigeons = this.Data.Pigeons.GetAll()
-                .Where(p => user.Following.Select(uf => uf.Id).Contains(p.AuthorId))
+                .Where(p => loggedUser.Following.Select(uf => uf.Id).Contains(p.AuthorId))
                 .OrderByDescending(p => p.CreatedOn)
-                .Take(10)
+                .Take(5)
                 .Select(PigeonViewModel.Create);
+
+            this.CheckIfUserVotedForPigeon(newsPigeons, loggedUser);
+            this.CheckIfUserFavouritedPigeon(newsPigeons, loggedUser);
 
             if (!newsPigeons.Any())
             {
@@ -82,13 +92,14 @@
         [EnableQuery]
         public IHttpActionResult GetUserFavouritePigeons()
         {
-            var userId = this.User.Identity.GetUserId();
-            var user = this.Data.Users.GetById(userId);
+            var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
 
-            var favouritePigeons = user.FavouritePigeons
+            var favouritePigeons = loggedUser.FavouritePigeons
                 .AsQueryable()
-                .Select(PigeonViewModel.Create)
-                .ToList();
+                .Select(PigeonViewModel.Create);
+
+            this.CheckIfUserVotedForPigeon(favouritePigeons, loggedUser);
 
             if (!favouritePigeons.Any())
             {
@@ -107,6 +118,9 @@
         [EnableQuery]
         public IHttpActionResult GetPigeonById(int id)
         {
+            var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
+
             var pigeon = this.Data.Pigeons.GetAll()
                 .Where(p => p.Id == id)
                 .Select(PigeonViewModel.Create)
@@ -117,6 +131,16 @@
                 return this.BadRequest("No such Pigeon.");
             }
 
+            if (loggedUser.Votes.Any(pv => pv.PigeonId == pigeon.Id))
+            {
+                pigeon.VotedFor = true;
+            }
+
+            if (loggedUser.FavouritePigeons.Any(fp => fp.Id == pigeon.Id))
+            {
+                pigeon.VotedFor = true;
+            }
+
             return this.Ok(pigeon);
         }
 
@@ -125,7 +149,7 @@
         [Route]
         public IHttpActionResult AddPigeon(PigeonBindingModel inputPigeon)
         {
-            var userId = this.User.Identity.GetUserId();
+            var loggedUserId = this.User.Identity.GetUserId();
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest("Invalid Pigeon data.");
@@ -135,8 +159,8 @@
             {
                 Title = inputPigeon.Title,
                 Content = inputPigeon.Content,
-                Author = this.Data.Users.Search(u => u.Id == userId).FirstOrDefault(),
-                AuthorId = userId,
+                Author = this.Data.Users.Search(u => u.Id == loggedUserId).FirstOrDefault(),
+                AuthorId = loggedUserId,
                 CreatedOn = DateTime.Now,
                 FavouritedCount = 0,
                 Comments = new HashSet<Comment>(),
@@ -168,7 +192,7 @@
         [Route("{id}/vote")]
         public IHttpActionResult VoteForPigeon(int id, PigeonVoteBindingModel voteModel)
         {
-            var userId = this.User.Identity.GetUserId();
+            var loggedUserId = this.User.Identity.GetUserId();
             var pigeon = this.Data.Pigeons.GetById(id);
 
             if (pigeon == null)
@@ -182,7 +206,7 @@
             }
 
             var existingVote = this.Data.Votes
-                .Search(v => v.UserId == userId && v.PigeonId == id)
+                .Search(v => v.UserId == loggedUserId && v.PigeonId == id)
                 .FirstOrDefault();
 
             if (existingVote != null)
@@ -209,7 +233,7 @@
             {
                 var vote = new PigeonVote
                 {
-                    UserId = userId,
+                    UserId = loggedUserId,
                     PigeonId = pigeon.Id,
                     Pigeon = pigeon,
                     Value = voteModel.Value == VoteValue.Up,
@@ -257,10 +281,7 @@
             this.Data.Pigeons.Update(pigeonToUpdate);
             this.Data.SaveChanges();
 
-            var pigeonViewModel = this.Data.Pigeons.GetAll()
-                .Where(p => p.Id == pigeonToUpdate.Id)
-                .Select(PigeonViewModel.Create)
-                .FirstOrDefault();
+            var pigeonViewModel = new { pigeonToUpdate.Content };
 
             return this.Ok(pigeonViewModel);
         }
@@ -391,6 +412,22 @@
             {
                 message = "Successfully deleted pigeon."
             });
+        }
+
+        private void CheckIfUserVotedForPigeon(IQueryable<PigeonViewModel> pigeons, User loggedUser)
+        {
+            foreach (var pigeon in pigeons)
+            {
+                pigeon.VotedFor = loggedUser.Votes.Any(v => v.PigeonId == pigeon.Id);
+            }
+        }
+
+        private void CheckIfUserFavouritedPigeon(IQueryable<PigeonViewModel> pigeons, User loggedUser)
+        {
+            foreach (var pigeon in pigeons)
+            {
+                pigeon.Favourited = loggedUser.FavouritePigeons.Any(p => p.Id == pigeon.Id);
+            }
         }
     }
 }

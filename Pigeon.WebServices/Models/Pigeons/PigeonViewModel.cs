@@ -6,6 +6,7 @@
     using System.Linq.Expressions;
     using Comments;
     using Pigeon.Models;
+    using PhotoUtils;
 
     public class PigeonViewModel
     {
@@ -21,7 +22,10 @@
 
         public int FavouritedCount { get; set; }
 
-        //Additional functionality by developers preferences
+        public bool VotedFor { get; set; }
+
+        public bool Favourited { get; set; }
+
         public PigeonAuthorViewModel Author { get; set; }
 
         public IEnumerable<CommentViewModel> Comments { get; set; }
@@ -44,8 +48,7 @@
                         Username = pigeon.Author.UserName,
                         FirstName = pigeon.Author.FirstName,
                         LastName = pigeon.Author.LastName,
-                        ProfilePhotoData = pigeon.Author.ProfilePhotos
-                            .FirstOrDefault(pp => pp.ProfilePhotoFor == pigeon.Author).Base64Data
+                        ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(pigeon.Author).Base64Data
                     },
                     Comments = pigeon.Comments
                         .AsQueryable()
