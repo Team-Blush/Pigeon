@@ -8,6 +8,7 @@
     using Microsoft.AspNet.Identity;
     using Models.Comments;
     using Models.Pigeons;
+    using PhotoUtils;
     using Pigeon.Models;
     using Pigeon.Models.Enumerations;
     using UserSessionUtils;
@@ -171,7 +172,7 @@
             if (pigeonPhotoData != null)
             {
                 var photo = new Photo { Base64Data = inputPigeon.ImageData };
-
+                
                 this.Data.Photos.Add(photo);
                 pigeonToAdd.Photo = photo;
             }
@@ -179,10 +180,28 @@
             this.Data.Pigeons.Add(pigeonToAdd);
             this.Data.SaveChanges();
 
-            var pigeonViewModel = this.Data.Pigeons.GetAll()
-                .Where(p => p.Id == pigeonToAdd.Id)
-                .Select(PigeonViewModel.Create)
-                .FirstOrDefault();
+            var pigeonViewModel = new PigeonViewModel
+            {
+                Id = pigeonToAdd.Id,
+                Title = pigeonToAdd.Title,
+                Content = pigeonToAdd.Content,
+                Photo = pigeonToAdd.Photo,
+                CreatedOn = pigeonToAdd.CreatedOn,
+                FavouritedCount = pigeonToAdd.FavouritedCount,
+                Author = new PigeonAuthorViewModel
+                {
+                    Id = pigeonToAdd.Author.Id,
+                    Username = pigeonToAdd.Author.UserName,
+                    FirstName = pigeonToAdd.Author.FirstName,
+                    LastName = pigeonToAdd.Author.LastName,
+                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(pigeonToAdd.Author).Base64Data
+                },
+                Comments = pigeonToAdd.Comments
+                    .AsQueryable()
+                    .OrderByDescending(c => c.CreatedOn)
+                    .Take(3)
+                    .Select(CommentViewModel.Create)
+            };
 
             return this.Ok(pigeonViewModel);
         }

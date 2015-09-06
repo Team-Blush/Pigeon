@@ -5,6 +5,7 @@
     using System.Web.Http;
     using Microsoft.AspNet.Identity;
     using Models.Comments;
+    using PhotoUtils;
     using Pigeon.Models;
     using UserSessionUtils;
 
@@ -25,8 +26,7 @@
 
             var pigeonCommentViews = pigeon.Comments
                 .AsQueryable()
-                .Select(CommentViewModel.Create)
-                .ToList();
+                .Select(CommentViewModel.Create);
 
             return this.Ok(pigeonCommentViews);
         }
@@ -35,7 +35,9 @@
         [Route]
         public IHttpActionResult AddCommentToPigeon(int pigeonId, CommentBindingModel inputComment)
         {
-            var userId = this.User.Identity.GetUserId();
+            var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
+
             var pigeon = this.Data.Pigeons.GetById(pigeonId);
 
             if (pigeon == null)
@@ -46,7 +48,7 @@
             var commentToAdd = new Comment
             {
                 Content = inputComment.Content,
-                AuthorId = userId,
+                AuthorId = loggedUserId,
                 PigeonId = pigeon.Id,
                 CreatedOn = DateTime.Now
             };
@@ -56,19 +58,28 @@
 
             this.Data.SaveChanges();
 
-            var commentViewMode = this.Data.Comments.GetAll()
-                .Where(c => c.Id == commentToAdd.Id)
-                .Select(CommentViewModel.Create)
-                .FirstOrDefault();
+            var commentViewModel = new CommentViewModel
+            {
+                Id = commentToAdd.Id,
+                Content = commentToAdd.Content,
+                CreatedOn = commentToAdd.CreatedOn,
+                Author = new CommentAuthorViewModel
+                {
+                    Username = loggedUser.UserName,
+                    FirstName = loggedUser.FirstName,
+                    LastName = loggedUser.LastName,
+                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(loggedUser).Base64Data
+                }
+            };
 
-            return this.Ok(commentViewMode);
+            return this.Ok(commentViewModel);
         }
 
         [HttpPut]
         [Route("{commentId}")]
         public IHttpActionResult EditPigeonComment(int pigeonId, int commentId, CommentBindingModel inputComment)
         {
-            var userId = this.User.Identity.GetUserId();
+            var loggedUserId = this.User.Identity.GetUserId();
             var pigeon = this.Data.Pigeons.GetById(pigeonId);
 
             if (pigeon == null)
@@ -89,7 +100,7 @@
                 return this.BadRequest("No such comment.");
             }
 
-            if (commentToUpdate.AuthorId != userId)
+            if (commentToUpdate.AuthorId != loggedUserId)
             {
                 return this.Unauthorized();
             }
@@ -98,12 +109,11 @@
 
             this.Data.SaveChanges();
 
-            var commentViewMode = this.Data.Comments.GetAll()
-                .Where(c => c.Id == commentToUpdate.Id)
-                .Select(CommentViewModel.Create)
-                .FirstOrDefault();
-
-            return this.Ok(commentViewMode);
+            return this.Ok(new
+            {
+                commentToUpdate.Id,
+                commentToUpdate.Content
+            });
         }
 
         [HttpDelete]

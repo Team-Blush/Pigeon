@@ -83,7 +83,8 @@
             loggedUser.Email = profileBindingModel.Email;
             loggedUser.Age = profileBindingModel.Age ?? null;
 
-            this.EditUserPhotoContent(loggedUser, profileBindingModel);
+            this.EditUserProfilePhoto(loggedUser, profileBindingModel.ProfilePhotoData);
+            this.EditUserCoverPhoto(loggedUser, profileBindingModel.CoverPhotoData);
 
             this.Data.SaveChanges();
 
@@ -119,42 +120,45 @@
             });
         }
 
-        private void EditUserPhotoContent(User loggedUser, ProfileEditBindingModel profileBindingModel)
+        private void EditUserProfilePhoto(User loggedUser, string profilePhotoData)
         {
-            var loggedUserPhotos = new[]
-            {
-                loggedUser.ProfilePhotos.FirstOrDefault(p => p.ProfilePhotoFor == loggedUser),
-                loggedUser.CoverPhotos.FirstOrDefault(p => p.CoverPhotoFor == loggedUser)
-            };
+            var userProfilePhoto = loggedUser.ProfilePhotos
+                .FirstOrDefault(p => p.ProfilePhotoFor == loggedUser);
 
-            if (loggedUserPhotos[0] != null)
+            if (userProfilePhoto != null)
             {
-                loggedUserPhotos[0].ProfilePhotoFor = null;
-                this.Data.Photos.Update(loggedUserPhotos[0]);
+                userProfilePhoto.ProfilePhotoFor = null;
+                this.Data.Photos.Update(userProfilePhoto);
             }
 
-            if (loggedUserPhotos[1] != null)
-            {
-                loggedUserPhotos[1].CoverPhotoFor = null;
-                this.Data.Photos.Update(loggedUserPhotos[1]);
-            }
-
-            if (profileBindingModel.ProfilePhotoData != null)
+            if (profilePhotoData != null)
             {
                 var newProfilePhoto = new Photo
                 {
-                    Base64Data = profileBindingModel.ProfilePhotoData,
+                    Base64Data = profilePhotoData,
                     ProfilePhotoFor = loggedUser
                 };
                 this.Data.Photos.Add(newProfilePhoto);
                 loggedUser.ProfilePhotos.Add(newProfilePhoto);
             }
+        }
 
-            if (profileBindingModel.CoverPhotoData != null)
+        private void EditUserCoverPhoto(User loggedUser, string coverPhotoData)
+        {
+            var userCoverPhoto = loggedUser.CoverPhotos
+                .FirstOrDefault(p => p.CoverPhotoFor == loggedUser);
+
+            if (userCoverPhoto != null)
+            {
+                userCoverPhoto.CoverPhotoFor = null;
+                this.Data.Photos.Update(userCoverPhoto);
+            }
+
+            if (coverPhotoData != null)
             {
                 var newCoverPhoto = new Photo
                 {
-                    Base64Data = profileBindingModel.CoverPhotoData,
+                    Base64Data = coverPhotoData,
                     CoverPhotoFor = loggedUser
                 };
                 this.Data.Photos.Add(newCoverPhoto);

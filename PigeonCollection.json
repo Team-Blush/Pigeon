@@ -297,7 +297,7 @@
 		{
 			"id": "8192d080-baa5-8a42-a7b5-b3cf0b15b27e",
 			"headers": "Content-Type: application/json\nAuthorization: Bearer rP5BeDDKj-DV9b8x37sROTwxxANyZsZEfD_b1XNGyQVppRLxHo2y9k-P2nlT3HZ5CE8m--POJ4ooXkaEy17G9mV7Ko4oZ3STXbqOEY8q_rWdoFSi2egQUDGA_oRoymEuJVSlcJW7-JytBQHFvQ45N0neHp5hfPFgq_qux9dPk-maFqcQaGt24dgnddL6xLa4CiLSHQAauFxjEMERR32wbGv1EUgTeWzTlc-3AKhVouW4Z1dzlPI4KbUwLlkfw9uxrJdd4QsZc3_3Hds7riBzKvfbCsMvsA3QwlkhIKLF7p5o8fUWgO_zeYxC5OIHWuxs6-EqX-vUocuNRi1um0k4tcRie97aGMV3gzTghFLOMLsb1XYmX5wSTcFWI-iotKY6TCYR80S4H4n7goseAgdk2betymrZydtAbfgurAewDiZd3HxRMQ10TFdmYn9BWgCjwv5sRFFUNLMKB58mH9JRLkoqnsOcoYKAaxOQLDBBB17T2fyzygA-4R_TNsx-EtFJ\n",
-			"url": "http://localhost:56756/api/pigeons/own",
+			"url": "http://localhost:56756/api/pigeons/rumen",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "GET",
@@ -307,8 +307,8 @@
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1441118063332,
-			"name": "GetOwnPigeons",
+			"time": 1441407788311,
+			"name": "GetUserPigeons",
 			"description": "",
 			"collectionId": "0ec42384-5ec8-73b5-4fd9-c513f621fe65",
 			"responses": []
@@ -427,12 +427,12 @@
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1441123158898,
+			"time": 1441404990454,
 			"name": "Login",
 			"description": "",
 			"collectionId": "0ec42384-5ec8-73b5-4fd9-c513f621fe65",
 			"responses": [],
-			"rawModeData": "{\n    \"username\" : \"rumen123\",\n    \"password\": \"daviebaqko\"\n}"
+			"rawModeData": "{\n    \"username\" : \"rumen\",\n    \"password\": \"rumenn\"\n}"
 		},
 		{
 			"id": "ce5e7777-17e8-d68e-0b97-7fe9af4ecab4",
