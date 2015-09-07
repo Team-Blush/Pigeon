@@ -15,6 +15,24 @@ define(['app', 'constants', 'requestService'], function (app) {
             return requestService.getRequest(url, headers);
         }
 
+        service.favourite = function (pigeonId) {
+            var url = serviceUrl + '/' + pigeonId + '/favourite';
+            var headers = requestService.getHeaders();
+            return requestService.putRequest(url, headers);
+        };
+
+        service.unfavourite = function (pigeonId) {
+            var url = serviceUrl + '/' + pigeonId + '/unfavourite';
+            var headers = requestService.getHeaders();
+            return requestService.putRequest(url, headers);
+        };
+
+        service.vote = function (pigeonId, vote) {
+            var url = serviceUrl + '/' + pigeonId + '/vote';
+            var headers = requestService.getHeaders();
+            return requestService.postRequest(url, headers, vote);
+        };
+
         return service;
     });
 });

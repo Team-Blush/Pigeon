@@ -30,6 +30,8 @@
 
             accountService.loadUserFullData($scope.userData.username).then(
                 function (serverData) {
+                    serverData.profilePhotoData = serverData.profilePhotoData ? serverData.profilePhotoData : constants.profilePhotoData;
+                    serverData.coverPhotoData = serverData.coverPhotoData ? serverData.coverPhotoData : constants.coverPhotoData;
                     $scope.userData = serverData;
                 },
                 function (serverError) {
@@ -100,6 +102,7 @@
             $scope.loadUserPigeons = function () {
                 pigeonService.loadUserPigeons($scope.userData.username).then(
                     function (serverData) {
+                        console.log(serverData);
                         serverData.forEach(function (pigeon) {
                             parsePigeonDate(pigeon);
                         });
@@ -108,6 +111,72 @@
                     function (serverError) {
                         console.error(serverError);
                     });
+            }
+
+            $scope.favourite = function (pigeon) {
+                pigeonService.favourite(pigeon.id).then(
+                    function (serverData) {
+                        pigeon.favouritedCount++;
+                        pigeon.favourited = true;
+                        notifyService.showInfo(serverData.message);
+                    },
+                    function (serverError) {
+                        console.log(serverError);
+                    }
+                );
+            }
+
+            $scope.unfavourite = function (pigeon) {
+                pigeonService.unfavourite(pigeon.id).then(
+                    function (serverData) {
+                        pigeon.favouritedCount--;
+                        pigeon.favourited = false;
+                        notifyService.showInfo(serverData.message);
+                    },
+                    function (serverError) {
+                        console.log(serverError);
+                    }
+                );
+            }
+
+            $scope.voteUp = function (pigeon) {
+                var vote = {}
+                vote.value = 1;
+                pigeonService.vote(pigeon.id, vote).then(
+                    function (serverData) {
+                        if (pigeon.voted === 0) {
+                            pigeon.upVotesCount++;
+                        } else {
+                            pigeon.upVotesCount++;
+                            pigeon.downVotesCount--;
+                        }
+                        pigeon.voted = 1;
+                        notifyService.showInfo(serverData.message);
+                    },
+                    function (serverError) {
+                        console.log(serverError);
+                    }
+                );
+            }
+
+            $scope.voteDown = function (pigeon) {
+                var vote = {}
+                vote.value = -1;
+                pigeonService.vote(pigeon.id, vote).then(
+                    function (serverData) {
+                        if (pigeon.voted === 0) {
+                            pigeon.downVotesCount++;
+                        } else {
+                            pigeon.downVotesCount++;
+                            pigeon.upVotesCount--;
+                        }
+                        pigeon.voted = -1;
+                        notifyService.showInfo(serverData.message);
+                    },
+                    function (serverError) {
+                        console.log(serverError);
+                    }
+                );
             }
 
             $scope.createComment = function (pigeon) {
