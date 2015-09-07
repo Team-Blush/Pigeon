@@ -209,10 +209,9 @@
             searchTerm = searchTerm.ToLower();
             var foundUsers = this.Data.Users.GetAll()
                 .Where(u => u.UserName.ToLower().Contains(searchTerm))
-                .Include(u => u.Followers)
-                .Include(u => u.Following)
                 .Take(5)
-                .Select(UserSearchViewModel.Create);
+                .Select(UserSearchViewModel.Create)
+                .ToList();
 
             foreach (var user in foundUsers)
             {
