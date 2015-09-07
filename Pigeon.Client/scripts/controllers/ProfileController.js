@@ -1,19 +1,11 @@
-﻿define(['app', 'HeaderController', 'accountService', 'validationService', 'navigationService', 'notifyService', 'ngPictureSelect'],
+﻿define(['app', 'constants', 'HeaderController', 'accountService', 'validationService', 'navigationService', 'notifyService', 'ngPictureSelect'],
     function (app) {
-        app.controller('ProfileController', function ($scope, $rootScope, accountService, validationService, navigationService, notifyService) {
+        app.controller('ProfileController', function ($scope, $rootScope, constants, accountService, validationService, navigationService, notifyService) {
             $scope.isLoggedIn = accountService.isLoggedIn();
             $scope.myData = accountService.loadMyData();
             $scope.changePasswordData = {};
             $scope.title = $scope.myData.username + ' - Profile';
-            if ($scope.myData.firstName === 'null') {
-                $scope.myData.firstName = '';
-            }
-            if ($scope.myData.lastName === 'null') {
-                $scope.myData.lastName = '';
-            }
-            if ($scope.myData.age === 'null') {
-                $scope.myData.age = '';
-            }
+            
 
             $scope.editProfile = function () {
                 var myData = $scope.myData;

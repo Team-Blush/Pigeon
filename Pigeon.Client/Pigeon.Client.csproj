@@ -59,7 +59,9 @@
   <ItemGroup>
     <Content Include="content\pigeon.css" />
     <Content Include="imgs\bg.jpg" />
+    <Content Include="imgs\coverPhotoData.png" />
     <Content Include="imgs\pigeon.jpg" />
+    <Content Include="imgs\profilePhotoData.png" />
     <Content Include="scripts\constants.js" />
     <Content Include="scripts\controllers\HeaderController.js" />
     <Content Include="scripts\controllers\LoginController.js" />

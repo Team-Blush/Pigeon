@@ -35,7 +35,7 @@
                                 <label>Title</label>
                                 <input type="text" class="form-control" ng-model="pigeonData.title">
                             </div>
-                            <img class="img-preview" ng-src="{{pigeonData.imageData}}" />
+                            <img class="img-preview" ng-src="{{pigeonData.photoData}}" />
                             <div class="form-group col-lg-12">
                                 <label>Message</label>
                                 <textarea class="form-control" rows="3" ng-model="pigeonData.content"></textarea>
@@ -106,9 +106,10 @@
                                         <button type="button" class="btn btn-default" ng-click="editComment(pigeon, comment)">Edit</button>
                                     </div>
                                 </div>
-                                <div class="col-lg-4"></div>
-                                <button type="button" class="btn btn-default" ng-click="expandEditComment(comment)">Edit</button>
-                                <button type="button" class="btn btn-default" ng-click="deleteComment(pigeon, comment)">Delete</button>
+                                <div class="col-lg-4">
+                                    <button type="button" class="btn btn-default" ng-click="expandEditComment(comment)">Edit</button>
+                                    <button type="button" class="btn btn-default" ng-click="deleteComment(pigeon, comment)">Delete</button>
+                                </div>
                             </div>
                             <div class="row">
                                 <hr />

@@ -1,26 +1,27 @@
 define(['app', 'constants', 'requestService'], function (app) {
     app.factory('accountService', function ($rootScope, constants, requestService) {
         var service = {};
-        var serviceUrl = constants.baseServiceUrl;
+        var serviceUrlUsers = constants.baseServiceUrl + 'api/users/';
+        var serviceUrlProfile = constants.baseServiceUrl + 'api/profile/';
 
         service.isLoggedIn = function () {
             return !!(sessionStorage['accessToken'] && sessionStorage['accessToken'].length > constants.accessTokenMinLength);
         };
 
         service.register = function (registerData) {
-            var url = serviceUrl + 'api/users/register';
+            var url = serviceUrlUsers + 'register';
             var headers = null;
             return requestService.postRequest(url, headers, registerData);
         };
 
         service.login = function (loginData) {
-            var url = serviceUrl + 'api/users/login';
+            var url = serviceUrlUsers + 'login';
             var headers = null;
             return requestService.postRequest(url, headers, loginData);
         };
         
         service.logout = function () {
-            var url = serviceUrl + 'api/users/logout';
+            var url = serviceUrlUsers + 'logout';
             var headers = requestService.getHeaders();
             return requestService.postRequest(url, headers);
         };
@@ -38,7 +39,7 @@ define(['app', 'constants', 'requestService'], function (app) {
         };
 
         service.getMe = function () {
-            var url = serviceUrl + "api/profile";
+            var url = serviceUrlProfile;
             var headers = requestService.getHeaders();
             return requestService.getRequest(url, headers);
         };
@@ -46,7 +47,20 @@ define(['app', 'constants', 'requestService'], function (app) {
         service.saveMyData = function (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) {
-                    sessionStorage[property] = data[property];
+                    switch (property) {
+                        case 'profilePhotoData':
+                            sessionStorage[property] = data[property] || constants.profilePhotoData;
+                            break;
+                        case 'coverPhotoData':
+                            sessionStorage[property] = data[property] || constants.coverPhotoData;
+                            break;
+                        case 'null':
+                            sessionStorage[property] = '';
+                            break;
+                        default:
+                            sessionStorage[property] = data[property];
+                            break;
+                    }
                 }
             }
         };
@@ -55,6 +69,8 @@ define(['app', 'constants', 'requestService'], function (app) {
             var data = {};
             for (var property in sessionStorage) {
                 if (sessionStorage.hasOwnProperty(property)) {
+                    
+
                     data[property] = sessionStorage[property];
                 }
             }
@@ -62,19 +78,25 @@ define(['app', 'constants', 'requestService'], function (app) {
         };
 
         service.editProfile = function (editProfileData) {
-            var url = serviceUrl + 'api/profile/edit';
+            var url = serviceUrlProfile + 'edit';
             var headers = requestService.getHeaders();
             return requestService.putRequest(url, headers, editProfileData);
         };
 
         service.changePassword = function (changePasswordData) {
-            var url = serviceUrl + 'api/profile/changePassword';
+            var url = serviceUrlProfile + 'changePassword';
             var headers = requestService.getHeaders();
             return requestService.putRequest(url, headers, changePasswordData);
         };
 
         service.loadUserFullData = function (username) {
-            var url = serviceUrl + 'api/users/' + username;
+            var url = serviceUrlUsers + username;
+            var headers = requestService.getHeaders();
+            return requestService.getRequest(url, headers);
+        };
+
+        service.search = function (searchTerm) {
+            var url = serviceUrlUsers + 'search?searchTerm=' + searchTerm;
             var headers = requestService.getHeaders();
             return requestService.getRequest(url, headers);
         };

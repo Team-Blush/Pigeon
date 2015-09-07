@@ -1,6 +1,6 @@
-﻿define(['app', 'HeaderController', 'accountService', 'pigeonService', 'commentService', 'ngPictureSelect'],
+﻿define(['app', 'constants', 'HeaderController', 'accountService', 'pigeonService', 'commentService', 'ngPictureSelect'],
     function (app) {
-        app.controller('UserController', function ($scope, $routeParams, accountService, pigeonService, commentService) {
+        app.controller('UserController', function ($scope, $routeParams, constants, accountService, pigeonService, commentService) {
             $scope.isLoggedIn = accountService.isLoggedIn();
             $scope.myData = accountService.loadMyData();
             $scope.userData = {};
@@ -101,6 +101,9 @@
             $scope.loadPigeonComments = function (pigeon) {
                 commentService.loadPigeonComments(pigeon.id).then(
                     function (serverData) {
+                        serverData.forEach(function (comment) {
+                            comment.author.profilePhotoData = comment.author.profilePhotoData ? comment.author.profilePhotoData : constants.profilePhotoData;
+                        });
                         pigeon.comments = serverData;
                     },
                     function (serverError) {
@@ -108,7 +111,7 @@
                     }
                 );
             }
-            
+
             $scope.editComment = function (pigeon, comment) {
                 commentService.editComment(pigeon.id, comment.id, $scope.editCommentData).then(
                     function (serverData) {
