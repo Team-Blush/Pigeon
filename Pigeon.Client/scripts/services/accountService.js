@@ -101,6 +101,18 @@ define(['app', 'constants', 'requestService'], function (app) {
             return requestService.getRequest(url, headers);
         };
 
+        service.follow = function (username) {
+            var url = serviceUrlUsers + username + '/follow';
+            var headers = requestService.getHeaders();
+            return requestService.putRequest(url, headers);
+        };
+
+        service.unfollow = function (username) {
+            var url = serviceUrlUsers + username + '/unfollow';
+            var headers = requestService.getHeaders();
+            return requestService.putRequest(url, headers);
+        };
+
         return service;
     });
 });

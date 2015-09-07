@@ -10,7 +10,11 @@
 <div class="container" ng-if="isLoggedIn">
     <div class="row">
         <div class="box">
-            <img class="img-wall-profile" ng-src="{{userData.profilePhotoData}}" />
+            <img class="img-wall-profile" ng-src="{{userData.profilePhotoData}}"/>
+            <div ng-if="userData.username != myData.username">
+                <button type="button" class="btn btn-default btn-follow" ng-if="!userData.isFollowed" ng-click="follow()">Follow</button>
+                <button type="button" class="btn btn-default btn-follow" ng-if="userData.isFollowed" ng-click="unfollow()">UnFollow</button>
+            </div>
             <img class="img-wall-cover" ng-src="{{userData.coverPhotoData}}" />
         </div>
     </div>
