@@ -1,74 +1,32 @@
 ﻿namespace Pigeon.WebServices.PhotoUtils
 {
-    using System;
-    using System.IO;
     using System.Linq;
-    using System.Web.Hosting;
     using Pigeon.Models;
 
     public static class PhotoUtils
     {
-        private static readonly string DefaultUserImagesLocation =
-            HostingEnvironment.MapPath("~/Resources/");
-
-        private static readonly string DefaultProfilePhotoName = "Default-Profile.png";
-        private static readonly string DefaultCoverPhotoName = "Default-Cover.jpg";
-        private static readonly string PhotoPrefix = "data:image/png;base64,";
-
-        public static Photo CheckForCoverPhotoData(User userDbModel)
+        public static string CheckForProfilePhotoData(User userDbModel)
         {
-            var hasCoverPhoto = userDbModel.CoverPhotos
-                .Any(p => p.CoverPhotoFor.UserName.Equals(userDbModel.UserName));
-            if (hasCoverPhoto)
+            var profilePhoto = userDbModel.ProfilePhotos
+                .FirstOrDefault(p => p.ProfilePhotoFor == userDbModel);
+            if (profilePhoto != null)
             {
-                return userDbModel.CoverPhotos
-                    .FirstOrDefault(pp => pp.CoverPhotoFor == userDbModel);
+                return profilePhoto.Base64Data;
             }
 
-            return GetDefaultCoverPhoto(userDbModel);
+            return null;
         }
 
-        public static Photo CheckForProfilePhotoData(User userDbModel)
+        public static string CheckForCoverPhotoData(User userDbModel)
         {
-            var hasProfilePhoto = userDbModel.ProfilePhotos
-                .Any(p => p.ProfilePhotoFor.UserName.Equals(userDbModel.UserName));
-            if (hasProfilePhoto)
+            var coverPhoto = userDbModel.CoverPhotos
+                .FirstOrDefault(p => p.CoverPhotoFor == userDbModel);
+            if (coverPhoto != null)
             {
-                return userDbModel.ProfilePhotos
-                    .FirstOrDefault(pp => pp.ProfilePhotoFor == userDbModel);
+                return coverPhoto.Base64Data;
             }
 
-            return GetDefaultProfilePhoto(userDbModel);
-        }
-
-        private static Photo GetDefaultCoverPhoto(User userDbModel)
-        {
-            var bytes = File.ReadAllBytes(DefaultUserImagesLocation + DefaultCoverPhotoName);
-            var photoData = PhotoPrefix + Convert.ToBase64String(bytes);
-
-            var coverPhoto = new Photo
-            {
-                Title = userDbModel.UserName,
-                Url = DefaultCoverPhotoName,
-                Base64Data = photoData
-            };
-
-            return coverPhoto;
-        }
-
-        private static Photo GetDefaultProfilePhoto(User userDbModel)
-        {
-            var bytes = File.ReadAllBytes(DefaultUserImagesLocation + DefaultProfilePhotoName);
-            var photoData = PhotoPrefix + Convert.ToBase64String(bytes);
-
-            var profilePhoto = new Photo
-            {
-                Title = userDbModel.UserName,
-                Url = DefaultProfilePhotoName,
-                Base64Data = photoData
-            };
-
-            return profilePhoto;
+            return null;
         }
     }
 }

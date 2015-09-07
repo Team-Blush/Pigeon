@@ -6,7 +6,7 @@
     using System.Linq.Expressions;
     using Comments;
     using Pigeon.Models;
-    using PhotoUtils;
+    using Users;
 
     public class PigeonViewModel
     {
@@ -16,7 +16,7 @@
 
         public string Content { get; set; }
 
-        public Photo Photo { get; set; }
+        public string PhotoData { get; set; }
 
         public DateTime CreatedOn { get; set; }
 
@@ -26,7 +26,7 @@
 
         public bool Favourited { get; set; }
 
-        public PigeonAuthorViewModel Author { get; set; }
+        public AuthorViewModel Author { get; set; }
 
         public IEnumerable<CommentViewModel> Comments { get; set; }
 
@@ -39,17 +39,17 @@
                     Id = pigeon.Id,
                     Title = pigeon.Title,
                     Content = pigeon.Content,
-                    Photo = pigeon.Photo,
+                    PhotoData = pigeon.Photo != null ? pigeon.Photo.Base64Data : null,
                     CreatedOn = pigeon.CreatedOn,
                     FavouritedCount = pigeon.FavouritedCount,
-                    Author = new PigeonAuthorViewModel
+                    Author = new AuthorViewModel
                     {
-                        Id = pigeon.Author.Id,
                         Username = pigeon.Author.UserName,
-                        FirstName = pigeon.Author.FirstName,
-                        LastName = pigeon.Author.LastName,
-                        ProfilePhotoData = pigeon.Author.ProfilePhotos
-                            .FirstOrDefault(photo => photo.ProfilePhotoFor == pigeon.Author).Base64Data
+                        ProfilePhotoData =
+                        pigeon.Author.ProfilePhotos
+                            .FirstOrDefault(photo => photo.ProfilePhotoFor == pigeon.Author) != null ?
+                        pigeon.Author.ProfilePhotos
+                            .FirstOrDefault(photo => photo.ProfilePhotoFor == pigeon.Author).Base64Data : null
                     },
                     Comments = pigeon.Comments
                         .AsQueryable()

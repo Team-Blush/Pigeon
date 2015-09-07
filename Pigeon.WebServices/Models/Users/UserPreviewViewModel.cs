@@ -31,7 +31,7 @@
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Gender = user.Gender,
-                ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(user).Base64Data
+                ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(user)
             };
         }
     }

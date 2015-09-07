@@ -37,21 +37,19 @@
             var loggedUserId = this.User.Identity.GetUserId();
             var loggedUser = this.Data.Users.GetById(loggedUserId);
 
-            var profilePhoto = PhotoUtils.CheckForProfilePhotoData(loggedUser);
-            var coverPhoto = PhotoUtils.CheckForCoverPhotoData(loggedUser);
-
-            return this.Ok(new UserViewModel
+            var profileViewModel = new UserViewModel
             {
-                Id = loggedUser.Id,
                 Username = loggedUser.UserName,
                 FirstName = loggedUser.FirstName,
                 LastName = loggedUser.LastName,
                 Email = loggedUser.Email,
                 Age = loggedUser.Age,
                 Gender = loggedUser.Gender,
-                ProfilePhotoData = profilePhoto.Base64Data,
-                CoverPhotoData = coverPhoto.Base64Data
-            });
+                ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(loggedUser),
+                CoverPhotoData = PhotoUtils.CheckForCoverPhotoData(loggedUser)
+            };
+
+            return this.Ok(profileViewModel);
         }
 
         // PUT api/profile/edit
@@ -66,10 +64,6 @@
 
             var loggedUserId = this.User.Identity.GetUserId();
             var loggedUser = this.Data.Users.GetById(loggedUserId);
-            if (loggedUser == null)
-            {
-                return this.BadRequest("Invalid user token.");
-            }
 
             var emailHolder = this.Data.Users.GetAll()
                 .FirstOrDefault(u => u.Email == profileBindingModel.Email);

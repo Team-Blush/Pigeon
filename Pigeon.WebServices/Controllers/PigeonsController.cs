@@ -8,6 +8,7 @@
     using Microsoft.AspNet.Identity;
     using Models.Comments;
     using Models.Pigeons;
+    using Models.Users;
     using PhotoUtils;
     using Pigeon.Models;
     using Pigeon.Models.Enumerations;
@@ -43,14 +44,6 @@
             this.CheckIfUserVotedForPigeon(pigeons, loggedUser);
             this.CheckIfUserFavouritedPigeon(pigeons, loggedUser);
 
-            if (!pigeons.Any())
-            {
-                return this.Ok(new
-                {
-                    message = "No Pigeons are found."
-                });
-            }
-
             return this.Ok(pigeons);
         }
 
@@ -63,27 +56,15 @@
             var loggedUserId = this.User.Identity.GetUserId();
             var loggedUser = this.Data.Users.GetById(loggedUserId);
 
-            if (!loggedUser.Followers.Any())
-            {
-                return this.Ok(new
-                {
-                    message = "Follow someone to see their Pigeons."
-                });
-            }
-
             var newsPigeons = this.Data.Pigeons.GetAll()
-                .Where(p => loggedUser.Following.Select(uf => uf.Id).Contains(p.AuthorId))
+                .Where(p => loggedUser.Following
+                    .Select(uf => uf.Id).Contains(p.AuthorId))
                 .OrderByDescending(p => p.CreatedOn)
                 .Take(5)
                 .Select(PigeonViewModel.Create);
 
             this.CheckIfUserVotedForPigeon(newsPigeons, loggedUser);
             this.CheckIfUserFavouritedPigeon(newsPigeons, loggedUser);
-
-            if (!newsPigeons.Any())
-            {
-                return this.Ok("No Pigeons found.");
-            }
 
             return this.Ok(newsPigeons);
         }
@@ -102,14 +83,6 @@
                 .Select(PigeonViewModel.Create);
 
             this.CheckIfUserVotedForPigeon(favouritePigeons, loggedUser);
-
-            if (!favouritePigeons.Any())
-            {
-                return this.Ok(new
-                {
-                    message = "You have no favourite pigeons at this time."
-                });
-            }
 
             return this.Ok(favouritePigeons);
         }
@@ -152,9 +125,10 @@
         public IHttpActionResult AddPigeon(PigeonBindingModel inputPigeon)
         {
             var loggedUserId = this.User.Identity.GetUserId();
+
             if (!this.ModelState.IsValid)
             {
-                return this.BadRequest("Invalid Pigeon data.");
+                return this.BadRequest(this.ModelState);
             }
 
             var pigeonToAdd = new Pigeon
@@ -169,10 +143,9 @@
                 Votes = new HashSet<PigeonVote>()
             };
 
-            var pigeonPhotoData = inputPigeon.ImageData;
-            if (pigeonPhotoData != null)
+            if (inputPigeon.PhotoData != null)
             {
-                var photo = new Photo { Base64Data = inputPigeon.ImageData };
+                var photo = new Photo {Base64Data = inputPigeon.PhotoData};
 
                 this.Data.Photos.Add(photo);
                 pigeonToAdd.Photo = photo;
@@ -186,16 +159,13 @@
                 Id = pigeonToAdd.Id,
                 Title = pigeonToAdd.Title,
                 Content = pigeonToAdd.Content,
-                Photo = pigeonToAdd.Photo,
+                PhotoData = pigeonToAdd.Photo != null ? pigeonToAdd.Photo.Base64Data : null,
                 CreatedOn = pigeonToAdd.CreatedOn,
                 FavouritedCount = pigeonToAdd.FavouritedCount,
-                Author = new PigeonAuthorViewModel
+                Author = new AuthorViewModel
                 {
-                    Id = pigeonToAdd.Author.Id,
                     Username = pigeonToAdd.Author.UserName,
-                    FirstName = pigeonToAdd.Author.FirstName,
-                    LastName = pigeonToAdd.Author.LastName,
-                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(pigeonToAdd.Author).Base64Data
+                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(pigeonToAdd.Author)
                 },
                 Comments = pigeonToAdd.Comments
                     .AsQueryable()
@@ -222,7 +192,7 @@
 
             if (!this.ModelState.IsValid)
             {
-                return this.BadRequest("Invalid vote value.");
+                return this.BadRequest(this.ModelState);
             }
 
             var existingVote = this.Data.Votes
@@ -278,12 +248,12 @@
         [Route("{id}/edit")]
         public IHttpActionResult EditPigeon(int id, PigeonBindingModel updatedPigeon)
         {
-            var userId = this.User.Identity.GetUserId();
+            var loggedUserId = this.User.Identity.GetUserId();
             var pigeonToUpdate = this.Data.Pigeons.GetById(id);
 
             if (!this.ModelState.IsValid)
             {
-                return this.BadRequest("Invalid Pigeon data.");
+                return this.BadRequest(this.ModelState);
             }
 
             if (pigeonToUpdate == null)
@@ -291,7 +261,7 @@
                 return this.BadRequest("No such Pigeon.");
             }
 
-            if (pigeonToUpdate.Author.Id != userId)
+            if (pigeonToUpdate.Author.Id != loggedUserId)
             {
                 return this.Unauthorized();
             }
@@ -301,7 +271,7 @@
             this.Data.Pigeons.Update(pigeonToUpdate);
             this.Data.SaveChanges();
 
-            var pigeonViewModel = new { pigeonToUpdate.Content };
+            var pigeonViewModel = new {pigeonToUpdate.Content};
 
             return this.Ok(pigeonViewModel);
         }
@@ -311,8 +281,8 @@
         [Route("{id}/favourite")]
         public IHttpActionResult FavouritePigeon(int id)
         {
-            var userId = this.User.Identity.GetUserId();
-            var user = this.Data.Users.GetById(userId);
+            var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
 
             var pigeonToFavourite = this.Data.Pigeons.GetById(id);
 
@@ -321,23 +291,23 @@
                 return this.BadRequest("No such Pigeon.");
             }
 
-            if (pigeonToFavourite.Author.Id == userId)
+            if (pigeonToFavourite.Author.Id == loggedUserId)
             {
                 return this.BadRequest("You cannot favourite your own Pigeon.");
             }
 
-            if (user.FavouritePigeons.Contains(pigeonToFavourite))
+            if (loggedUser.FavouritePigeons.Contains(pigeonToFavourite))
             {
                 return this.BadRequest("Pigeon already favourited.");
             }
 
-            pigeonToFavourite.FavouritedBy.Add(user);
-            user.FavouritePigeons.Add(pigeonToFavourite);
+            pigeonToFavourite.FavouritedBy.Add(loggedUser);
+            loggedUser.FavouritePigeons.Add(pigeonToFavourite);
 
             pigeonToFavourite.FavouritedCount++;
 
             this.Data.Pigeons.Update(pigeonToFavourite);
-            this.Data.Users.Update(user);
+            this.Data.Users.Update(loggedUser);
             this.Data.SaveChanges();
 
             return this.Ok(new
@@ -351,8 +321,8 @@
         [Route("{id}/unfavourite")]
         public IHttpActionResult UnFavouritePigeon(int id)
         {
-            var userId = this.User.Identity.GetUserId();
-            var user = this.Data.Users.GetById(userId);
+            var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
             var pigeonToUnfavourite = this.Data.Pigeons.GetById(id);
 
             if (pigeonToUnfavourite == null)
@@ -360,23 +330,23 @@
                 return this.BadRequest("No such Pigeon.");
             }
 
-            if (pigeonToUnfavourite.Author.Id == userId)
+            if (pigeonToUnfavourite.Author.Id == loggedUserId)
             {
                 return this.BadRequest("You cannot unfavourite your own Pigeon.");
             }
 
-            if (!user.FavouritePigeons.Contains(pigeonToUnfavourite))
+            if (!loggedUser.FavouritePigeons.Contains(pigeonToUnfavourite))
             {
                 return this.BadRequest("Cannot unfavourite a non-favourite Pigeon.");
             }
 
-            pigeonToUnfavourite.FavouritedBy.Remove(user);
-            user.FavouritePigeons.Remove(pigeonToUnfavourite);
+            pigeonToUnfavourite.FavouritedBy.Remove(loggedUser);
+            loggedUser.FavouritePigeons.Remove(pigeonToUnfavourite);
 
             pigeonToUnfavourite.FavouritedCount--;
 
             this.Data.Pigeons.Update(pigeonToUnfavourite);
-            this.Data.Users.Update(user);
+            this.Data.Users.Update(loggedUser);
             this.Data.SaveChanges();
 
             return this.Ok(new
@@ -390,7 +360,7 @@
         [Route("{id}")]
         public IHttpActionResult DeletePigeon(int id)
         {
-            var userId = this.User.Identity.GetUserId();
+            var loggedUserId = this.User.Identity.GetUserId();
             var pigeon = this.Data.Pigeons.GetById(id);
 
             if (pigeon == null)
@@ -398,7 +368,7 @@
                 return this.BadRequest("No such pigeon");
             }
 
-            if (pigeon.Author.Id != userId)
+            if (pigeon.Author.Id != loggedUserId)
             {
                 return this.Unauthorized();
             }

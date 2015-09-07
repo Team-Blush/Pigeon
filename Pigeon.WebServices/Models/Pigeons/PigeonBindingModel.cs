@@ -12,6 +12,6 @@
         [MaxLength(150)]
         public string Content { get; set; }
 
-        public string ImageData { get; set; }
+        public string PhotoData { get; set; }
     }
 }

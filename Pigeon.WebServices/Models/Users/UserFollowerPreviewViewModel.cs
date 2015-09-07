@@ -7,8 +7,6 @@
 
     public class UserFollowerPreviewViewModel
     {
-        public string Id { get; set; }
-
         public string Username { get; set; }
 
         public string FirstName { get; set; }
@@ -23,11 +21,10 @@
             {
                 return follower => new UserFollowerPreviewViewModel
                 {
-                    Id = follower.Id,
                     Username = follower.UserName,
                     FirstName = follower.FirstName,
                     LastName = follower.LastName,
-                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(follower).Base64Data
+                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(follower)
                 };
             }
         }

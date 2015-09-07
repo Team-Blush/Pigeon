@@ -7,8 +7,6 @@
 
     public class UserSearchViewModel
     {
-        public string Id { get; set; }
-
         public string Username { get; set; }
 
         public string FirstName { get; set; }
@@ -27,12 +25,14 @@
             {
                 return user => new UserSearchViewModel
                 {
-                    Id = user.Id,
                     Username = user.UserName,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    ProfilePhotoData = user.ProfilePhotos
-                        .FirstOrDefault(photo => photo.ProfilePhotoFor == user).Base64Data
+                    ProfilePhotoData = 
+                    user.ProfilePhotos
+                        .FirstOrDefault(photo => photo.ProfilePhotoFor == user) != null ?
+                    user.ProfilePhotos
+                        .FirstOrDefault(photo => photo.ProfilePhotoFor == user).Base64Data : null
                 };
             }
         }

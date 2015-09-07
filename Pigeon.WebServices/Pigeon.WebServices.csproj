@@ -239,10 +239,9 @@
     <Compile Include="Controllers\PigeonsController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
-    <Compile Include="Models\Comments\CommentAuthorViewModel.cs" />
     <Compile Include="Models\Comments\CommentBindingModel.cs" />
     <Compile Include="Models\Comments\CommentViewModel.cs" />
-    <Compile Include="Models\Pigeons\PigeonAuthorViewModel.cs" />
+    <Compile Include="Models\Users\AuthorViewModel.cs" />
     <Compile Include="Models\Pigeons\PigeonBindingModel.cs" />
     <Compile Include="Models\Pigeons\PigeonViewModel.cs" />
     <Compile Include="Models\Pigeons\PigeonVoteBindingModel.cs" />

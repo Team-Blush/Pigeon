@@ -1,7 +1,6 @@
 ﻿namespace Pigeon.WebServices.Controllers
 {
     using System.Collections.Generic;
-    using System.Data.Entity;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -61,11 +60,16 @@
                 return this.BadRequest(this.ModelState);
             }
 
-            var emailExists = this.Data.Users.GetAll()
-                .Any(x => x.Email == model.Email);
+            var emailExists = this.Data.Users.GetAll().Any(u => u.Email == model.Email);
             if (emailExists)
             {
                 return this.BadRequest("Email is already taken.");
+            }
+
+            var usernameExists = this.Data.Users.GetAll().Any(u => u.UserName == model.Username);
+            if (usernameExists)
+            {
+                return this.BadRequest("Username is already taken.");
             }
 
             var user = new User
@@ -172,7 +176,12 @@
                 return this.NotFound();
             }
 
-            return this.Ok(UserViewModel.Create(targetUser, loggedUser));
+            var userViewModel = UserViewModel.Create(targetUser, loggedUser);
+
+            userViewModel.IsFollowed = loggedUser.Following.Any(u => u.Id == targetUser.Id);
+            userViewModel.IsFollowing = loggedUser.Followers.Any(u => u.Id == targetUser.Id);
+
+            return this.Ok(userViewModel);
         }
 
         // GET api/users/{username}/preview
@@ -199,6 +208,7 @@
             return this.Ok(targetUser);
         }
 
+        // GET api/users/search?searchTerm=***
         [HttpGet]
         [Route("search")]
         public IHttpActionResult SearchUserByName([FromUri] string searchTerm)
@@ -210,13 +220,12 @@
             var foundUsers = this.Data.Users.GetAll()
                 .Where(u => u.UserName.ToLower().Contains(searchTerm))
                 .Take(5)
-                .Select(UserSearchViewModel.Create)
-                .ToList();
+                .Select(UserSearchViewModel.Create);
 
             foreach (var user in foundUsers)
             {
-                user.IsFollowed = loggedUser.Following.Any(u => u.Id == user.Id);
-                user.IsFollowing = loggedUser.Followers.Any(u => u.Id == user.Id);
+                user.IsFollowed = loggedUser.Following.Any(u => u.UserName == user.Username);
+                user.IsFollowing = loggedUser.Followers.Any(u => u.UserName == user.Username);
             }
 
             return this.Ok(foundUsers);
@@ -241,14 +250,6 @@
                 .Take(10)
                 .Select(UserFollowerPreviewViewModel.Create);
 
-            if (!loggedUserFollowers.Any())
-            {
-                return this.Ok(new
-                {
-                    message = "User has no followers."
-                });
-            }
-
             return this.Ok(loggedUserFollowers);
         }
 
@@ -270,14 +271,6 @@
                 .OrderBy(f => f.FirstName + f.LastName)
                 .Take(10)
                 .Select(UserFollowerPreviewViewModel.Create);
-
-            if (!loggedUserFollowing.Any())
-            {
-                return this.Ok(new
-                {
-                    message = "User currently follows no one."
-                });
-            }
 
             return this.Ok(loggedUserFollowing);
         }
@@ -365,6 +358,5 @@
                 message = "Successfully unfollowed user."
             });
         }
-
     }
 }

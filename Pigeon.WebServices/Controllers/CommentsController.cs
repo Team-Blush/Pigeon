@@ -5,6 +5,7 @@
     using System.Web.Http;
     using Microsoft.AspNet.Identity;
     using Models.Comments;
+    using Models.Users;
     using PhotoUtils;
     using Pigeon.Models;
     using UserSessionUtils;
@@ -45,6 +46,11 @@
                 return this.BadRequest("No such Pigeon.");
             }
 
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
             var commentToAdd = new Comment
             {
                 Content = inputComment.Content,
@@ -63,12 +69,10 @@
                 Id = commentToAdd.Id,
                 Content = commentToAdd.Content,
                 CreatedOn = commentToAdd.CreatedOn,
-                Author = new CommentAuthorViewModel
+                Author = new AuthorViewModel
                 {
                     Username = loggedUser.UserName,
-                    FirstName = loggedUser.FirstName,
-                    LastName = loggedUser.LastName,
-                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(loggedUser).Base64Data
+                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(loggedUser)
                 }
             };
 
@@ -89,7 +93,7 @@
 
             if (!this.ModelState.IsValid)
             {
-                return this.BadRequest("Invalid comment to add.");
+                return this.BadRequest(this.ModelState);
             }
 
             var commentToUpdate = pigeon.Comments
@@ -120,7 +124,7 @@
         [Route("{commentId}")]
         public IHttpActionResult DeletePigeonComment(int pigeonId, int commentId)
         {
-            var userId = this.User.Identity.GetUserId();
+            var loggedUserId = this.User.Identity.GetUserId();
             var pigeon = this.Data.Pigeons.GetById(pigeonId);
 
             if (pigeon == null)
@@ -136,7 +140,7 @@
                 return this.BadRequest("No such comment.");
             }
 
-            if (commentToDelete.AuthorId != userId)
+            if (commentToDelete.AuthorId != loggedUserId)
             {
                 return this.Unauthorized();
             }

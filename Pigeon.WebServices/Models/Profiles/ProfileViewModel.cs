@@ -1,13 +1,11 @@
 ﻿namespace Pigeon.WebServices.Models.Profiles
 {
-    using PhotoUtils;
+    using System.Linq;
     using Pigeon.Models;
     using Pigeon.Models.Enumerations;
 
     public class ProfileViewModel
     {
-        public string Id { get; set; }
-
         public string Username { get; set; }
 
         public string Email { get; set; }
@@ -26,20 +24,21 @@
 
         public static ProfileViewModel Create(User userDbModel)
         {
-            var profilePhoto = PhotoUtils.CheckForProfilePhotoData(userDbModel);
-            var coverPhoto = PhotoUtils.CheckForCoverPhotoData(userDbModel);
+            var profilePhoto = userDbModel.ProfilePhotos
+                .FirstOrDefault(p => p.ProfilePhotoFor == userDbModel);
+            var coverPhoto = userDbModel.CoverPhotos
+                .FirstOrDefault(p => p.CoverPhotoFor == userDbModel);
 
             return new ProfileViewModel
             {
-                Id = userDbModel.Id,
                 Username = userDbModel.UserName,
                 Email = userDbModel.Email,
                 FirstName = userDbModel.FirstName,
                 LastName = userDbModel.LastName,
                 Age = userDbModel.Age,
                 Gender = userDbModel.Gender,
-                ProfilePhotoData = profilePhoto.Base64Data,
-                CoverPhotoData = coverPhoto.Base64Data
+                ProfilePhotoData = profilePhoto != null ? profilePhoto.Base64Data : null,
+                CoverPhotoData = coverPhoto != null ? coverPhoto.Base64Data : null
             };
         }
     }
