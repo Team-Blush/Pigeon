@@ -256,6 +256,7 @@
     <Compile Include="Models\Users\RegisterUserBindingModel.cs" />
     <Compile Include="Models\Users\UserFollowerPreviewViewModel.cs" />
     <Compile Include="Models\Users\UserPreviewViewModel.cs" />
+    <Compile Include="Models\Users\UserSearchViewModel.cs" />
     <Compile Include="Models\Users\UserSessionViewModel.cs" />
     <Compile Include="Models\Users\UserViewModel.cs" />
     <Compile Include="PhotoUtils\PhotoUtils.cs" />

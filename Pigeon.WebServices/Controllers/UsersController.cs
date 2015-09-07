@@ -1,6 +1,7 @@
 ﻿namespace Pigeon.WebServices.Controllers
 {
     using System.Collections.Generic;
+    using System.Data.Entity;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -198,6 +199,30 @@
             return this.Ok(targetUser);
         }
 
+        [HttpGet]
+        [Route("search")]
+        public IHttpActionResult SearchUserByName([FromUri] string searchTerm)
+        {
+            var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
+
+            searchTerm = searchTerm.ToLower();
+            var foundUsers = this.Data.Users.GetAll()
+                .Where(u => u.UserName.ToLower().Contains(searchTerm))
+                .Include(u => u.Followers)
+                .Include(u => u.Following)
+                .Take(5)
+                .Select(UserSearchViewModel.Create);
+
+            foreach (var user in foundUsers)
+            {
+                user.IsFollowed = loggedUser.Following.Any(u => u.Id == user.Id);
+                user.IsFollowing = loggedUser.Followers.Any(u => u.Id == user.Id);
+            }
+
+            return this.Ok(foundUsers);
+        }
+
         // GET api/users/{username}/followers
         [HttpGet]
         [EnableQuery]
@@ -341,5 +366,6 @@
                 message = "Successfully unfollowed user."
             });
         }
+
     }
 }
