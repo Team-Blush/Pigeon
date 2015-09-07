@@ -130,6 +130,11 @@ hr {
     width: 100%;
 }
 
+.img-small {
+    width: auto;
+    height: 30px
+}
+
 textarea {
     resize: none;
 }

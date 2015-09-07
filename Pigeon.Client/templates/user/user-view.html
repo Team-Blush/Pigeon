@@ -94,8 +94,25 @@
                         </form>
                         <hr />
                         <div class="row" ng-repeat="comment in pigeon.comments track by $index">
-                            <p>{{comment.content}}</p>
-                            <hr />
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <img class="img-small" ng-src="{{comment.author.profilePhotoData}}"/>
+                                    <p>{{comment.author.username}}</p>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p>{{comment.content}}</p>
+                                    <div class="row" ng-if="isEditCommentExpanded && expandEditCommentsCommentId == comment.id">
+                                        <textarea type="text" rows="3" class="form-control" ng-model="editCommentData.content"></textarea>
+                                        <button type="button" class="btn btn-default" ng-click="editComment(pigeon, comment)">Edit</button>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4"></div>
+                                <button type="button" class="btn btn-default" ng-click="expandEditComment(comment)">Edit</button>
+                                <button type="button" class="btn btn-default" ng-click="deleteComment(pigeon, comment)">Delete</button>
+                            </div>
+                            <div class="row">
+                                <hr />
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -7,18 +7,25 @@
             $scope.pigeonData = {};
             $scope.pigeonsData = [];
             $scope.commentData = {};
+            $scope.editCommentData = {};
             $scope.userData.username = $routeParams.username;
             $scope.isCreatePigeonExpanded = false;
             $scope.isCommentsExpanded = false;
+            $scope.isEditCommentExpanded = false;
+
+            $scope.expandCreatePigeon = function () {
+                $scope.isCreatePigeonExpanded = !$scope.isCreatePigeonExpanded;
+            }
 
             $scope.expandComments = function (pigeonId) {
                 $scope.expandCommentsPigeonId = pigeonId;
                 $scope.isCommentsExpanded = !$scope.isCommentsExpanded;
-
             }
 
-            $scope.expandCreatePigeon = function () {
-                $scope.isCreatePigeonExpanded = !$scope.isCreatePigeonExpanded;
+            $scope.expandEditComment = function (comment) {
+                $scope.expandEditCommentsCommentId = comment.id;
+                $scope.editCommentData.content = comment.content;
+                $scope.isEditCommentExpanded = !$scope.isEditCommentExpanded;
             }
 
             accountService.loadUserFullData($scope.userData.username).then(
@@ -95,6 +102,30 @@
                 commentService.loadPigeonComments(pigeon.id).then(
                     function (serverData) {
                         pigeon.comments = serverData;
+                    },
+                    function (serverError) {
+                        console.error(serverError);
+                    }
+                );
+            }
+            
+            $scope.editComment = function (pigeon, comment) {
+                commentService.editComment(pigeon.id, comment.id, $scope.editCommentData).then(
+                    function (serverData) {
+                        comment.content = serverData.content;
+                        $scope.isEditCommentExpanded = false;
+                    },
+                    function (serverError) {
+                        console.error(serverError);
+                    }
+                );
+            }
+
+            $scope.deleteComment = function (pigeon, comment) {
+                commentService.deleteComment(pigeon.id, comment.id).then(
+                    function (serverData) {
+                        pigeon.comments.pop(comment);
+                        console.log(serverData);
                     },
                     function (serverError) {
                         console.error(serverError);

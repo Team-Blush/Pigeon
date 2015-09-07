@@ -5,6 +5,17 @@
             $scope.isLoggedIn = accountService.isLoggedIn();
             $scope.isCommentsExpanded = false;
             $scope.myData = accountService.loadMyData();
+            $scope.isSearchExpanded = false;
+            $scope.searchData = {};
+
+            $scope.expandSearch = function() {
+                $scope.isSearchExpanded = !$scope.isSearchExpanded;
+            }
+
+            $scope.search = function() {
+                var searchData = $scope.searchData;
+                console.log(searchData);
+            }
 
             $rootScope.$on('myDataUpdate', function () {
                 $rootScope.myDataUpdate = true;

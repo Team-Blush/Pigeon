@@ -15,6 +15,18 @@
             return requestService.getRequest(url, headers);
         }
 
+        service.editComment = function (pigeonId, commentId, commentData) {
+            var url = serviceUrl + '/' + pigeonId + '/comments/' + commentId;
+            var headers = requestService.getHeaders();
+            return requestService.putRequest(url, headers, commentData);
+        };
+
+        service.deleteComment = function (pigeonId, commentId) {
+            var url = serviceUrl + '/' + pigeonId + '/comments/' + commentId;
+            var headers = requestService.getHeaders();
+            return requestService.deleteRequest(url, headers);
+        };
+
         return service;
     });
 });
