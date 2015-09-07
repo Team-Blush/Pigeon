@@ -7,19 +7,26 @@
             $scope.pigeonData = {};
             $scope.pigeonsData = [];
             $scope.commentData = {};
+            $scope.editPigeonData = {};
             $scope.editCommentData = {};
             $scope.userData.username = $routeParams.username;
             $scope.isCreatePigeonExpanded = false;
-            $scope.isCommentsExpanded = false;
+            $scope.isEditPigeonExpanded = false;
+            $scope.isCreateCommentExpanded = false;
             $scope.isEditCommentExpanded = false;
 
             $scope.expandCreatePigeon = function () {
                 $scope.isCreatePigeonExpanded = !$scope.isCreatePigeonExpanded;
             }
 
-            $scope.expandComments = function (pigeonId) {
+            $scope.expandEditPigeon = function(pigeonId) {
+                $scope.expandEditPigeonsPigeonId = pigeonId;
+                $scope.isEditPigeonExpanded = !$scope.isEditPigeonExpanded;
+            }
+
+            $scope.expandCreateComment = function (pigeonId) {
                 $scope.expandCommentsPigeonId = pigeonId;
-                $scope.isCommentsExpanded = !$scope.isCommentsExpanded;
+                $scope.isCreateCommentExpanded = !$scope.isCreateCommentExpanded;
             }
 
             $scope.expandEditComment = function (comment) {
@@ -39,13 +46,13 @@
                 }
             );
 
-            $scope.follow = function() {
+            $scope.follow = function () {
                 accountService.follow($scope.userData.username).then(
                     function (serverData) {
                         $scope.userData.isFollowed = true;
                         notifyService.showInfo(serverData.message);
                     },
-                    function(serverError) {
+                    function (serverError) {
                         console.log(serverError);
                     }
                 );
@@ -102,7 +109,6 @@
             $scope.loadUserPigeons = function () {
                 pigeonService.loadUserPigeons($scope.userData.username).then(
                     function (serverData) {
-                        console.log(serverData);
                         serverData.forEach(function (pigeon) {
                             parsePigeonDate(pigeon);
                         });
@@ -111,6 +117,35 @@
                     function (serverError) {
                         console.error(serverError);
                     });
+            }
+
+            $scope.editPigeon = function (pigeon) {
+                var pigeonData = {
+                    title: pigeon.title,
+                    content: pigeon.content,
+                    photoData: pigeon.photoData
+                }
+                pigeonService.editPigeon(pigeon.id, pigeonData).then(
+                    function (serverData) {
+                        pigeon.content = serverData.content;
+                        $scope.isEditPigeonExpanded = false;
+                        notifyService.showInfo("Successfully updated pigeon");
+                    },
+                    function (serverError) {
+                        console.error(serverError);
+                    });
+            }
+
+            $scope.deletePigeon = function (pigeon) {
+                pigeonService.deletePigeon(pigeon.id).then(
+                    function (serverData) {
+                        $scope.pigeonsData.shift(pigeon);
+                        notifyService.showInfo(serverData.message);
+                    },
+                    function (serverError) {
+                        console.error(serverError);
+                    }
+                );
             }
 
             $scope.favourite = function (pigeon) {

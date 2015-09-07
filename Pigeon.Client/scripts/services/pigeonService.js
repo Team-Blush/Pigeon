@@ -15,6 +15,18 @@ define(['app', 'constants', 'requestService'], function (app) {
             return requestService.getRequest(url, headers);
         }
 
+        service.editPigeon = function (pigeonId, pigeonData) {
+            var url = serviceUrl + '/' + pigeonId + '/edit';
+            var headers = requestService.getHeaders();
+            return requestService.putRequest(url, headers, pigeonData);
+        };
+
+        service.deletePigeon = function (pigeonId) {
+            var url = serviceUrl + '/' + pigeonId;
+            var headers = requestService.getHeaders();
+            return requestService.deleteRequest(url, headers);
+        };
+
         service.favourite = function (pigeonId) {
             var url = serviceUrl + '/' + pigeonId + '/favourite';
             var headers = requestService.getHeaders();
