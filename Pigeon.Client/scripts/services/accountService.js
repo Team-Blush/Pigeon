@@ -54,14 +54,8 @@ define(['app', 'constants', 'requestService'], function (app) {
                         case 'coverPhotoData':
                             sessionStorage[property] = data[property] || constants.coverPhotoData;
                             break;
-                        case 'null':
-                            sessionStorage[property] = '';
-                            break;
-                        case null:
-                            sessionStorage[property] = '';
-                            break;
                         default:
-                            sessionStorage[property] = data[property];
+                            sessionStorage[property] = data[property] === null ? '' : data[property];
                             break;
                     }
                 }
@@ -72,20 +66,7 @@ define(['app', 'constants', 'requestService'], function (app) {
             var data = {};
             for (var property in sessionStorage) {
                 if (sessionStorage.hasOwnProperty(property)) {
-                    switch (property) {
-                        case 'profilePhotoData':
-                            data[property] = sessionStorage[property] || constants.profilePhotoData;
-                            break;
-                        case 'coverPhotoData':
-                            data[property] = sessionStorage[property] || constants.coverPhotoData;
-                            break;
-                        case 'null':
-                            data[property] = '';
-                            break;
-                        default:
-                            data[property] = sessionStorage[property];
-                            break;
-                    }
+                    data[property] = sessionStorage[property];
                 }
             }
             return data;
