@@ -160,6 +160,9 @@
         [Route("{username}")]
         public IHttpActionResult GetUserInfo(string username)
         {
+            var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
+
             var targetUser = this.Data.Users.GetAll()
                 .FirstOrDefault(u => u.UserName == username);
 
@@ -167,9 +170,6 @@
             {
                 return this.NotFound();
             }
-
-            var loggedUserId = this.User.Identity.GetUserId();
-            var loggedUser = this.Data.Users.GetById(loggedUserId);
 
             return this.Ok(UserViewModel.Create(targetUser, loggedUser));
         }
@@ -179,18 +179,23 @@
         [Route("{username}/preview")]
         public IHttpActionResult GetUserInfoPreview(string username)
         {
+            var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
+
             var targetUser = this.Data.Users.GetAll()
-                .FirstOrDefault(u => u.UserName == username);
+                .Where(u => u.UserName == username)
+                .Select(UserPreviewViewModel.Create)
+                .FirstOrDefault();
 
             if (targetUser == null)
             {
                 return this.NotFound();
             }
 
-            var loggedUserId = this.User.Identity.GetUserId();
-            var loggedUser = this.Data.Users.GetById(loggedUserId);
+            targetUser.IsFollowed = loggedUser.Following.Any(u => u.Id == targetUser.Id);
+            targetUser.IsFollowing = loggedUser.Followers.Any(u => u.Id == targetUser.Id);
 
-            return this.Ok(UserPreviewViewModel.Create(targetUser, loggedUser));
+            return this.Ok(targetUser);
         }
 
         // GET api/users/{username}/followers

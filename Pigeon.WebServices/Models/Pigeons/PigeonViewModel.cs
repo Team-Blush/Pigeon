@@ -48,7 +48,8 @@
                         Username = pigeon.Author.UserName,
                         FirstName = pigeon.Author.FirstName,
                         LastName = pigeon.Author.LastName,
-                        ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(pigeon.Author).Base64Data
+                        ProfilePhotoData = pigeon.Author.ProfilePhotos
+                            .FirstOrDefault(photo => photo.ProfilePhotoFor == pigeon.Author).Base64Data
                     },
                     Comments = pigeon.Comments
                         .AsQueryable()

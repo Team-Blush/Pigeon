@@ -1,6 +1,7 @@
 ﻿namespace Pigeon.WebServices.Models.Comments
 {
     using System;
+    using System.Linq;
     using System.Linq.Expressions;
     using PhotoUtils;
     using Pigeon.Models;
@@ -30,7 +31,8 @@
                         Username = comment.Author.UserName,
                         FirstName = comment.Author.FirstName,
                         LastName = comment.Author.LastName,
-                        ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(comment.Author).Base64Data
+                        ProfilePhotoData = comment.Author.ProfilePhotos
+                            .FirstOrDefault(photo => photo.ProfilePhotoFor == comment.Author).Base64Data
                     }
                 };
             }

@@ -1,6 +1,8 @@
 ﻿namespace Pigeon.WebServices.Models.Users
 {
+    using System;
     using System.Linq;
+    using System.Linq.Expressions;
     using PhotoUtils;
     using Pigeon.Models;
     using Pigeon.Models.Enumerations;
@@ -31,9 +33,6 @@
 
         public static UserViewModel Create(User user, User loggedUser)
         {
-            var profilePhoto = PhotoUtils.CheckForProfilePhotoData(user);
-            var coverPhoto = PhotoUtils.CheckForCoverPhotoData(user);
-
             return new UserViewModel
             {
                 Id = user.Id,
@@ -43,12 +42,10 @@
                 LastName = user.LastName,
                 Age = user.Age,
                 Gender = user.Gender,
-                ProfilePhotoData = profilePhoto.Base64Data,
-                CoverPhotoData = coverPhoto.Base64Data,
-                IsFollowed = user.Followers
-                    .Any(u => u.Id == loggedUser.Id),
-                IsFollowing = user.Following
-                    .Any(u => u.Id == loggedUser.Id)
+                ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(user).Base64Data,
+                CoverPhotoData = PhotoUtils.CheckForCoverPhotoData(user).Base64Data,
+                IsFollowed = loggedUser.Following.Any(u => u.Id == user.Id),
+                IsFollowing = loggedUser.Followers.Any(u => u.Id == user.Id)
             };
         }
     }

@@ -62,6 +62,7 @@
         {
             var loggedUserId = this.User.Identity.GetUserId();
             var loggedUser = this.Data.Users.GetById(loggedUserId);
+
             if (!loggedUser.Followers.Any())
             {
                 return this.Ok(new
@@ -172,7 +173,7 @@
             if (pigeonPhotoData != null)
             {
                 var photo = new Photo { Base64Data = inputPigeon.ImageData };
-                
+
                 this.Data.Photos.Add(photo);
                 pigeonToAdd.Photo = photo;
             }
