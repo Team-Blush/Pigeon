@@ -6,7 +6,7 @@ namespace Pigeon.WebServices.Models.Pigeons
     public class PigeonVoteBindingModel
     {
         [Required]
-        [Range(0, 1)]
+        [Range(-1, 1)]
         public VoteValue Value { get; set; }
     }
 }

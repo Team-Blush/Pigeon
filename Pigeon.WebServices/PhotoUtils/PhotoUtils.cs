@@ -9,24 +9,19 @@
         {
             var profilePhoto = userDbModel.ProfilePhotos
                 .FirstOrDefault(p => p.ProfilePhotoFor == userDbModel);
-            if (profilePhoto != null)
-            {
-                return profilePhoto.Base64Data;
-            }
-
-            return null;
+            return CheckForPhotoData(profilePhoto);
         }
 
         public static string CheckForCoverPhotoData(User userDbModel)
         {
             var coverPhoto = userDbModel.CoverPhotos
                 .FirstOrDefault(p => p.CoverPhotoFor == userDbModel);
-            if (coverPhoto != null)
-            {
-                return coverPhoto.Base64Data;
-            }
+            return CheckForPhotoData(coverPhoto);
+        }
 
-            return null;
+        public static string CheckForPhotoData(Photo photo)
+        {
+            return photo == null ? null : photo.Base64Data;
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel.DataAnnotations;
+    using Enumerations;
 
     public class PigeonVote
     {
@@ -9,7 +10,7 @@
         public int Id { get; set; }
 
         [Required]
-        public bool Value { get; set; }
+        public VoteValue Value { get; set; }
 
         [Required]
         public DateTime VotedOn { get; set; }

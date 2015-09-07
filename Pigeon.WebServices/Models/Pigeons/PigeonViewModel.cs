@@ -6,6 +6,7 @@
     using System.Linq.Expressions;
     using Comments;
     using Pigeon.Models;
+    using Pigeon.Models.Enumerations;
     using Users;
 
     public class PigeonViewModel
@@ -20,11 +21,15 @@
 
         public DateTime CreatedOn { get; set; }
 
-        public int FavouritedCount { get; set; }
+        public VoteValue Voted { get; set; }
 
-        public bool VotedFor { get; set; }
+        public int UpVotesCount { get; set; }
+
+        public int DownVotesCount { get; set; }
 
         public bool Favourited { get; set; }
+
+        public int FavouritedCount { get; set; }
 
         public AuthorViewModel Author { get; set; }
 
@@ -41,15 +46,17 @@
                     Content = pigeon.Content,
                     PhotoData = pigeon.Photo != null ? pigeon.Photo.Base64Data : null,
                     CreatedOn = pigeon.CreatedOn,
+                    UpVotesCount = pigeon.Votes.Count(c => c.Value == VoteValue.Up),
+                    DownVotesCount = pigeon.Votes.Count(c => c.Value == VoteValue.Down),
                     FavouritedCount = pigeon.FavouritedCount,
                     Author = new AuthorViewModel
                     {
                         Username = pigeon.Author.UserName,
                         ProfilePhotoData =
-                        pigeon.Author.ProfilePhotos
-                            .FirstOrDefault(photo => photo.ProfilePhotoFor == pigeon.Author) != null ?
-                        pigeon.Author.ProfilePhotos
-                            .FirstOrDefault(photo => photo.ProfilePhotoFor == pigeon.Author).Base64Data : null
+                            pigeon.Author.ProfilePhotos
+                                .FirstOrDefault(photo => photo.ProfilePhotoFor == pigeon.Author) != null ?
+                            pigeon.Author.ProfilePhotos
+                                .FirstOrDefault(photo => photo.ProfilePhotoFor == pigeon.Author).Base64Data : null
                     },
                     Comments = pigeon.Comments
                         .AsQueryable()
