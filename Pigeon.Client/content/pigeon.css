@@ -163,6 +163,11 @@ button, .btn, .btn-default {
     outline: none;
 }
 
+.btn-follow {
+    position: absolute;
+    margin: 100px 0 100px 50px;
+}
+
 footer {
     background: #fff;
     background: rgba(255,255,255,0.9);
