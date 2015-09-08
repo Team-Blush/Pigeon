@@ -34,7 +34,7 @@ define(['app', 'notifyService'], function (app) {
         function validateUsername(username) {
             var usernamePattern = /^[a-zA-Z0-9]{4,32}$/;
             if (!username || !usernamePattern.test(username)) {
-                notifyService.showError("The username can only contain letters or digits from 4 to 32 symbols.");
+                notifyService.showError("The username can only contain letters or digits from 4 to 32 symbols");
                 return false;
             }
             return true;
@@ -43,7 +43,7 @@ define(['app', 'notifyService'], function (app) {
         function validateEmailAddress(email) {
             var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
             if (!emailPattern.test(email)) {
-                notifyService.showError("Incorrect email address.");
+                notifyService.showError("Incorrect email address");
                 return false;
             }
             return true;
@@ -51,7 +51,7 @@ define(['app', 'notifyService'], function (app) {
 
         function validatePassword(password) {
             if (!password || password.length < 6 || password.length > 100) {
-                notifyService.showError("The password must be from 6 to 100 characters long.");
+                notifyService.showError("The password must be from 6 to 100 characters long");
                 return false;
             }
             return true;
@@ -59,29 +59,29 @@ define(['app', 'notifyService'], function (app) {
 
         function validateConfirmPasswordMatch(password, confirmPassword) {
             if (password !== confirmPassword) {
-                notifyService.showError("The password and confirmation password do not match.");
+                notifyService.showError("The password and confirmation password do not match");
                 return false;
             }
             return true;
         }
 
         function validateName(name, isFirst) {
-            if (name.length < 4 || name.length > 32) {
+            if (name.length < 2 || name.length > 20) {
                 var namePart;
                 if (isFirst) {
                     namePart = "First";
                 } else {
                     namePart = "Last";
                 }
-                notifyService.showError(namePart + " name must be from 4 to 32 characters long.");
+                notifyService.showError(namePart + " name must be from 2 to 20 characters long");
                 return false;
             }
             return true;
         }
 
         function validateAge(age) {
-            if (age < 18) {
-                notifyService.showError("Your age cannot be under 18.");
+            if (age < 0 || age > 100) {
+                notifyService.showError("Your age must be from 0 to 100 years");
                 return false;
             }
             return true;
