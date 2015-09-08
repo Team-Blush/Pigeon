@@ -13,26 +13,32 @@
         <p>{{pigeon.favouritedCount}} Favourite {{pigeon.comments.length}} Comments</p>
         <p>{{pigeon.upVotesCount}} Votes+ {{pigeon.downVotesCount}} Votes-</p>
         <p>
-            <button type="button" class="btn btn-default btn-lg" ng-if="!pigeon.favourited" ng-click="favourite(pigeon)">
+            <button type="button" title="Favourite" class="btn btn-default btn-lg" ng-if="!pigeon.favourited" ng-click="favourite(pigeon)">
                 <div class="glyphicon glyphicon-star-empty"></div>
             </button>
-            <button type="button" class="btn btn-default btn-lg" ng-if="pigeon.favourited" ng-click="unfavourite(pigeon)">
+            <button type="button" title="Unfavourite" class="btn btn-default btn-lg" ng-if="pigeon.favourited" ng-click="unfavourite(pigeon)">
                 <div class="glyphicon glyphicon-star"></div>
             </button>
-            <button type="button" class="btn btn-default btn-lg" ng-if="pigeon.voted == 0 || pigeon.voted == -1" ng-click="voteUp(pigeon)">
+            <button type="button" title="Vote Up" class="btn btn-default btn-lg" ng-if="pigeon.voted == 0 || pigeon.voted == -1" ng-click="voteUp(pigeon)">
                 <div class="glyphicon glyphicon-chevron-up"></div>
             </button>
-            <button type="button" class="btn btn-default btn-lg" ng-if="pigeon.voted == 0 || pigeon.voted == 1" ng-click="voteDown(pigeon)">
+            <button type="button" title="Vote Down" class="btn btn-default btn-lg" ng-if="pigeon.voted == 0 || pigeon.voted == 1" ng-click="voteDown(pigeon)">
                 <div class="glyphicon glyphicon-chevron-down"></div>
             </button>
-            <button type="button" class="btn btn-default btn-lg" ng-click="expandCreateComment(pigeon.id)">
+            <button type="button" title="Comments" class="btn btn-default btn-lg" ng-click="expandCreateComment(pigeon.id)">
                 <div class="glyphicon glyphicon-comment"></div>
             </button>
-            <button type="button" class="btn btn-default btn-lg" ng-if="pigeon.author.username == myData.username" ng-click="expandEditPigeon(pigeon.id)">
+            <button type="button" title="Edit" class="btn btn-default btn-lg" ng-if="pigeon.author.username == myData.username" ng-click="expandEditPigeon(pigeon.id)">
                 <div class="glyphicon glyphicon-edit"></div>
             </button>
-            <button type="button" class="btn btn-default btn-lg" ng-if="pigeon.author.username == myData.username" ng-click="deletePigeon(pigeon)">
+            <button type="button" title="Delete" class="btn btn-default btn-lg" ng-if="pigeon.author.username == myData.username" ng-click="expandDeletePigeon(pigeon.id)">
                 <div class="glyphicon glyphicon-remove"></div>
+            </button>
+            <button type="button" title="Yes" class="btn btn-default btn-lg" ng-if="isDeletePigeonExpanded && pigeon.id == expandDeletePigeonsPigeonId" ng-click="deletePigeon(pigeon)">
+                <div class="glyphicon glyphicon-ok-circle"></div>
+            </button>
+            <button type="button" title="No" class="btn btn-default btn-lg" ng-if="isDeletePigeonExpanded && pigeon.id == expandDeletePigeonsPigeonId" ng-click="hideDeletePigeon()">
+                <div class="glyphicon glyphicon-remove-circle"></div>
             </button>
         </p>
     </div>

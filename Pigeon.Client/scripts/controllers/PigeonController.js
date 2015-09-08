@@ -10,6 +10,7 @@
             $scope.isEditPigeonExpanded = false;
             $scope.isCreateCommentExpanded = false;
             $scope.isEditCommentExpanded = false;
+            $scope.isDeletePigeonExpanded = false;
 
             $scope.expandCreatePigeon = function () {
                 $scope.isCreatePigeonExpanded = !$scope.isCreatePigeonExpanded;
@@ -18,6 +19,15 @@
             $scope.expandEditPigeon = function (pigeonId) {
                 $scope.expandEditPigeonsPigeonId = pigeonId;
                 $scope.isEditPigeonExpanded = !$scope.isEditPigeonExpanded;
+            }
+
+            $scope.expandDeletePigeon = function (pigeonId) {
+                $scope.expandDeletePigeonsPigeonId = pigeonId;
+                $scope.isDeletePigeonExpanded = !$scope.isDeletePigeonExpanded;
+            }
+
+            $scope.hideDeletePigeon = function() {
+                $scope.isDeletePigeonExpanded = false;
             }
 
             $scope.expandCreateComment = function (pigeonId) {
@@ -134,9 +144,13 @@
             }
 
             $scope.deletePigeon = function (pigeon) {
+                $scope.isDeletePigeonExpanded = false;
                 pigeonService.deletePigeon(pigeon.id).then(
                     function (serverData) {
-                        $scope.pigeonsData.shift(pigeon);
+                        var index = $scope.pigeonsData.indexOf(pigeon);
+                        if (index > -1) {
+                            $scope.pigeonsData.splice(index, 1);
+                        }
                         notifyService.showInfo(serverData.message);
                     },
                     function (serverError) {
@@ -259,7 +273,10 @@
             $scope.deleteComment = function (pigeon, comment) {
                 commentService.deleteComment(pigeon.id, comment.id).then(
                     function (serverData) {
-                        pigeon.comments.pop(comment);
+                        var index = pigeon.comments.indexOf(comment);
+                        if (index > -1) {
+                            pigeon.comments.splice(index, 1);
+                        }
                         notifyService.showInfo(serverData.message);
                     },
                     function (serverError) {
