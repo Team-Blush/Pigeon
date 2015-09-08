@@ -4,6 +4,7 @@
 <!-- Header -->
 <div ng-include="'templates/partial/header-view.html'" ng-controller="HeaderController"></div>
 
+<!-- Guest View -->
 <div class="container" ng-if="!isLoggedIn">
     <div class="row">
         <div class="box">
@@ -19,7 +20,9 @@
                 <img class="img-responsive img-border-left" src="imgs/pigeon.jpg" alt="">
             </div>
             <div class="col-md-6">
-                <p>This is a free social network website designed by Team "Blush" at <a href="https://softuni.bg/">Software University</a></p>
+                <p>
+                    This is a free social network website designed by Team "Blush" at <a href="https://softuni.bg/">Software University</a>
+                </p>
                 <p>You can follow friends and post pigeons on your own wall. You must register or login for continue.</p>
                 <div class="row">
                     <div class="form-group col-lg-4 col-lg-offset-4">
@@ -33,26 +36,27 @@
     </div>
 </div>
 
+<!-- User View -->
 <div class="container" ng-if="isLoggedIn">
     <div class="row">
         <div class="box">
             <div class="row">
-                <form role="form">
-                    <div class="col-lg-4 text-center">
-                        <div class="row">
+                <div class="col-lg-4">
+                    <form role="form" class="row">
+                        <div class="col-lg-12 text-center">
                             <button type="button" class="btn btn-default" ng-click="expandSearch()">Search People</button>
                             <br />
                             <br />
                             <div class="col-lg-12" ng-if="isSearchExpanded">
-                                <input type="text" class="form-control" ng-model="searchData.searchTerm"/><br/>
+                                <input type="text" class="form-control" ng-model="searchData.searchTerm" /><br />
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-default" ng-click="search()">Search</button>
                                 </div>
                                 <hr />
                                 <div class="row" ng-repeat="person in people">
-                                    <div class="row">
+                                    <div class="col-lg-12">
                                         <div class="col-lg-4">
-                                            <img class="img-small" ng-src="{{person.profilePhotoData}}"/>
+                                            <img class="img-small" ng-src="{{person.profilePhotoData}}" />
                                         </div>
                                         <div class="col-lg-4">
                                             <a href="#/{{person.username}}">{{person.username}}</a>
@@ -62,17 +66,19 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
-                                        <hr/>
+                                        <hr />
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                    </form>
+                    <div class="row">
+                        <div class="col-lg-12 text-center">
                             <div class="col-lg-12">
                                 <h3>Following</h3>
                                 <hr />
                                 <div class="row" ng-repeat="followingPerson in followingPeople">
-                                    <div class="row">
+                                    <div class="col-lg-12">
                                         <div class="col-lg-4">
                                             <img class="img-small" ng-src="{{followingPerson.profilePhotoData}}" />
                                         </div>
@@ -89,12 +95,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 text-center">
                             <div class="col-lg-12">
                                 <h3>Followers</h3>
                                 <hr />
                                 <div class="row" ng-repeat="follower in followers">
-                                    <div class="row">
+                                    <div class="col-lg-12">
                                         <div class="col-lg-4">
                                             <img class="img-small" ng-src="{{follower.profilePhotoData}}" />
                                         </div>
@@ -112,7 +120,8 @@
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
+                <div class="col-lg-8" ng-include="'templates/partial/pigeons-view.html'" ng-controller="PigeonController" ng-init="loadNewsPigeons()"></div>
             </div>
         </div>
     </div>

@@ -10,27 +10,26 @@
 <div class="container" ng-if="isLoggedIn">
     <div class="row">
         <div class="box">
-            <img class="img-wall-profile" ng-src="{{userData.profilePhotoData}}" />
+            <img class="img-wall-profile" ng-src="{{userData.profilePhotoData}}"/>
             <div ng-if="userData.username != myData.username">
                 <button type="button" class="btn btn-default btn-follow" ng-if="!userData.isFollowed" ng-click="follow()">Follow</button>
                 <button type="button" class="btn btn-default btn-follow" ng-if="userData.isFollowed" ng-click="unfollow()">UnFollow</button>
             </div>
-            <img class="img-wall-cover" ng-src="{{userData.coverPhotoData}}" />
+            <img class="img-wall-cover" ng-src="{{userData.coverPhotoData}}"/>
         </div>
-    </div>
-    <div class="row">
-        <div class="box" ng-init="loadUserPigeons()">
+        <div class="box" ng-controller="PigeonController">
             <div class="row" ng-if="userData.username == myData.username">
                 <div class="col-lg-4 text-center">
                     <button type="button" class="btn btn-default" ng-click="expandCreatePigeon()">Create Pigeon</button>
                 </div>
                 <div class="col-lg-4 text-center">
-                    <button type="button" class="btn btn-default">All Pigeons</button>
+                    <button type="button" class="btn btn-default" ng-click="loadUserPigeons()">My Pigeons</button>
                 </div>
                 <div class="col-lg-4 text-center">
-                    <button type="button" class="btn btn-default">Favorite Pigeons</button>
+                    <button type="button" class="btn btn-default" ng-click="loadFavouritePigeons()">Favorite Pigeons</button>
                 </div>
             </div>
+            <br />
             <div class="row" ng-if="isCreatePigeonExpanded">
                 <div class="col-lg-6 col-lg-offset-3 text-center">
                     <form role="form">
@@ -55,95 +54,9 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 text-center" ng-repeat="pigeon in pigeonsData" ng-init="loadPigeonComments(pigeon)">
-                    <h4>
-                        {{pigeon.title}}
-                    </h4>
-                    <img class="img-responsive img-border img-full" ng-src="{{pigeon.photoData}}">
-
+                <div class="box">
                     <div class="row">
-                        <p>{{pigeon.content}}</p>
-                        <small>{{pigeon.createdOn}}</small>
-                    </div>
-
-                    <div class="row">
-                        <p>{{pigeon.favouritedCount}} Favourite {{pigeon.comments.length}} Comments</p>
-                        <p>{{pigeon.upVotesCount}} Votes+ {{pigeon.downVotesCount}} Votes-</p>
-                        <p>
-                            <button type="button" class="btn btn-default btn-lg" ng-if="!pigeon.favourited" ng-click="favourite(pigeon)">
-                                <div class="glyphicon glyphicon-star-empty"></div>
-                            </button>
-                            <button type="button" class="btn btn-default btn-lg" ng-if="pigeon.favourited" ng-click="unfavourite(pigeon)">
-                                <div class="glyphicon glyphicon-star"></div>
-                            </button>
-                            <button type="button" class="btn btn-default btn-lg" ng-if="pigeon.voted == 0 || pigeon.voted == -1" ng-click="voteUp(pigeon)">
-                                <div class="glyphicon glyphicon-chevron-up"></div>
-                            </button>
-                            <button type="button" class="btn btn-default btn-lg" ng-if="pigeon.voted == 0 || pigeon.voted == 1" ng-click="voteDown(pigeon)">
-                                <div class="glyphicon glyphicon-chevron-down"></div>
-                            </button>
-                            <button type="button" class="btn btn-default btn-lg" ng-click="expandCreateComment(pigeon.id)">
-                                <div class="glyphicon glyphicon-comment"></div>
-                            </button>
-                            <button type="button" class="btn btn-default btn-lg" ng-click="expandEditPigeon(pigeon.id)">
-                                <div class="glyphicon glyphicon-edit"></div>
-                            </button>
-                            <button type="button" class="btn btn-default btn-lg" ng-click="deletePigeon(pigeon)">
-                                <div class="glyphicon glyphicon-remove"></div>
-                            </button>
-                        </p>
-                    </div>
-
-                    <div class="row" ng-if="isEditPigeonExpanded && pigeon.id == expandEditPigeonsPigeonId">
-                        <div class="col-lg-12 text-center">
-                            <form role="form">
-                                <div class="row">
-                                    <div class="form-group col-lg-12">
-                                        <label>Message</label>
-                                        <textarea class="form-control" rows="3" ng-model="pigeon.content"></textarea>
-                                    </div>
-                                    <div class="form-group col-lg-12">
-                                        <button type="button" class="btn btn-default" ng-click="editPigeon(pigeon)">Edit Pigeon</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div class="row" ng-if="isCreateCommentExpanded && pigeon.id == expandCommentsPigeonId">
-                        <form role="form">
-                            <div class="row">
-                                <div class="form-group col-lg-12">
-                                    <label>Comment</label>
-                                    <textarea class="form-control" rows="3" ng-model="commentData.content"></textarea>
-                                </div>
-                                <div class="form-group col-lg-12">
-                                    <button type="submit" class="btn btn-default" ng-click="createComment(pigeon)">Comment</button>
-                                </div>
-                            </div>
-                        </form>
-                        <hr />
-                        <div class="row" ng-repeat="comment in pigeon.comments track by $index">
-                            <div class="row">
-                                <div class="col-lg-4">
-                                    <img class="img-small" ng-src="{{comment.author.profilePhotoData}}" />
-                                    <p>{{comment.author.username}}</p>
-                                </div>
-                                <div class="col-lg-4">
-                                    <p>{{comment.content}}</p>
-                                    <div class="row" ng-if="isEditCommentExpanded && expandEditCommentsCommentId == comment.id">
-                                        <textarea type="text" rows="3" class="form-control" ng-model="editCommentData.content"></textarea>
-                                        <button type="button" class="btn btn-default" ng-click="editComment(pigeon, comment)">Edit</button>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <button type="button" class="btn btn-default" ng-click="expandEditComment(comment)">Edit</button>
-                                    <button type="button" class="btn btn-default" ng-click="deleteComment(pigeon, comment)">Delete</button>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <hr />
-                            </div>
+                        <div class="col-lg-8 col-lg-offset-2 text-center" ng-include="'templates/partial/pigeons-view.html'" ng-init="loadUserPigeons()">
                         </div>
                     </div>
                 </div>

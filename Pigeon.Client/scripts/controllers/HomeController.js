@@ -1,4 +1,4 @@
-﻿define(['app', 'constants', 'HeaderController', 'accountService', 'ngPictureSelect'],
+﻿define(['app', 'constants', 'HeaderController', 'PigeonController', 'accountService', 'ngPictureSelect'],
     function (app) {
         app.controller('HomeController', function ($scope, $rootScope, constants, accountService) {
             $scope.title = 'Welcome to Pigeon';
@@ -85,8 +85,6 @@
                     $scope.title = $scope.myData.username + ' - ' + $scope.title;
                 }
             }
-
-            
         });
     }
 );

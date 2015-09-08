@@ -17,6 +17,7 @@
         LoginController: 'controllers/LoginController',
         UserController: 'controllers/UserController',
         ProfileController: 'controllers/ProfileController',
+        PigeonController: 'controllers/PigeonController',
 
         // services
         accountService: 'services/accountService',

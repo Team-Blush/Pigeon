@@ -65,6 +65,7 @@
     <Content Include="scripts\constants.js" />
     <Content Include="scripts\controllers\HeaderController.js" />
     <Content Include="scripts\controllers\LoginController.js" />
+    <Content Include="scripts\controllers\PigeonController.js" />
     <Content Include="scripts\controllers\ProfileController.js" />
     <Content Include="scripts\controllers\RegisterController.js" />
     <Content Include="scripts\controllers\UserController.js" />
@@ -78,6 +79,7 @@
     <Content Include="scripts\services\requestService.js" />
     <Content Include="scripts\services\accountService.js" />
     <Content Include="scripts\services\validationService.js" />
+    <Content Include="templates\partial\pigeons-view.html" />
     <Content Include="templates\register-view.html" />
     <Content Include="templates\login-view.html" />
     <Content Include="templates\partial\footer-view.html" />
