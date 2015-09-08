@@ -8,24 +8,53 @@
             $scope.isSearchExpanded = false;
             $scope.searchData = {};
             $scope.people = [];
+            $scope.followingPeople = [];
+            $scope.followers = [];
 
             $scope.expandSearch = function() {
                 $scope.isSearchExpanded = !$scope.isSearchExpanded;
+            }
+
+            function parseServerData(serverData) {
+                serverData.forEach(function (person) {
+                    person.profilePhotoData = person.profilePhotoData ? person.profilePhotoData : constants.profilePhotoData;
+                    person.firstName = person.firstName ? person.firstName : '';
+                    person.lastName = person.lastName ? person.lastName : '';
+                });
             }
 
             $scope.search = function () {
                 var searchTerm = $scope.searchData.searchTerm;
                 accountService.search(searchTerm).then(
                     function (serverData) {
-                        serverData.forEach(function (person) {
-                            person.profilePhotoData = person.profilePhotoData ? person.profilePhotoData : constants.profilePhotoData;
-                            person.firstName = person.firstName ? person.firstName : '';
-                            person.lastName = person.lastName ? person.lastName : '';
-                        });
-
+                        parseServerData(serverData);
                         $scope.people = serverData;
                     },
                     function(serverError) {
+                        console.error(serverError);
+                    }
+                );
+            }
+
+            var loadFollowingPeople = function () {
+                accountService.loadFollowingPeople($scope.myData.username).then(
+                    function (serverData) {
+                        parseServerData(serverData);
+                        $scope.followingPeople = serverData;
+                    },
+                    function (serverError) {
+                        console.error(serverError);
+                    }
+                );
+            }
+
+            var loadFollowers = function () {
+                accountService.loadFollowers($scope.myData.username).then(
+                    function (serverData) {
+                        parseServerData(serverData);
+                        $scope.followers = serverData;
+                    },
+                    function (serverError) {
                         console.error(serverError);
                     }
                 );
@@ -41,6 +70,8 @@
                         accountService.saveMyData(data);
                         $rootScope.myDataUpdate = false;
                         $scope.myData = accountService.loadMyData();
+                        loadFollowingPeople();
+                        loadFollowers();
                         $scope.title = $scope.myData.username + ' - ' + $scope.title;
                     },
                     function (error) {
@@ -49,9 +80,13 @@
             } else {
                 $scope.myData = accountService.loadMyData();
                 if ($scope.isLoggedIn) {
+                    loadFollowingPeople();
+                    loadFollowers();
                     $scope.title = $scope.myData.username + ' - ' + $scope.title;
                 }
             }
+
+            
         });
     }
 );

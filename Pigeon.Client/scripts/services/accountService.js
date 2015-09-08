@@ -108,6 +108,18 @@ define(['app', 'constants', 'requestService'], function (app) {
             return requestService.putRequest(url, headers);
         };
 
+        service.loadFollowingPeople = function(username) {
+            var url = serviceUrlUsers + username + '/following';
+            var headers = requestService.getHeaders();
+            return requestService.getRequest(url, headers);
+        }
+
+        service.loadFollowers = function (username) {
+            var url = serviceUrlUsers + username + '/followers';
+            var headers = requestService.getHeaders();
+            return requestService.getRequest(url, headers);
+        }
+
         return service;
     });
 });
