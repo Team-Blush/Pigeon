@@ -80,8 +80,8 @@
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <button type="button" class="btn btn-default" ng-click="expandEditComment(comment)">Edit</button>
-                    <button type="button" class="btn btn-default" ng-click="deleteComment(pigeon, comment)">Delete</button>
+                    <button type="button" class="btn btn-default" ng-if="comment.author.username == myData.username" ng-click="expandEditComment(comment)">Edit</button>
+                    <button type="button" class="btn btn-default" ng-if="comment.author.username == myData.username" ng-click="deleteComment(pigeon, comment)">Delete</button>
                 </div>
             </div>
             <div class="row">

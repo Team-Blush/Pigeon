@@ -8,8 +8,7 @@
 
             $scope.register = function () {
                 var registerData = $scope.registerData;
-                if (validationService.validateRegisterForm(registerData.username, registerData.email,
-                        registerData.password, registerData.confirmPassword, registerData.name)) {
+                if (validationService.validateRegisterForm(registerData)) {
                     registerData = validationService.escapeHtmlSpecialChars(registerData);
                     accountService.register(registerData).then(
                         function (serverResponse) {
