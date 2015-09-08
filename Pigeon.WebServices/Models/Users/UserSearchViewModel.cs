@@ -15,9 +15,9 @@
 
         public string ProfilePhotoData { get; set; }
 
-        public bool IsFollowed { get; set; }
+        public bool IsFollower { get; set; }
 
-        public bool IsFollowing { get; set; }
+        public bool IsFollowed { get; set; }
 
         public static Expression<Func<User, UserSearchViewModel>> Create
         {

@@ -44,8 +44,8 @@
 
             foreach (var pigeon in pigeons)
             {
-                pigeon.Voted = this.CheckIfUserVotedForPigeon(pigeon, loggedUser);
-                pigeon.Favourited = loggedUser.FavouritePigeons.Any(p => p.Id == pigeon.Id);
+                pigeon.Voted = this.HasUserVotedForPigeon(loggedUser, pigeon);
+                pigeon.Favourited = this.HasUserFavouritedPigeon(loggedUser, pigeon.Id);
             }
 
             return this.Ok(pigeons);
@@ -70,8 +70,8 @@
 
             foreach (var pigeon in newsPigeons)
             {
-                pigeon.Voted = this.CheckIfUserVotedForPigeon(pigeon, loggedUser);
-                pigeon.Favourited = loggedUser.FavouritePigeons.Any(p => p.Id == pigeon.Id);
+                pigeon.Voted = this.HasUserVotedForPigeon(loggedUser, pigeon);
+                pigeon.Favourited = this.HasUserFavouritedPigeon(loggedUser, pigeon.Id);
             }
 
             return this.Ok(newsPigeons);
@@ -93,7 +93,7 @@
 
             foreach (var pigeon in favouritePigeons)
             {
-                pigeon.Voted = this.CheckIfUserVotedForPigeon(pigeon, loggedUser);
+                pigeon.Voted = this.HasUserVotedForPigeon(loggedUser, pigeon);
                 pigeon.Favourited = true;
             }
 
@@ -119,8 +119,8 @@
                 return this.BadRequest("No such Pigeon.");
             }
 
-            pigeon.Voted = this.CheckIfUserVotedForPigeon(pigeon, loggedUser);
-            pigeon.Favourited = loggedUser.FavouritePigeons.Any(fp => fp.Id == pigeon.Id);
+            pigeon.Voted = this.HasUserVotedForPigeon(loggedUser, pigeon);
+            pigeon.Favourited = this.HasUserFavouritedPigeon(loggedUser, pigeon.Id);
 
             return this.Ok(pigeon);
         }
@@ -403,7 +403,7 @@
             });
         }
 
-        private VoteValue CheckIfUserVotedForPigeon(PigeonViewModel pigeon, User loggedUser)
+        private VoteValue HasUserVotedForPigeon(User loggedUser, PigeonViewModel pigeon)
         {
             var existingVote = loggedUser.Votes.FirstOrDefault(pv => pv.PigeonId == pigeon.Id);
             if (existingVote != null && existingVote.Value != VoteValue.None)
@@ -411,7 +411,12 @@
                 return existingVote.Value == VoteValue.Up ? VoteValue.Up : VoteValue.Down;
             }
 
-            return pigeon.Voted = VoteValue.None;
+            return VoteValue.None;
+        }
+
+        private bool HasUserFavouritedPigeon(User loggedUser, int pigeonId)
+        {
+            return loggedUser.FavouritePigeons.Any(p => p.Id == pigeonId);
         }
     }
 }

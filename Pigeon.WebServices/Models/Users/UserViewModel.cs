@@ -23,9 +23,9 @@
 
         public string CoverPhotoData { get; set; }
 
-        public bool IsFollowed { get; set; }
+        public bool IsFollower { get; set; }
 
-        public bool IsFollowing { get; set; }
+        public bool IsFollowed { get; set; }
 
         public static UserViewModel Create(User user, User loggedUser)
         {
@@ -39,8 +39,8 @@
                 Gender = user.Gender,
                 ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(user),
                 CoverPhotoData = PhotoUtils.CheckForCoverPhotoData(user),
-                IsFollowed = loggedUser.Following.Any(u => u.Id == user.Id),
-                IsFollowing = loggedUser.Followers.Any(u => u.Id == user.Id)
+                IsFollower = loggedUser.Following.Any(u => u.Id == user.Id),
+                IsFollowed = loggedUser.Followers.Any(u => u.Id == user.Id)
             };
         }
     }

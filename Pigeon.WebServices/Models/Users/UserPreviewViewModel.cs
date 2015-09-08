@@ -20,7 +20,7 @@
 
         public bool IsFollowed { get; set; }
 
-        public bool IsFollowing { get; set; }
+        public bool IsFollower { get; set; }
 
         public static UserPreviewViewModel Create(User user)
         {

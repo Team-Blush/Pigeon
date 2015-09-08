@@ -178,8 +178,8 @@
 
             var userViewModel = UserViewModel.Create(targetUser, loggedUser);
 
-            userViewModel.IsFollowed = loggedUser.Following.Any(u => u.Id == targetUser.Id);
-            userViewModel.IsFollowing = loggedUser.Followers.Any(u => u.Id == targetUser.Id);
+            userViewModel.IsFollower = this.IsLoggedUserFollowed(loggedUser, targetUser.UserName);
+            userViewModel.IsFollowed = this.IsLoggedUserFollower(loggedUser, targetUser.UserName);
 
             return this.Ok(userViewModel);
         }
@@ -202,8 +202,8 @@
                 return this.NotFound();
             }
 
-            targetUser.IsFollowed = loggedUser.Following.Any(u => u.Id == targetUser.Id);
-            targetUser.IsFollowing = loggedUser.Followers.Any(u => u.Id == targetUser.Id);
+            targetUser.IsFollowed = this.IsLoggedUserFollower(loggedUser, targetUser.Username);
+            targetUser.IsFollower = this.IsLoggedUserFollowed(loggedUser, targetUser.Username);
 
             return this.Ok(targetUser);
         }
@@ -220,12 +220,13 @@
             var foundUsers = this.Data.Users.GetAll()
                 .Where(u => u.UserName.ToLower().Contains(searchTerm))
                 .Take(5)
-                .Select(UserSearchViewModel.Create);
+                .Select(UserSearchViewModel.Create)
+                .ToList();
 
             foreach (var user in foundUsers)
             {
-                user.IsFollowed = loggedUser.Following.Any(u => u.UserName == user.Username);
-                user.IsFollowing = loggedUser.Followers.Any(u => u.UserName == user.Username);
+                user.IsFollowed = this.IsLoggedUserFollower(loggedUser, user.Username);
+                user.IsFollower = this.IsLoggedUserFollowed(loggedUser, user.Username);
             }
 
             return this.Ok(foundUsers);
@@ -357,6 +358,16 @@
             {
                 message = "Successfully unfollowed user."
             });
+        }
+
+        private bool IsLoggedUserFollowed(User loggedUser, string targetUserUsername)
+        {
+            return loggedUser.Followers.Any(u => u.UserName == targetUserUsername);
+        }
+
+        private bool IsLoggedUserFollower(User loggedUser, string targetUserUsername)
+        {
+            return loggedUser.Following.Any(u => u.UserName == targetUserUsername);
         }
     }
 }
