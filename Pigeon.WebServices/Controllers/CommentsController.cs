@@ -5,7 +5,6 @@
     using System.Web.Http;
     using Microsoft.AspNet.Identity;
     using Models.Comments;
-    using Models.Users;
     using Pigeon.Models;
     using UserSessionUtils;
 
@@ -21,7 +20,7 @@
                 .Where(p => p.Id == pigeonId)
                 .Select(p => p.Comments
                     .AsQueryable()
-                    .OrderByDescending(c => c.CreatedOn)
+                    .OrderBy(c => c.CreatedOn)
                     .Select(CommentViewModel.Create))
                 .FirstOrDefault();
 
