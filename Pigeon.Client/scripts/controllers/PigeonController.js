@@ -61,7 +61,16 @@
                 var month = months[date.getMonth() + 1];
                 var year = date.getFullYear();
 
+                pigeon.dateCreatedOn = date;
                 pigeon.createdOn = day + ' ' + month + ' ' + year;
+            }
+
+            function comparePigeonsByDateCreatedOn(pigeon, otherPigeon) {
+                if (pigeon.dateCreatedOn < otherPigeon.dateCreatedOn)
+                    return 1;
+                if (pigeon.dateCreatedOn > otherPigeon.dateCreatedOn)
+                    return -1;
+                return 0;
             }
 
             $scope.createPigeon = function () {
@@ -111,11 +120,16 @@
             $scope.loadNewsPigeons = function () {
                 pigeonService.loadNewsPigeons().then(
                     function (serverData) {
-                        console.log(serverData);
-                        serverData.forEach(function (pigeon) {
-                            parsePigeonDate(pigeon);
+                        var allPigeons = [];
+                        serverData.forEach(function(pigeonsData) {
+                            pigeonsData.forEach(function (pigeon) {
+                                parsePigeonDate(pigeon);
+                                allPigeons.push(pigeon);
+                            });
                         });
-                        $scope.pigeonsData = serverData;
+
+                        allPigeons.sort(comparePigeonsByDateCreatedOn);
+                        $scope.pigeonsData = allPigeons;
                     },
                     function (serverError) {
                         console.error(serverError);
