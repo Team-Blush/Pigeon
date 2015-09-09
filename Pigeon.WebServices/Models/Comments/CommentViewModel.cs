@@ -33,5 +33,22 @@
                 };
             }
         }
+
+        public static CommentViewModel CreateSingle(Comment commentDbModel)
+        {
+            return new CommentViewModel
+            {
+                Id = commentDbModel.Id,
+                Content = commentDbModel.Content,
+                CreatedOn = commentDbModel.CreatedOn,
+                Author = new AuthorViewModel
+                {
+                    Username = commentDbModel.Author.UserName,
+                    ProfilePhotoData =
+                        commentDbModel.Author.ProfilePhoto != null ?
+                        commentDbModel.Author.ProfilePhoto.Base64Data : null
+                }
+            };
+        }
     }
 }

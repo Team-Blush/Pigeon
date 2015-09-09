@@ -36,7 +36,7 @@
                 .Where(pigeon => pigeon.AuthorId == targetUser.Id)
                 .OrderByDescending(pigeon => pigeon.CreatedOn)
                 .Take(5)
-                .Select(PigeonViewModel.CreateExpr(loggedUser));
+                .Select(PigeonViewModel.Create(loggedUser));
 
             return this.Ok(pigeons);
         }
@@ -50,14 +50,12 @@
             var loggedUserId = this.User.Identity.GetUserId();
             var loggedUser = this.Data.Users.GetById(loggedUserId);
 
-            var loggedUserFollowing = loggedUser.Following;
-
-            var newsPigeons = loggedUserFollowing
+            var newsPigeons = loggedUser.Following
                 .Select(f => f.Pigeons
                     .AsQueryable()
                     .OrderByDescending(p => p.CreatedOn)
                     .Take(3)
-                    .Select(PigeonViewModel.CreateExpr(loggedUser)));
+                    .Select(PigeonViewModel.Create(loggedUser)));
 
             return this.Ok(newsPigeons);
         }
@@ -73,7 +71,9 @@
 
             var favouritePigeons = loggedUser.FavouritePigeons
                 .AsQueryable()
-                .Select(PigeonViewModel.CreateExpr(loggedUser));
+                .OrderByDescending(p => p.CreatedOn)
+                .Take(5)
+                .Select(PigeonViewModel.Create(loggedUser));
 
             return this.Ok(favouritePigeons);
         }
@@ -89,7 +89,7 @@
 
             var pigeon = this.Data.Pigeons.GetAll()
                 .Where(p => p.Id == id)
-                .Select(PigeonViewModel.CreateExpr(loggedUser))
+                .Select(PigeonViewModel.Create(loggedUser))
                 .FirstOrDefault();
 
             if (pigeon == null)
@@ -125,7 +125,7 @@
 
             if (inputPigeon.PhotoData != null)
             {
-                var photo = new Photo {Base64Data = inputPigeon.PhotoData};
+                var photo = new Photo { Base64Data = inputPigeon.PhotoData };
 
                 this.Data.Photos.Add(photo);
                 pigeonToAdd.Photo = photo;
@@ -234,7 +234,7 @@
             this.Data.Pigeons.Update(pigeonToUpdate);
             this.Data.SaveChanges();
 
-            var pigeonViewModel = new {pigeonToUpdate.Content};
+            var pigeonViewModel = new { pigeonToUpdate.Content };
 
             return this.Ok(pigeonViewModel);
         }

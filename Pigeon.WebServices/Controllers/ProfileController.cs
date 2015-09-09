@@ -36,7 +36,7 @@
             var loggedUserId = this.User.Identity.GetUserId();
             var loggedUserView = this.Data.Users.GetAll()
                 .Where(u => u.Id == loggedUserId)
-                .Select(ProfileViewModel.CreateExpr)
+                .Select(ProfileViewModel.Create)
                 .FirstOrDefault();
 
             return this.Ok(loggedUserView);

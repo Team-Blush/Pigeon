@@ -27,8 +27,8 @@
                 FirstName = targetUser.FirstName,
                 LastName = targetUser.LastName,
                 ProfilePhotoData = targetUser.ProfilePhoto != null ? targetUser.ProfilePhoto.Base64Data : null,
-                IsFollower = loggedUser.Followers.Any(u => u.Id.Equals(targetUser.Id)),
-                IsFollowed = loggedUser.Following.Any(u => u.Id.Equals(targetUser.Id))
+                IsFollower = targetUser.Following.Any(u => u.Id.Equals(loggedUser.Id)),
+                IsFollowed = targetUser.Followers.Any(u => u.Id.Equals(loggedUser.Id))
             };
         }
     }

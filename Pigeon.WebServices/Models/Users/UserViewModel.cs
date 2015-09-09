@@ -1,6 +1,8 @@
 ﻿namespace Pigeon.WebServices.Models.Users
 {
+    using System;
     using System.Linq;
+    using System.Linq.Expressions;
     using Pigeon.Models;
 
     public class UserViewModel
@@ -23,9 +25,9 @@
 
         public bool IsFollowed { get; set; }
 
-        public static UserViewModel Create(User targetUser, User loggedUser)
+        public static Expression<Func<User, UserViewModel>> Create(User loggedUser)
         {
-            return new UserViewModel
+            return targetUser => new UserViewModel
             {
                 Username = targetUser.UserName,
                 Email = targetUser.Email,
@@ -34,8 +36,8 @@
                 Age = targetUser.Age,
                 ProfilePhotoData = targetUser.ProfilePhoto != null ? targetUser.ProfilePhoto.Base64Data : null,
                 CoverPhotoData = targetUser.CoverPhoto != null ? targetUser.CoverPhoto.Base64Data : null,
-                IsFollower = loggedUser.Followers.Any(f => f.Id.Equals(targetUser.Id)),
-                IsFollowed = loggedUser.Following.Any(f => f.Id.Equals(targetUser.Id))
+                IsFollower = targetUser.Following.Any(f => f.Id.Equals(loggedUser.Id)),
+                IsFollowed = targetUser.Followers.Any(f => f.Id.Equals(loggedUser.Id))
             };
         }
     }

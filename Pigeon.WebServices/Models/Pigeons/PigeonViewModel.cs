@@ -34,7 +34,7 @@
 
         public int CommentsCount { get; set; }
 
-        public static Expression<Func<Pigeon, PigeonViewModel>> CreateExpr(User currentUser)
+        public static Expression<Func<Pigeon, PigeonViewModel>> Create(User loggedUser)
         {
             return pigeon => new PigeonViewModel
             {
@@ -43,18 +43,18 @@
                 Content = pigeon.Content,
                 PhotoData = pigeon.Photo != null ? pigeon.Photo.Base64Data : null,
                 CreatedOn = pigeon.CreatedOn,
-                Voted =
-                    currentUser.Votes.Any(v => v.UserId == currentUser.Id)
-                        ? currentUser.Votes.FirstOrDefault(v => v.UserId == currentUser.Id).Value
-                        : VoteValue.None,
+                Voted = pigeon.Votes.Any(v => v.UserId == loggedUser.Id) ?
+                        pigeon.Votes.FirstOrDefault(v => v.UserId == loggedUser.Id).Value :
+                        VoteValue.None,
                 UpVotesCount = pigeon.Votes.Count(c => c.Value == VoteValue.Up),
                 DownVotesCount = pigeon.Votes.Count(c => c.Value == VoteValue.Down),
                 FavouritedCount = pigeon.FavouritedCount,
-                Favourited = currentUser.FavouritePigeons.Any(p => p.Id == pigeon.Id),
+                Favourited = pigeon.FavouritedBy.Any(u => u.Id == loggedUser.Id),
                 Author = new AuthorViewModel
                 {
                     Username = pigeon.Author.UserName,
-                    ProfilePhotoData = pigeon.Author.ProfilePhoto != null ? pigeon.Author.ProfilePhoto.Base64Data : null
+                    ProfilePhotoData = pigeon.Author.ProfilePhoto != null ?
+                        pigeon.Author.ProfilePhoto.Base64Data : null
                 },
                 CommentsCount = pigeon.Comments.Count
             };
@@ -67,14 +67,16 @@
                 Id = pigeonDbModel.Id,
                 Title = pigeonDbModel.Title,
                 Content = pigeonDbModel.Content,
-                PhotoData = PhotoUtils.CheckForPhotoData(pigeonDbModel.Photo),
+                PhotoData = pigeonDbModel.Photo != null ? pigeonDbModel.Photo.Base64Data : null,
                 CreatedOn = pigeonDbModel.CreatedOn,
+                FavouritedCount = pigeonDbModel.FavouritedCount,
                 Author = new AuthorViewModel
                 {
                     Username = pigeonDbModel.Author.UserName,
-                    ProfilePhotoData =
-                        pigeonDbModel.Author.ProfilePhoto != null ? pigeonDbModel.Author.ProfilePhoto.Base64Data : null
-                }
+                    ProfilePhotoData = pigeonDbModel.Author.ProfilePhoto != null ?
+                        pigeonDbModel.Author.ProfilePhoto.Base64Data : null
+                },
+                CommentsCount = 0
             };
         }
     }

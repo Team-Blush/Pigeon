@@ -14,15 +14,19 @@
 
         public string ProfilePhotoData { get; set; }
 
-        public static Expression<Func<User, UserFollowerPreviewViewModel>> Create(User loggedUser)
+        public static Expression<Func<User, UserFollowerPreviewViewModel>> Create
         {
-            return follower => new UserFollowerPreviewViewModel
+            get
             {
-                Username = follower.UserName,
-                FirstName = follower.FirstName,
-                LastName = follower.LastName,
-                ProfilePhotoData = follower.ProfilePhoto != null ? follower.ProfilePhoto.Base64Data : null
-            };
+                return follower => new UserFollowerPreviewViewModel
+                {
+                    Username = follower.UserName,
+                    FirstName = follower.FirstName,
+                    LastName = follower.LastName,
+                    ProfilePhotoData = follower.ProfilePhoto != null ? follower.ProfilePhoto.Base64Data : null
+                };
+            }
+
         }
     }
 }

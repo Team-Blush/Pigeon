@@ -1,7 +1,6 @@
 ﻿namespace Pigeon.WebServices.Models.Profiles
 {
     using System;
-    using System.Linq;
     using System.Linq.Expressions;
     using Pigeon.Models;
     using Users;
@@ -22,7 +21,7 @@
 
         public string CoverPhotoData { get; set; }
 
-        public static Expression<Func<User, UserViewModel>> CreateExpr
+        public static Expression<Func<User, UserViewModel>> Create
         {
             get
             {

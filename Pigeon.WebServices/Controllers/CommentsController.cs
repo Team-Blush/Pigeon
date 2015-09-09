@@ -19,7 +19,10 @@
         {
             var pigeonComments = this.Data.Pigeons.GetAll()
                 .Where(p => p.Id == pigeonId)
-                .Select(p => p.Comments)
+                .Select(p => p.Comments
+                    .AsQueryable()
+                    .OrderByDescending(c => c.CreatedOn)
+                    .Select(CommentViewModel.Create))
                 .FirstOrDefault();
 
             if (pigeonComments == null)
@@ -27,11 +30,7 @@
                 return this.BadRequest("No such Pigeon.");
             }
 
-            var pigeonCommentViews = pigeonComments
-                .AsQueryable()
-                .Select(CommentViewModel.Create);
-
-            return this.Ok(pigeonCommentViews);
+            return this.Ok(pigeonComments);
         }
 
         [HttpPost]
@@ -66,20 +65,7 @@
 
             this.Data.SaveChanges();
 
-            var commentViewModel = new CommentViewModel
-            {
-                Id = commentToAdd.Id,
-                Content = commentToAdd.Content,
-                CreatedOn = commentToAdd.CreatedOn,
-                Author = new AuthorViewModel
-                {
-                    Username = loggedUser.UserName,
-                    ProfilePhotoData =
-                        commentToAdd.Author.ProfilePhoto != null
-                            ? commentToAdd.Author.ProfilePhoto.Base64Data
-                            : null
-                }
-            };
+            var commentViewModel = CommentViewModel.CreateSingle(commentToAdd);
 
             return this.Ok(commentViewModel);
         }

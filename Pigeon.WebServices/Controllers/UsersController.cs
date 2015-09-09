@@ -168,14 +168,16 @@
 
             var targetUser = this.Data.Users
                 .GetAll()
-                .FirstOrDefault(u => u.UserName == username);
+                .Where(u => u.UserName == username)
+                .Select(UserViewModel.Create(loggedUser))
+                .FirstOrDefault();
 
             if (targetUser == null)
             {
                 return this.NotFound();
             }
 
-            return this.Ok(UserViewModel.Create(targetUser, loggedUser));
+            return this.Ok(targetUser);
         }
 
         // GET api/users/search?searchTerm=***
@@ -201,17 +203,14 @@
         [Route("{username}/followers")]
         public IHttpActionResult GetFollowersInfo(string username)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
-            var loggedUser = this.Data.Users.GetById(loggedUserId);
-
             var targetUserFollowers = this.Data.Users.GetAll()
                 .Where(u => u.UserName == username)
                 .Select(tu => tu.Followers
                     .AsQueryable()
                     .OrderBy(f => f.FirstName + f.LastName)
-                    .Take(10)
-                    .Select(UserFollowerPreviewViewModel.Create(loggedUser)))
-                .FirstOrDefault();
+                    .Take(5)
+                    .Select(UserFollowerPreviewViewModel.Create))
+                 .FirstOrDefault();
 
             if (targetUserFollowers == null)
             {
@@ -227,24 +226,21 @@
         [Route("{username}/following")]
         public IHttpActionResult GetFollowingInfo(string username)
         {
-            var loggedUserId = this.User.Identity.GetUserId();
-            var loggedUser = this.Data.Users.GetById(loggedUserId);
+            var targetUserFollowing = this.Data.Users.GetAll()
+                .Where(u => u.UserName == username)
+                .Select(tu => tu.Following
+                    .AsQueryable()
+                    .OrderBy(f => f.FirstName + f.LastName)
+                    .Take(5)
+                    .Select(UserFollowerPreviewViewModel.Create))
+                .FirstOrDefault();
 
-            var targetUser = this.Data.Users.GetAll()
-                .FirstOrDefault(u => u.UserName == username);
-
-            if (targetUser == null)
+            if (targetUserFollowing == null)
             {
                 return this.NotFound();
             }
 
-            var loggedUserFollowing = targetUser.Following
-                .AsQueryable()
-                .OrderBy(f => f.FirstName + f.LastName)
-                .Take(10)
-                .Select(UserFollowerPreviewViewModel.Create(loggedUser));
-
-            return this.Ok(loggedUserFollowing);
+            return this.Ok(targetUserFollowing);
         }
 
         // GET api/users/{username}/follow
