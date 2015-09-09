@@ -164,12 +164,11 @@
         public IHttpActionResult GetUserInfo(string username)
         {
             var loggedUserId = this.User.Identity.GetUserId();
-            var loggedUser = this.Data.Users.GetById(loggedUserId);
 
             var targetUser = this.Data.Users
                 .GetAll()
                 .Where(u => u.UserName == username)
-                .Select(UserViewModel.Create(loggedUser))
+                .Select(UserViewModel.Create(loggedUserId))
                 .FirstOrDefault();
 
             if (targetUser == null)
@@ -186,13 +185,12 @@
         public IHttpActionResult SearchUserByName([FromUri] string searchTerm)
         {
             var loggedUserId = this.User.Identity.GetUserId();
-            var loggedUser = this.Data.Users.GetById(loggedUserId);
 
             searchTerm = searchTerm.ToLower();
             var foundUsers = this.Data.Users.GetAll()
                 .Where(u => u.UserName.ToLower().Contains(searchTerm))
                 .Take(5)
-                .Select(UserSearchViewModel.Create(loggedUser));
+                .Select(UserSearchViewModel.Create(loggedUserId));
 
             return this.Ok(foundUsers);
         }

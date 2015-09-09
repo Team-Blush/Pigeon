@@ -34,7 +34,7 @@
 
         public int CommentsCount { get; set; }
 
-        public static Expression<Func<Pigeon, PigeonViewModel>> Create(User loggedUser)
+        public static Expression<Func<Pigeon, PigeonViewModel>> Create(string loggedUserId)
         {
             return pigeon => new PigeonViewModel
             {
@@ -43,13 +43,13 @@
                 Content = pigeon.Content,
                 PhotoData = pigeon.Photo != null ? pigeon.Photo.Base64Data : null,
                 CreatedOn = pigeon.CreatedOn,
-                Voted = pigeon.Votes.Any(v => v.UserId == loggedUser.Id) ?
-                        pigeon.Votes.FirstOrDefault(v => v.UserId == loggedUser.Id).Value :
+                Voted = pigeon.Votes.Any(v => v.UserId == loggedUserId) ?
+                        pigeon.Votes.FirstOrDefault(v => v.UserId == loggedUserId).Value :
                         VoteValue.None,
                 UpVotesCount = pigeon.Votes.Count(c => c.Value == VoteValue.Up),
                 DownVotesCount = pigeon.Votes.Count(c => c.Value == VoteValue.Down),
                 FavouritedCount = pigeon.FavouritedCount,
-                Favourited = pigeon.FavouritedBy.Any(u => u.Id == loggedUser.Id),
+                Favourited = pigeon.FavouritedBy.Any(u => u.Id == loggedUserId),
                 Author = new AuthorViewModel
                 {
                     Username = pigeon.Author.UserName,

@@ -25,7 +25,7 @@
 
         public bool IsFollowed { get; set; }
 
-        public static Expression<Func<User, UserViewModel>> Create(User loggedUser)
+        public static Expression<Func<User, UserViewModel>> Create(string loggedUserId)
         {
             return targetUser => new UserViewModel
             {
@@ -36,8 +36,8 @@
                 Age = targetUser.Age,
                 ProfilePhotoData = targetUser.ProfilePhoto != null ? targetUser.ProfilePhoto.Base64Data : null,
                 CoverPhotoData = targetUser.CoverPhoto != null ? targetUser.CoverPhoto.Base64Data : null,
-                IsFollower = targetUser.Following.Any(f => f.Id.Equals(loggedUser.Id)),
-                IsFollowed = targetUser.Followers.Any(f => f.Id.Equals(loggedUser.Id))
+                IsFollower = targetUser.Following.Any(f => f.Id.Equals(loggedUserId)),
+                IsFollowed = targetUser.Followers.Any(f => f.Id.Equals(loggedUserId))
             };
         }
     }

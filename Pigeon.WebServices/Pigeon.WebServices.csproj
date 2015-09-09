@@ -239,7 +239,6 @@
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\CommentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\PigeonsController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\UsersController.cs" />

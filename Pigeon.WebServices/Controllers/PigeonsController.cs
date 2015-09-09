@@ -25,7 +25,6 @@
                 .FirstOrDefault(u => u.UserName == username);
 
             var loggedUserId = this.User.Identity.GetUserId();
-            var loggedUser = this.Data.Users.GetById(loggedUserId);
 
             if (targetUser == null)
             {
@@ -36,7 +35,7 @@
                 .Where(pigeon => pigeon.AuthorId == targetUser.Id)
                 .OrderByDescending(pigeon => pigeon.CreatedOn)
                 .Take(5)
-                .Select(PigeonViewModel.Create(loggedUser));
+                .Select(PigeonViewModel.Create(loggedUserId));
 
             return this.Ok(pigeons);
         }
@@ -55,7 +54,7 @@
                     .AsQueryable()
                     .OrderByDescending(p => p.CreatedOn)
                     .Take(3)
-                    .Select(PigeonViewModel.Create(loggedUser)));
+                    .Select(PigeonViewModel.Create(loggedUserId)));
 
             return this.Ok(newsPigeons);
         }
@@ -73,7 +72,7 @@
                 .AsQueryable()
                 .OrderByDescending(p => p.CreatedOn)
                 .Take(5)
-                .Select(PigeonViewModel.Create(loggedUser));
+                .Select(PigeonViewModel.Create(loggedUserId));
 
             return this.Ok(favouritePigeons);
         }
@@ -85,11 +84,10 @@
         public IHttpActionResult GetPigeonById(int id)
         {
             var loggedUserId = this.User.Identity.GetUserId();
-            var loggedUser = this.Data.Users.GetById(loggedUserId);
 
             var pigeon = this.Data.Pigeons.GetAll()
                 .Where(p => p.Id == id)
-                .Select(PigeonViewModel.Create(loggedUser))
+                .Select(PigeonViewModel.Create(loggedUserId))
                 .FirstOrDefault();
 
             if (pigeon == null)
