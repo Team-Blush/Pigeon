@@ -1,4 +1,4 @@
-﻿<div class="row" ng-repeat="pigeon in pigeonsData" ng-init="loadPigeonComments(pigeon)">
+﻿<div class="row" ng-repeat="pigeon in pigeonsData">
     <h4>
         {{pigeon.title}}
     </h4>
@@ -10,7 +10,7 @@
     </div>
 
     <div class="row">
-        <p>{{pigeon.favouritedCount}} Favourite {{pigeon.comments.length}} Comments</p>
+        <p>{{pigeon.favouritedCount}} Favourite {{pigeon.commentsCount}} Comments</p>
         <p>{{pigeon.upVotesCount}} Votes+ {{pigeon.downVotesCount}} Votes-</p>
         <p>
             <button type="button" title="Favourite" class="btn btn-default btn-lg" ng-if="!pigeon.favourited" ng-click="favourite(pigeon)">
@@ -25,7 +25,7 @@
             <button type="button" title="Vote Down" class="btn btn-default btn-lg" ng-if="pigeon.voted == 0 || pigeon.voted == 1" ng-click="voteDown(pigeon)">
                 <div class="glyphicon glyphicon-chevron-down"></div>
             </button>
-            <button type="button" title="Comments" class="btn btn-default btn-lg" ng-click="expandCreateComment(pigeon.id)">
+            <button type="button" title="Comments" class="btn btn-default btn-lg" ng-click="expandComments(pigeon)">
                 <div class="glyphicon glyphicon-comment"></div>
             </button>
             <button type="button" title="Edit" class="btn btn-default btn-lg" ng-if="pigeon.author.username == myData.username" ng-click="expandEditPigeon(pigeon.id)">

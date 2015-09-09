@@ -8,9 +8,9 @@
             $scope.editCommentData = {};
             $scope.isCreatePigeonExpanded = false;
             $scope.isEditPigeonExpanded = false;
+            $scope.isDeletePigeonExpanded = false;
             $scope.isCreateCommentExpanded = false;
             $scope.isEditCommentExpanded = false;
-            $scope.isDeletePigeonExpanded = false;
 
             $scope.expandCreatePigeon = function () {
                 $scope.isCreatePigeonExpanded = !$scope.isCreatePigeonExpanded;
@@ -28,17 +28,6 @@
 
             $scope.hideDeletePigeon = function() {
                 $scope.isDeletePigeonExpanded = false;
-            }
-
-            $scope.expandCreateComment = function (pigeonId) {
-                $scope.expandCommentsPigeonId = pigeonId;
-                $scope.isCreateCommentExpanded = !$scope.isCreateCommentExpanded;
-            }
-
-            $scope.expandEditComment = function (comment) {
-                $scope.expandEditCommentsCommentId = comment.id;
-                $scope.editCommentData.content = comment.content;
-                $scope.isEditCommentExpanded = !$scope.isEditCommentExpanded;
             }
 
             function parsePigeonDate(pigeon) {
@@ -96,6 +85,7 @@
                         serverData.forEach(function (pigeon) {
                             parsePigeonDate(pigeon);
                         });
+
                         $scope.pigeonsData = serverData;
                     },
                     function (serverError) {
@@ -247,6 +237,7 @@
                         serverData.author.profilePhotoData = serverData.author.profilePhotoData ? serverData.author.profilePhotoData : constants.profilePhotoData;
                         pigeon.comments.push(serverData);
                         $scope.commentData = {};
+                        pigeon.commentsCount++;
                         notifyService.showInfo("Successfully add comment");
                     },
                     function (serverError) {
@@ -255,7 +246,7 @@
                 }
             }
 
-            $scope.loadPigeonComments = function (pigeon) {
+            var loadPigeonComments = function (pigeon) {
                 commentService.loadPigeonComments(pigeon.id).then(
                     function (serverData) {
                         serverData.forEach(function (comment) {
@@ -267,6 +258,23 @@
                         console.error(serverError);
                     }
                 );
+            }
+
+            var isCommentsLoaded = false;
+
+            $scope.expandComments = function (pigeon) {
+                $scope.expandCommentsPigeonId = pigeon.id;
+                $scope.isCreateCommentExpanded = !$scope.isCreateCommentExpanded;
+                if ($scope.isCreateCommentExpanded && !isCommentsLoaded) {
+                    loadPigeonComments(pigeon);
+                    isCommentsLoaded = true;
+                }
+            }
+
+            $scope.expandEditComment = function (comment) {
+                $scope.expandEditCommentsCommentId = comment.id;
+                $scope.editCommentData.content = comment.content;
+                $scope.isEditCommentExpanded = !$scope.isEditCommentExpanded;
             }
 
             $scope.editComment = function (pigeon, comment) {
@@ -291,6 +299,7 @@
                         if (index > -1) {
                             pigeon.comments.splice(index, 1);
                         }
+                        pigeon.commentsCount--;
                         notifyService.showInfo(serverData.message);
                     },
                     function (serverError) {
