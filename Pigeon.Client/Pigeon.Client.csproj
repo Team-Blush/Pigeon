@@ -84,6 +84,7 @@
     <Content Include="templates\login-view.html" />
     <Content Include="templates\partial\footer-view.html" />
     <Content Include="templates\partial\header-view.html" />
+    <None Include="Properties\PublishProfiles\pigeonMedia.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
