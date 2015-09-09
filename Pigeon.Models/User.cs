@@ -2,9 +2,9 @@ namespace Pigeon.Models
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using Enumerations;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -17,9 +17,6 @@ namespace Pigeon.Models
 
         private ICollection<PigeonVote> votes;
 
-        private ICollection<Photo> coverPhotos;
-        private ICollection<Photo> profilePhotos;
-
         private ICollection<User> followers;
         private ICollection<User> following;
 
@@ -28,9 +25,6 @@ namespace Pigeon.Models
             this.pigeons = new HashSet<Pigeon>();
             this.favouritePigeons = new HashSet<Pigeon>();
             this.comments = new HashSet<Comment>();
-
-            this.profilePhotos = new HashSet<Photo>();
-            this.coverPhotos = new HashSet<Photo>();
 
             this.followers = new HashSet<User>();
             this.following = new HashSet<User>();
@@ -46,8 +40,6 @@ namespace Pigeon.Models
 
         [Range(0, 100)]
         public int? Age { get; set; }
-
-        public Gender Gender { get; set; }
 
         public virtual ICollection<Pigeon> Pigeons
         {
@@ -73,17 +65,15 @@ namespace Pigeon.Models
             set { this.votes = value; }
         }
 
-        public virtual ICollection<Photo> ProfilePhotos
-        {
-            get { return this.profilePhotos; }
-            set { this.profilePhotos = value; }
-        }
+        public int? ProfilePhotoId { get; set; }
 
-        public virtual ICollection<Photo> CoverPhotos
-        {
-            get { return this.coverPhotos; }
-            set { this.coverPhotos = value; }
-        }
+        [ForeignKey("ProfilePhotoId")]
+        public virtual Photo ProfilePhoto { get; set; }
+
+        public int? CoverPhotoId { get; set; }
+
+        [ForeignKey("CoverPhotoId")]
+        public virtual Photo CoverPhoto { get; set; }
 
         public virtual ICollection<User> Followers
         {

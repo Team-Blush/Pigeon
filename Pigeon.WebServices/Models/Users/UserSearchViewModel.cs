@@ -19,22 +19,17 @@
 
         public bool IsFollowed { get; set; }
 
-        public static Expression<Func<User, UserSearchViewModel>> Create
+        public static Expression<Func<User, UserSearchViewModel>> Create(User loggedUser)
         {
-            get
+            return targetUser => new UserSearchViewModel
             {
-                return user => new UserSearchViewModel
-                {
-                    Username = user.UserName,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    ProfilePhotoData = 
-                    user.ProfilePhotos
-                        .FirstOrDefault(photo => photo.ProfilePhotoFor == user) != null ?
-                    user.ProfilePhotos
-                        .FirstOrDefault(photo => photo.ProfilePhotoFor == user).Base64Data : null
-                };
-            }
+                Username = targetUser.UserName,
+                FirstName = targetUser.FirstName,
+                LastName = targetUser.LastName,
+                ProfilePhotoData = targetUser.ProfilePhoto != null ? targetUser.ProfilePhoto.Base64Data : null,
+                IsFollower = loggedUser.Followers.Any(u => u.Id.Equals(targetUser.Id)),
+                IsFollowed = loggedUser.Following.Any(u => u.Id.Equals(targetUser.Id))
+            };
         }
     }
 }

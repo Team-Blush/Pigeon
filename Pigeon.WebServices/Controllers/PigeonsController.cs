@@ -6,10 +6,7 @@
     using System.Web.Http;
     using System.Web.OData;
     using Microsoft.AspNet.Identity;
-    using Models.Comments;
     using Models.Pigeons;
-    using Models.Users;
-    using PhotoUtils;
     using Pigeon.Models;
     using Pigeon.Models.Enumerations;
     using UserSessionUtils;
@@ -24,29 +21,22 @@
         [EnableQuery]
         public IHttpActionResult GetUserPigeons(string username)
         {
-            var user = this.Data.Users.GetAll()
+            var targetUser = this.Data.Users.GetAll()
                 .FirstOrDefault(u => u.UserName == username);
 
             var loggedUserId = this.User.Identity.GetUserId();
             var loggedUser = this.Data.Users.GetById(loggedUserId);
 
-            if (user == null)
+            if (targetUser == null)
             {
                 return this.NotFound();
             }
 
             var pigeons = this.Data.Pigeons.GetAll()
-                .Where(pigeon => pigeon.AuthorId == user.Id)
+                .Where(pigeon => pigeon.AuthorId == targetUser.Id)
                 .OrderByDescending(pigeon => pigeon.CreatedOn)
                 .Take(5)
-                .Select(PigeonViewModel.Create)
-                .ToList();
-
-            foreach (var pigeon in pigeons)
-            {
-                pigeon.Voted = this.HasUserVotedForPigeon(loggedUser, pigeon);
-                pigeon.Favourited = this.HasUserFavouritedPigeon(loggedUser, pigeon.Id);
-            }
+                .Select(PigeonViewModel.CreateExpr(loggedUser));
 
             return this.Ok(pigeons);
         }
@@ -60,19 +50,14 @@
             var loggedUserId = this.User.Identity.GetUserId();
             var loggedUser = this.Data.Users.GetById(loggedUserId);
 
-            var newsPigeons = this.Data.Pigeons.GetAll()
-                .Where(p => loggedUser.Following
-                    .Select(uf => uf.Id).Contains(p.AuthorId))
-                .OrderByDescending(p => p.CreatedOn)
-                .Take(5)
-                .Select(PigeonViewModel.Create)
-                .ToList();
+            var loggedUserFollowing = loggedUser.Following;
 
-            foreach (var pigeon in newsPigeons)
-            {
-                pigeon.Voted = this.HasUserVotedForPigeon(loggedUser, pigeon);
-                pigeon.Favourited = this.HasUserFavouritedPigeon(loggedUser, pigeon.Id);
-            }
+            var newsPigeons = loggedUserFollowing
+                .Select(f => f.Pigeons
+                    .AsQueryable()
+                    .OrderByDescending(p => p.CreatedOn)
+                    .Take(3)
+                    .Select(PigeonViewModel.CreateExpr(loggedUser)));
 
             return this.Ok(newsPigeons);
         }
@@ -88,14 +73,7 @@
 
             var favouritePigeons = loggedUser.FavouritePigeons
                 .AsQueryable()
-                .Select(PigeonViewModel.Create)
-                .ToList();
-
-            foreach (var pigeon in favouritePigeons)
-            {
-                pigeon.Voted = this.HasUserVotedForPigeon(loggedUser, pigeon);
-                pigeon.Favourited = true;
-            }
+                .Select(PigeonViewModel.CreateExpr(loggedUser));
 
             return this.Ok(favouritePigeons);
         }
@@ -111,16 +89,13 @@
 
             var pigeon = this.Data.Pigeons.GetAll()
                 .Where(p => p.Id == id)
-                .Select(PigeonViewModel.Create)
+                .Select(PigeonViewModel.CreateExpr(loggedUser))
                 .FirstOrDefault();
 
             if (pigeon == null)
             {
                 return this.BadRequest("No such Pigeon.");
             }
-
-            pigeon.Voted = this.HasUserVotedForPigeon(loggedUser, pigeon);
-            pigeon.Favourited = this.HasUserFavouritedPigeon(loggedUser, pigeon.Id);
 
             return this.Ok(pigeon);
         }
@@ -144,14 +119,13 @@
                 Author = this.Data.Users.Search(u => u.Id == loggedUserId).FirstOrDefault(),
                 AuthorId = loggedUserId,
                 CreatedOn = DateTime.Now,
-                FavouritedCount = 0,
                 Comments = new HashSet<Comment>(),
                 Votes = new HashSet<PigeonVote>()
             };
 
             if (inputPigeon.PhotoData != null)
             {
-                var photo = new Photo { Base64Data = inputPigeon.PhotoData };
+                var photo = new Photo {Base64Data = inputPigeon.PhotoData};
 
                 this.Data.Photos.Add(photo);
                 pigeonToAdd.Photo = photo;
@@ -160,25 +134,7 @@
             this.Data.Pigeons.Add(pigeonToAdd);
             this.Data.SaveChanges();
 
-            var pigeonViewModel = new PigeonViewModel
-            {
-                Id = pigeonToAdd.Id,
-                Title = pigeonToAdd.Title,
-                Content = pigeonToAdd.Content,
-                PhotoData = PhotoUtils.CheckForPhotoData(pigeonToAdd.Photo),
-                CreatedOn = pigeonToAdd.CreatedOn,
-                FavouritedCount = pigeonToAdd.FavouritedCount,
-                Author = new AuthorViewModel
-                {
-                    Username = pigeonToAdd.Author.UserName,
-                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(pigeonToAdd.Author)
-                },
-                Comments = pigeonToAdd.Comments
-                    .AsQueryable()
-                    .OrderByDescending(c => c.CreatedOn)
-                    .Take(3)
-                    .Select(CommentViewModel.Create)
-            };
+            var pigeonViewModel = PigeonViewModel.CreateSingle(pigeonToAdd);
 
             return this.Ok(pigeonViewModel);
         }
@@ -221,7 +177,7 @@
                 }
 
                 if ((existingVote.Value == VoteValue.Down || existingVote.Value == VoteValue.None)
-                     && voteModel.Value == VoteValue.Up)
+                    && voteModel.Value == VoteValue.Up)
                 {
                     existingVote.Value = VoteValue.Up;
                     this.Data.Votes.Update(existingVote);
@@ -233,7 +189,6 @@
                 {
                     UserId = loggedUserId,
                     PigeonId = pigeon.Id,
-                    Pigeon = pigeon,
                     Value = voteModel.Value,
                     VotedOn = DateTime.Now
                 };
@@ -279,7 +234,7 @@
             this.Data.Pigeons.Update(pigeonToUpdate);
             this.Data.SaveChanges();
 
-            var pigeonViewModel = new { pigeonToUpdate.Content };
+            var pigeonViewModel = new {pigeonToUpdate.Content};
 
             return this.Ok(pigeonViewModel);
         }
@@ -387,11 +342,7 @@
             // Delete pigeon photo if it is no one's cover or profile photo
             if (pigeon.Photo != null)
             {
-                if (pigeon.Photo.CoverPhotoFor == null &&
-                    pigeon.Photo.ProfilePhotoFor == null)
-                {
-                    this.Data.Photos.Delete(pigeon.Photo);
-                }
+                this.Data.Photos.Delete(pigeon.Photo);
             }
 
             this.Data.Pigeons.Delete(pigeon);
@@ -401,22 +352,6 @@
             {
                 message = "Successfully deleted pigeon."
             });
-        }
-
-        private VoteValue HasUserVotedForPigeon(User loggedUser, PigeonViewModel pigeon)
-        {
-            var existingVote = loggedUser.Votes.FirstOrDefault(pv => pv.PigeonId == pigeon.Id);
-            if (existingVote != null && existingVote.Value != VoteValue.None)
-            {
-                return existingVote.Value == VoteValue.Up ? VoteValue.Up : VoteValue.Down;
-            }
-
-            return VoteValue.None;
-        }
-
-        private bool HasUserFavouritedPigeon(User loggedUser, int pigeonId)
-        {
-            return loggedUser.FavouritePigeons.Any(p => p.Id == pigeonId);
         }
     }
 }

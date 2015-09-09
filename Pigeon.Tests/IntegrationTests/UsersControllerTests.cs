@@ -100,7 +100,7 @@
             this.Login(FirstUserUsername, FirstUserPassword);
 
             var getUserInfoResponse = this.Get(string.Format(Endpoints.UserPreview, FirstUserUsername));
-            var getUserInfoResponseResult = getUserInfoResponse.Content.ReadAsAsync<UserPreviewViewModel>().Result;
+            var getUserInfoResponseResult = getUserInfoResponse.Content.ReadAsAsync<UserSearchViewModel>().Result;
 
             Assert.AreEqual(HttpStatusCode.OK, getUserInfoResponse.StatusCode);
             Assert.IsNotNull(getUserInfoResponseResult.Username);

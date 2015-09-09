@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq.Expressions;
-    using PhotoUtils;
     using Pigeon.Models;
 
     public class UserFollowerPreviewViewModel
@@ -15,18 +14,15 @@
 
         public string ProfilePhotoData { get; set; }
 
-        public static Expression<Func<User, UserFollowerPreviewViewModel>> Create
+        public static Expression<Func<User, UserFollowerPreviewViewModel>> Create(User loggedUser)
         {
-            get
+            return follower => new UserFollowerPreviewViewModel
             {
-                return follower => new UserFollowerPreviewViewModel
-                {
-                    Username = follower.UserName,
-                    FirstName = follower.FirstName,
-                    LastName = follower.LastName,
-                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(follower)
-                };
-            }
+                Username = follower.UserName,
+                FirstName = follower.FirstName,
+                LastName = follower.LastName,
+                ProfilePhotoData = follower.ProfilePhoto != null ? follower.ProfilePhoto.Base64Data : null
+            };
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿namespace Pigeon.WebServices.Models.Comments
 {
     using System;
-    using System.Linq;
     using System.Linq.Expressions;
     using Pigeon.Models;
     using Users;
@@ -29,10 +28,7 @@
                     {
                         Username = comment.Author.UserName,
                         ProfilePhotoData =
-                        comment.Author.ProfilePhotos
-                            .FirstOrDefault(photo => photo.ProfilePhotoFor == comment.Author) != null ?
-                        comment.Author.ProfilePhotos
-                            .FirstOrDefault(photo => photo.ProfilePhotoFor == comment.Author).Base64Data : null
+                            comment.Author.ProfilePhoto != null ? comment.Author.ProfilePhoto.Base64Data : null
                     }
                 };
             }

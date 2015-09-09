@@ -45,18 +45,6 @@ namespace Pigeon.Data
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-                .HasMany(u => u.ProfilePhotos)
-                .WithOptional(p => p.ProfilePhotoFor)
-                .Map(m => { m.MapKey("UserProfileId"); })
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.CoverPhotos)
-                .WithOptional(p => p.CoverPhotoFor)
-                .Map(m => { m.MapKey("UserCoverId"); })
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<User>()
                 .HasMany(u => u.Following)
                 .WithMany()
                 .Map(m =>

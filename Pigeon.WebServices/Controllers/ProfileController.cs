@@ -8,7 +8,6 @@
     using Microsoft.AspNet.Identity.EntityFramework;
     using Models.Profiles;
     using Models.Users;
-    using PhotoUtils;
     using Pigeon.Models;
     using UserSessionUtils;
 
@@ -35,21 +34,12 @@
         public IHttpActionResult GetProfileInfo()
         {
             var loggedUserId = this.User.Identity.GetUserId();
-            var loggedUser = this.Data.Users.GetById(loggedUserId);
+            var loggedUserView = this.Data.Users.GetAll()
+                .Where(u => u.Id == loggedUserId)
+                .Select(ProfileViewModel.CreateExpr)
+                .FirstOrDefault();
 
-            var profileViewModel = new UserViewModel
-            {
-                Username = loggedUser.UserName,
-                FirstName = loggedUser.FirstName,
-                LastName = loggedUser.LastName,
-                Email = loggedUser.Email,
-                Age = loggedUser.Age,
-                Gender = loggedUser.Gender,
-                ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(loggedUser),
-                CoverPhotoData = PhotoUtils.CheckForCoverPhotoData(loggedUser)
-            };
-
-            return this.Ok(profileViewModel);
+            return this.Ok(loggedUserView);
         }
 
         // PUT api/profile/edit
@@ -75,11 +65,12 @@
             loggedUser.FirstName = profileBindingModel.FirstName;
             loggedUser.LastName = profileBindingModel.LastName;
             loggedUser.Email = profileBindingModel.Email;
-            loggedUser.Age = profileBindingModel.Age ?? null;
+            loggedUser.Age = profileBindingModel.Age;
 
-            this.EditUserProfilePhoto(loggedUser, profileBindingModel.ProfilePhotoData);
-            this.EditUserCoverPhoto(loggedUser, profileBindingModel.CoverPhotoData);
+            this.UpdateUserProfilePhoto(profileBindingModel.ProfilePhotoData, loggedUser);
+            this.UpdateUserCoverPhoto(profileBindingModel.CoverPhotoData, loggedUser);
 
+            this.Data.Users.Update(loggedUser);
             this.Data.SaveChanges();
 
             return this.Ok(new
@@ -93,13 +84,15 @@
         [Route("changePassword")]
         public async Task<IHttpActionResult> ChangeProfilePassword(ChangePasswordBindingModel passChangeBindingModel)
         {
+            var userPassword = this.User.Identity.GetUserId();
+
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest(this.ModelState);
             }
 
             var result = await this.UserManager.ChangePasswordAsync(
-                this.User.Identity.GetUserId(),
+                userPassword,
                 passChangeBindingModel.OldPassword,
                 passChangeBindingModel.NewPassword);
 
@@ -114,49 +107,25 @@
             });
         }
 
-        private void EditUserProfilePhoto(User loggedUser, string profilePhotoData)
+        private void UpdateUserCoverPhoto(string coverPhotoData, User loggedUser)
         {
-            var userProfilePhoto = loggedUser.ProfilePhotos
-                .FirstOrDefault(p => p.ProfilePhotoFor == loggedUser);
-
-            if (userProfilePhoto != null)
+            if (coverPhotoData != null)
             {
-                userProfilePhoto.ProfilePhotoFor = null;
-                this.Data.Photos.Update(userProfilePhoto);
-            }
+                var coverPhoto = new Photo { Base64Data = coverPhotoData };
 
-            if (profilePhotoData != null)
-            {
-                var newProfilePhoto = new Photo
-                {
-                    Base64Data = profilePhotoData,
-                    ProfilePhotoFor = loggedUser
-                };
-                this.Data.Photos.Add(newProfilePhoto);
-                loggedUser.ProfilePhotos.Add(newProfilePhoto);
+                this.Data.Photos.Add(coverPhoto);
+                loggedUser.CoverPhoto = coverPhoto;
             }
         }
 
-        private void EditUserCoverPhoto(User loggedUser, string coverPhotoData)
+        private void UpdateUserProfilePhoto(string profilePhotoData, User loggedUser)
         {
-            var userCoverPhoto = loggedUser.CoverPhotos
-                .FirstOrDefault(p => p.CoverPhotoFor == loggedUser);
-
-            if (userCoverPhoto != null)
+            if (profilePhotoData != null)
             {
-                userCoverPhoto.CoverPhotoFor = null;
-                this.Data.Photos.Update(userCoverPhoto);
-            }
+                var profilePhoto = new Photo { Base64Data = profilePhotoData };
 
-            if (coverPhotoData != null)
-            {
-                var newCoverPhoto = new Photo
-                {
-                    Base64Data = coverPhotoData,
-                    CoverPhotoFor = loggedUser
-                };
-                this.Data.Photos.Add(newCoverPhoto);
-                loggedUser.CoverPhotos.Add(newCoverPhoto);
+                this.Data.Photos.Add(profilePhoto);
+                loggedUser.ProfilePhoto = profilePhoto;
             }
         }
     }

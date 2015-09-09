@@ -1,10 +1,9 @@
 ﻿namespace Pigeon.WebServices.Models.Pigeons
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
-    using Comments;
+    using PhotoUtils;
     using Pigeon.Models;
     using Pigeon.Models.Enumerations;
     using Users;
@@ -33,38 +32,50 @@
 
         public AuthorViewModel Author { get; set; }
 
-        public IEnumerable<CommentViewModel> Comments { get; set; }
+        public int CommentsCount { get; set; }
 
-        public static Expression<Func<Pigeon, PigeonViewModel>> Create
+        public static Expression<Func<Pigeon, PigeonViewModel>> CreateExpr(User currentUser)
         {
-            get
+            return pigeon => new PigeonViewModel
             {
-                return pigeon => new PigeonViewModel
+                Id = pigeon.Id,
+                Title = pigeon.Title,
+                Content = pigeon.Content,
+                PhotoData = pigeon.Photo != null ? pigeon.Photo.Base64Data : null,
+                CreatedOn = pigeon.CreatedOn,
+                Voted =
+                    currentUser.Votes.Any(v => v.UserId == currentUser.Id)
+                        ? currentUser.Votes.FirstOrDefault(v => v.UserId == currentUser.Id).Value
+                        : VoteValue.None,
+                UpVotesCount = pigeon.Votes.Count(c => c.Value == VoteValue.Up),
+                DownVotesCount = pigeon.Votes.Count(c => c.Value == VoteValue.Down),
+                FavouritedCount = pigeon.FavouritedCount,
+                Favourited = currentUser.FavouritePigeons.Any(p => p.Id == pigeon.Id),
+                Author = new AuthorViewModel
                 {
-                    Id = pigeon.Id,
-                    Title = pigeon.Title,
-                    Content = pigeon.Content,
-                    PhotoData = pigeon.Photo != null ? pigeon.Photo.Base64Data : null,
-                    CreatedOn = pigeon.CreatedOn,
-                    UpVotesCount = pigeon.Votes.Count(c => c.Value == VoteValue.Up),
-                    DownVotesCount = pigeon.Votes.Count(c => c.Value == VoteValue.Down),
-                    FavouritedCount = pigeon.FavouritedCount,
-                    Author = new AuthorViewModel
-                    {
-                        Username = pigeon.Author.UserName,
-                        ProfilePhotoData =
-                            pigeon.Author.ProfilePhotos
-                                .FirstOrDefault(photo => photo.ProfilePhotoFor == pigeon.Author) != null ?
-                            pigeon.Author.ProfilePhotos
-                                .FirstOrDefault(photo => photo.ProfilePhotoFor == pigeon.Author).Base64Data : null
-                    },
-                    Comments = pigeon.Comments
-                        .AsQueryable()
-                        .OrderByDescending(c => c.CreatedOn)
-                        .Take(3)
-                        .Select(CommentViewModel.Create)
-                };
-            }
+                    Username = pigeon.Author.UserName,
+                    ProfilePhotoData = pigeon.Author.ProfilePhoto != null ? pigeon.Author.ProfilePhoto.Base64Data : null
+                },
+                CommentsCount = pigeon.Comments.Count
+            };
+        }
+
+        public static PigeonViewModel CreateSingle(Pigeon pigeonDbModel)
+        {
+            return new PigeonViewModel
+            {
+                Id = pigeonDbModel.Id,
+                Title = pigeonDbModel.Title,
+                Content = pigeonDbModel.Content,
+                PhotoData = PhotoUtils.CheckForPhotoData(pigeonDbModel.Photo),
+                CreatedOn = pigeonDbModel.CreatedOn,
+                Author = new AuthorViewModel
+                {
+                    Username = pigeonDbModel.Author.UserName,
+                    ProfilePhotoData =
+                        pigeonDbModel.Author.ProfilePhoto != null ? pigeonDbModel.Author.ProfilePhoto.Base64Data : null
+                }
+            };
         }
     }
 }

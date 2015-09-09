@@ -1,8 +1,10 @@
 ﻿namespace Pigeon.WebServices.Models.Profiles
 {
+    using System;
     using System.Linq;
+    using System.Linq.Expressions;
     using Pigeon.Models;
-    using Pigeon.Models.Enumerations;
+    using Users;
 
     public class ProfileViewModel
     {
@@ -16,30 +18,25 @@
 
         public int? Age { get; set; }
 
-        public Gender Gender { get; set; }
-
         public string ProfilePhotoData { get; set; }
 
         public string CoverPhotoData { get; set; }
 
-        public static ProfileViewModel Create(User userDbModel)
+        public static Expression<Func<User, UserViewModel>> CreateExpr
         {
-            var profilePhoto = userDbModel.ProfilePhotos
-                .FirstOrDefault(p => p.ProfilePhotoFor == userDbModel);
-            var coverPhoto = userDbModel.CoverPhotos
-                .FirstOrDefault(p => p.CoverPhotoFor == userDbModel);
-
-            return new ProfileViewModel
+            get
             {
-                Username = userDbModel.UserName,
-                Email = userDbModel.Email,
-                FirstName = userDbModel.FirstName,
-                LastName = userDbModel.LastName,
-                Age = userDbModel.Age,
-                Gender = userDbModel.Gender,
-                ProfilePhotoData = profilePhoto != null ? profilePhoto.Base64Data : null,
-                CoverPhotoData = coverPhoto != null ? coverPhoto.Base64Data : null
-            };
+                return user => new UserViewModel
+                {
+                    Username = user.UserName,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Age = user.Age,
+                    ProfilePhotoData = user.ProfilePhoto != null ? user.ProfilePhoto.Base64Data : null,
+                    CoverPhotoData = user.CoverPhoto != null ? user.CoverPhoto.Base64Data : null
+                };
+            }
         }
     }
 }

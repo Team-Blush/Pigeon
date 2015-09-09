@@ -6,7 +6,6 @@
     using Microsoft.AspNet.Identity;
     using Models.Comments;
     using Models.Users;
-    using PhotoUtils;
     using Pigeon.Models;
     using UserSessionUtils;
 
@@ -18,14 +17,17 @@
         [Route]
         public IHttpActionResult GetPigeonComments(int pigeonId)
         {
-            var pigeon = this.Data.Pigeons.GetById(pigeonId);
+            var pigeonComments = this.Data.Pigeons.GetAll()
+                .Where(p => p.Id == pigeonId)
+                .Select(p => p.Comments)
+                .FirstOrDefault();
 
-            if (pigeon == null)
+            if (pigeonComments == null)
             {
                 return this.BadRequest("No such Pigeon.");
             }
 
-            var pigeonCommentViews = pigeon.Comments
+            var pigeonCommentViews = pigeonComments
                 .AsQueryable()
                 .Select(CommentViewModel.Create);
 
@@ -72,7 +74,10 @@
                 Author = new AuthorViewModel
                 {
                     Username = loggedUser.UserName,
-                    ProfilePhotoData = PhotoUtils.CheckForProfilePhotoData(loggedUser)
+                    ProfilePhotoData =
+                        commentToAdd.Author.ProfilePhoto != null
+                            ? commentToAdd.Author.ProfilePhoto.Base64Data
+                            : null
                 }
             };
 

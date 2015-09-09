@@ -28,7 +28,6 @@
         [MaxLength(150)]
         public string Content { get; set; }
 
-        // [Required]
         public string AuthorId { get; set; }
 
         public virtual User Author { get; set; }
@@ -47,6 +46,8 @@
             get { return this.favouritedBy; }
             set { this.favouritedBy = value; }
         }
+
+        public int CommentsCount { get; set; }
 
         public virtual ICollection<Comment> Comments
         {

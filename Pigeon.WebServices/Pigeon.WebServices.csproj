@@ -40,6 +40,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework.Extended, Version=6.0.0.0, Culture=neutral, PublicKeyToken=05b7e29bdd433584, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.Extended.6.1.0.168\lib\net45\EntityFramework.Extended.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.OData.Core, Version=6.13.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.OData.Core.6.13.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.OData.Core.dll</HintPath>
@@ -241,11 +245,11 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Models\Comments\CommentBindingModel.cs" />
     <Compile Include="Models\Comments\CommentViewModel.cs" />
+    <Compile Include="Models\Profiles\ProfileViewModel.cs" />
     <Compile Include="Models\Users\AuthorViewModel.cs" />
     <Compile Include="Models\Pigeons\PigeonBindingModel.cs" />
     <Compile Include="Models\Pigeons\PigeonViewModel.cs" />
     <Compile Include="Models\Pigeons\PigeonVoteBindingModel.cs" />
-    <Compile Include="Models\Profiles\ProfileViewModel.cs" />
     <Compile Include="Models\Users\ChangePasswordBindingModel.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -254,7 +258,6 @@
     <Compile Include="Models\Users\LoginUserBindingModel.cs" />
     <Compile Include="Models\Users\RegisterUserBindingModel.cs" />
     <Compile Include="Models\Users\UserFollowerPreviewViewModel.cs" />
-    <Compile Include="Models\Users\UserPreviewViewModel.cs" />
     <Compile Include="Models\Users\UserSearchViewModel.cs" />
     <Compile Include="Models\Users\UserSessionViewModel.cs" />
     <Compile Include="Models\Users\UserViewModel.cs" />
@@ -275,8 +278,6 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Resources\Default-Cover.jpg" />
-    <Content Include="Resources\Default-Profile.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
