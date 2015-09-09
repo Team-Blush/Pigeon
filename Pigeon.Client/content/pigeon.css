@@ -34,6 +34,10 @@ hr {
     border-color: #999999;
 }
 
+small {
+    text-transform: lowercase;
+}
+
 .brand,
 .address-bar {
     display: none;
@@ -49,11 +53,6 @@ hr {
     text-transform: uppercase;
     font-weight: 400;
     letter-spacing: 3px;
-}
-
-.img-full {
-    max-height: 350px;
-    width: auto;
 }
 
 .brand-before,
@@ -129,6 +128,11 @@ hr {
     margin: 10px auto;
     max-height: 400px;
     width: 100%;
+}
+
+.img-full {
+    max-height: 350px;
+    width: auto;
 }
 
 .img-small {

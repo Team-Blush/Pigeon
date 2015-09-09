@@ -1,8 +1,13 @@
 ﻿<div class="row" ng-repeat="pigeon in pigeonsData">
     <h4>
         {{pigeon.title}}
+        <small ng-if="pigeon.author.username != myData.username">by {{pigeon.author.username}}</small>
     </h4>
-    <img class="img-responsive img-border img-full" ng-src="{{pigeon.photoData}}">
+    <div class="row">
+    </div>
+    <div class="row">
+        <img class="img-responsive img-border img-full" ng-src="{{pigeon.photoData}}">
+    </div>
 
     <div class="row">
         <p>{{pigeon.content}}</p>

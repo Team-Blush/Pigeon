@@ -85,7 +85,7 @@
                         serverData.forEach(function (pigeon) {
                             parsePigeonDate(pigeon);
                         });
-
+                        
                         $scope.pigeonsData = serverData;
                     },
                     function (serverError) {
@@ -99,6 +99,7 @@
                         serverData.forEach(function (pigeon) {
                             parsePigeonDate(pigeon);
                         });
+                        console.log(serverData);
                         $scope.pigeonsData = serverData;
                     },
                     function (serverError) {
