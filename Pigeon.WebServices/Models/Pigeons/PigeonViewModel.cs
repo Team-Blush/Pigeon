@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using System.Linq.Expressions;
-    using PhotoUtils;
     using Pigeon.Models;
     using Pigeon.Models.Enumerations;
     using Users;

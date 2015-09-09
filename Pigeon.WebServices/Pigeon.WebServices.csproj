@@ -260,7 +260,6 @@
     <Compile Include="Models\Users\UserSearchViewModel.cs" />
     <Compile Include="Models\Users\UserSessionViewModel.cs" />
     <Compile Include="Models\Users\UserViewModel.cs" />
-    <Compile Include="PhotoUtils\PhotoUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
