@@ -9,7 +9,7 @@
 
             $scope.editProfile = function () {
                 var myData = $scope.myData;
-                if (validationService.validateEditProfileForm(myData.firstName, myData.lastName, myData.email, myData.age)) {
+                if (validationService.validateEditProfileForm(myData)) {
                     myData = validationService.escapeHtmlSpecialChars(myData);
                     accountService.editProfile(myData).then(
                         function (serverResponse) {
@@ -26,7 +26,7 @@
 
             $scope.changePassword = function () {
                 var changePasswordData = $scope.changePasswordData;
-                if (validationService.validateChangePasswordForm(changePasswordData.newPassword, changePasswordData.confirmPassword)) {
+                if (validationService.validateChangePasswordForm(changePasswordData)) {
                     changePasswordData = validationService.escapeHtmlSpecialChars(changePasswordData);
                     accountService.changePassword(changePasswordData).then(
                         function (serverResponse) {

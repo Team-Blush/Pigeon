@@ -24,7 +24,7 @@
                         notifyService.showInfo(serverData.message);
                     },
                     function (serverError) {
-                        console.log(serverError);
+                        notifyService.showError(serverError);
                     }
                 );
             }
@@ -36,7 +36,7 @@
                         notifyService.showInfo(serverData.message);
                     },
                     function (serverError) {
-                        console.log(serverError);
+                        notifyService.showError(serverError);
                     }
                 );
             }

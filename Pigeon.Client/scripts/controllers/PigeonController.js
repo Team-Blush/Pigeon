@@ -1,6 +1,6 @@
-﻿define(['app', 'constants', 'pigeonService', 'commentService', 'notifyService', 'ngPictureSelect'],
+﻿define(['app', 'constants', 'pigeonService', 'commentService', 'validationService', 'notifyService', 'ngPictureSelect'],
     function (app) {
-        app.controller('PigeonController', function ($scope, constants, pigeonService, commentService, notifyService) {
+        app.controller('PigeonController', function ($scope, constants, pigeonService, commentService, validationService, notifyService) {
             $scope.pigeonData = {};
             $scope.pigeonsData = [];
             $scope.editPigeonData = {};
@@ -10,6 +10,7 @@
             $scope.isEditPigeonExpanded = false;
             $scope.isCreateCommentExpanded = false;
             $scope.isEditCommentExpanded = false;
+            $scope.isDeletePigeonExpanded = false;
 
             $scope.expandCreatePigeon = function () {
                 $scope.isCreatePigeonExpanded = !$scope.isCreatePigeonExpanded;
@@ -18,6 +19,15 @@
             $scope.expandEditPigeon = function (pigeonId) {
                 $scope.expandEditPigeonsPigeonId = pigeonId;
                 $scope.isEditPigeonExpanded = !$scope.isEditPigeonExpanded;
+            }
+
+            $scope.expandDeletePigeon = function (pigeonId) {
+                $scope.expandDeletePigeonsPigeonId = pigeonId;
+                $scope.isDeletePigeonExpanded = !$scope.isDeletePigeonExpanded;
+            }
+
+            $scope.hideDeletePigeon = function() {
+                $scope.isDeletePigeonExpanded = false;
             }
 
             $scope.expandCreateComment = function (pigeonId) {
@@ -56,16 +66,19 @@
 
             $scope.createPigeon = function () {
                 var pigeonData = $scope.pigeonData;
-                pigeonService.createPigeon(pigeonData).then(
-                    function (serverData) {
-                        parsePigeonDate(serverData);
-                        $scope.pigeonsData.unshift(serverData);
-                        $scope.isCreatePigeonExpanded = false;
-                        $scope.pigeonData = {};
-                    },
-                    function (serverError) {
-                        console.error(serverError);
-                    });
+                if (validationService.validatePigeon(pigeonData)) {
+                    pigeonService.createPigeon(pigeonData).then(
+                        function (serverData) {
+                            parsePigeonDate(serverData);
+                            $scope.pigeonsData.unshift(serverData);
+                            $scope.isCreatePigeonExpanded = false;
+                            $scope.pigeonData = {};
+                        },
+                        function (serverError) {
+                            console.error(serverError);
+                        }
+                    );
+                }
             }
 
             $scope.loadUserPigeons = function () {
@@ -111,30 +124,37 @@
             }
 
             $scope.editPigeon = function (pigeon) {
-                var pigeonData = {
-                    title: pigeon.title,
-                    content: pigeon.content,
-                    photoData: pigeon.photoData
+                if (validationService.validatePigeon(pigeon)) {
+                    var pigeonData = {
+                        title: pigeon.title,
+                        content: pigeon.content,
+                        photoData: pigeon.photoData
+                    }
+                    pigeonService.editPigeon(pigeon.id, pigeonData).then(
+                        function (serverData) {
+                            pigeon.content = serverData.content;
+                            $scope.isEditPigeonExpanded = false;
+                            notifyService.showInfo("Successfully updated pigeon");
+                        },
+                        function (serverError) {
+                            notifyService.showError(serverError);
+                        }
+                    );
                 }
-                pigeonService.editPigeon(pigeon.id, pigeonData).then(
-                    function (serverData) {
-                        pigeon.content = serverData.content;
-                        $scope.isEditPigeonExpanded = false;
-                        notifyService.showInfo("Successfully updated pigeon");
-                    },
-                    function (serverError) {
-                        console.error(serverError);
-                    });
             }
 
             $scope.deletePigeon = function (pigeon) {
+                $scope.isDeletePigeonExpanded = false;
                 pigeonService.deletePigeon(pigeon.id).then(
                     function (serverData) {
-                        $scope.pigeonsData.shift(pigeon);
+                        var index = $scope.pigeonsData.indexOf(pigeon);
+                        if (index > -1) {
+                            $scope.pigeonsData.splice(index, 1);
+                        }
                         notifyService.showInfo(serverData.message);
                     },
                     function (serverError) {
-                        console.error(serverError);
+                        notifyService.showError(serverError);
                     }
                 );
             }
@@ -147,7 +167,7 @@
                         notifyService.showInfo(serverData.message);
                     },
                     function (serverError) {
-                        console.log(serverError);
+                        notifyService.showError(serverError);
                     }
                 );
             }
@@ -160,7 +180,7 @@
                         notifyService.showInfo(serverData.message);
                     },
                     function (serverError) {
-                        console.log(serverError);
+                        notifyService.showError(serverError);
                     }
                 );
             }
@@ -180,7 +200,7 @@
                         notifyService.showInfo(serverData.message);
                     },
                     function (serverError) {
-                        console.log(serverError);
+                        notifyService.showError(serverError);
                     }
                 );
             }
@@ -200,21 +220,25 @@
                         notifyService.showInfo(serverData.message);
                     },
                     function (serverError) {
-                        console.log(serverError);
+                        notifyService.showError(serverError);
                     }
                 );
             }
 
             $scope.createComment = function (pigeon) {
-                commentService.createComment(pigeon.id, $scope.commentData).then(
+                var commentData = $scope.commentData;
+                if (validationService.validateComment(commentData)) {
+                    commentService.createComment(pigeon.id, $scope.commentData).then(
                     function (serverData) {
+                        serverData.author.profilePhotoData = serverData.author.profilePhotoData ? serverData.author.profilePhotoData : constants.profilePhotoData;
                         pigeon.comments.push(serverData);
                         $scope.commentData = {};
+                        notifyService.showInfo("Successfully add comment");
                     },
                     function (serverError) {
-                        console.error(serverError);
-                    }
-                );
+                        notifyService.showError(serverError);
+                    });
+                }
             }
 
             $scope.loadPigeonComments = function (pigeon) {
@@ -232,25 +256,31 @@
             }
 
             $scope.editComment = function (pigeon, comment) {
-                commentService.editComment(pigeon.id, comment.id, $scope.editCommentData).then(
+                var commentData = $scope.editCommentData;
+                if (validationService.validateComment(commentData)) {
+                    commentService.editComment(pigeon.id, comment.id, commentData).then(
                     function (serverData) {
                         comment.content = serverData.content;
                         $scope.isEditCommentExpanded = false;
+                        notifyService.showInfo("Successfully edit comment");
                     },
                     function (serverError) {
-                        console.error(serverError);
-                    }
-                );
+                        notifyService.showError(serverError);
+                    });
+                }
             }
 
             $scope.deleteComment = function (pigeon, comment) {
                 commentService.deleteComment(pigeon.id, comment.id).then(
                     function (serverData) {
-                        pigeon.comments.pop(comment);
-                        console.log(serverData);
+                        var index = pigeon.comments.indexOf(comment);
+                        if (index > -1) {
+                            pigeon.comments.splice(index, 1);
+                        }
+                        notifyService.showInfo(serverData.message);
                     },
                     function (serverError) {
-                        console.error(serverError);
+                        notifyService.showError(serverError);
                     }
                 );
             }

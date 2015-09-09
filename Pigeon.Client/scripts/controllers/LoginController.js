@@ -8,7 +8,7 @@
 
             $scope.login = function () {
                 var loginData = $scope.loginData;
-                if (validationService.validateLoginForm(loginData.username, loginData.password)) {
+                if (validationService.validateLoginForm(loginData)) {
                     loginData = validationService.escapeHtmlSpecialChars(loginData);
                     accountService.login(loginData).then(
                         function (serverResponse) {
