@@ -39,6 +39,7 @@
         public IHttpActionResult AddCommentToPigeon(int pigeonId, CommentBindingModel inputComment)
         {
             var loggedUserId = this.User.Identity.GetUserId();
+            var loggedUser = this.Data.Users.GetById(loggedUserId);
 
             var pigeon = this.Data.Pigeons.GetById(pigeonId);
 
@@ -56,7 +57,9 @@
             {
                 Content = inputComment.Content,
                 AuthorId = loggedUserId,
+                Author = loggedUser,
                 PigeonId = pigeon.Id,
+                Pigeon = pigeon,
                 CreatedOn = DateTime.Now
             };
 
