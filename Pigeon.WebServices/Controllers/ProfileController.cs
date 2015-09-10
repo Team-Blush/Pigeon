@@ -16,6 +16,9 @@
     public class ProfileController : BaseApiController
     {
         private readonly ApplicationUserManager userManager;
+        private const string EmailAlreadyTakenMessage = "Email is already taken.";
+        private const string ProfileEditedSuccessfullyMessage = "Profile edited successfully.";
+        private const string PasswordChangedSuccessfullyMessage = "Password successfully changed.";
 
         public ProfileController()
         {
@@ -59,7 +62,7 @@
                 .FirstOrDefault(u => u.Email == profileBindingModel.Email);
             if (emailHolder != null && emailHolder.Id != loggedUserId)
             {
-                return this.BadRequest("Email is already taken.");
+                return this.BadRequest(EmailAlreadyTakenMessage);
             }
 
             loggedUser.FirstName = profileBindingModel.FirstName;
@@ -75,7 +78,7 @@
 
             return this.Ok(new
             {
-                message = "Profile edited successfully."
+                message = ProfileEditedSuccessfullyMessage
             });
         }
 
@@ -103,7 +106,7 @@
 
             return this.Ok(new
             {
-                message = "Password successfully changed."
+                message = PasswordChangedSuccessfullyMessage
             });
         }
 

@@ -15,6 +15,13 @@
     [RoutePrefix("api/pigeons")]
     public class PigeonsController : BaseApiController
     {
+        private const string InvalidVoteMessage = "You can vote positively or negatively once per Pigeon.";
+        private const string DuplicatingFavouritePigeonMessage = "Pigeon already favourited.";
+        private const string FavouriteUnfavouritedPigeonMessage = "Cannot unfavourite a non-favourite Pigeon.";
+        private const string PigeonFavouritedSuccessfullyMessage = "Successfully favourited Pigeon.";
+        private const string PigeonUnavouritedSuccessfullyMessage = "Successfully unfavourited Pigeon.";
+        private const string PigeonDeletedSuccessfullyMessage = "Successfully deleted pigeon.";
+
         // GET api/pigeons/{username}/all
         [HttpGet]
         [Route("{username}/all")]
@@ -92,7 +99,7 @@
 
             if (pigeon == null)
             {
-                return this.BadRequest("No such Pigeon.");
+                return this.NotFound();
             }
 
             return this.Ok(pigeon);
@@ -147,7 +154,7 @@
 
             if (pigeon == null)
             {
-                return this.BadRequest("No such Pigeon.");
+                return this.NotFound();
             }
 
             if (!this.ModelState.IsValid)
@@ -164,7 +171,7 @@
                 if ((existingVote.Value == VoteValue.Up && voteModel.Value == VoteValue.Up) ||
                     (existingVote.Value == VoteValue.Down && voteModel.Value == VoteValue.Down))
                 {
-                    return this.BadRequest("You can vote positively or negatively once per Pigeon.");
+                    return this.BadRequest(InvalidVoteMessage);
                 }
 
                 if ((existingVote.Value == VoteValue.Up || existingVote.Value == VoteValue.None)
@@ -219,7 +226,7 @@
 
             if (pigeonToUpdate == null)
             {
-                return this.BadRequest("No such Pigeon.");
+                return this.NotFound();
             }
 
             if (pigeonToUpdate.Author.Id != loggedUserId)
@@ -249,12 +256,12 @@
 
             if (pigeonToFavourite == null)
             {
-                return this.BadRequest("No such Pigeon.");
+                return this.NotFound();
             }
 
-            if (loggedUser.FavouritePigeons.Contains(pigeonToFavourite))
+            if (loggedUser.FavouritePigeons.Any(p => p.Id.Equals(id)))
             {
-                return this.BadRequest("Pigeon already favourited.");
+                return this.BadRequest(DuplicatingFavouritePigeonMessage);
             }
 
             pigeonToFavourite.FavouritedBy.Add(loggedUser);
@@ -268,7 +275,7 @@
 
             return this.Ok(new
             {
-                message = "Successfully favourited Pigeon."
+                message = PigeonFavouritedSuccessfullyMessage
             });
         }
 
@@ -284,12 +291,12 @@
 
             if (pigeonToUnfavourite == null)
             {
-                return this.BadRequest("No such Pigeon.");
+                return this.NotFound();
             }
 
-            if (!loggedUser.FavouritePigeons.Contains(pigeonToUnfavourite))
+            if (!loggedUser.FavouritePigeons.Any(p => p.Id.Equals(id)))
             {
-                return this.BadRequest("Cannot unfavourite a non-favourite Pigeon.");
+                return this.BadRequest(FavouriteUnfavouritedPigeonMessage);
             }
 
             pigeonToUnfavourite.FavouritedBy.Remove(loggedUser);
@@ -303,7 +310,7 @@
 
             return this.Ok(new
             {
-                message = "Successfully unfavourited Pigeon."
+                message = PigeonUnavouritedSuccessfullyMessage
             });
         }
 
@@ -317,7 +324,7 @@
 
             if (pigeon == null)
             {
-                return this.BadRequest("No such pigeon");
+                return this.NotFound();
             }
 
             if (pigeon.Author.Id != loggedUserId)
@@ -348,7 +355,7 @@
 
             return this.Ok(new
             {
-                message = "Successfully deleted pigeon."
+                message = PigeonDeletedSuccessfullyMessage
             });
         }
     }

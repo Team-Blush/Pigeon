@@ -12,6 +12,8 @@
     [RoutePrefix("api/pigeons/{pigeonId}/comments")]
     public class CommentsController : BaseApiController
     {
+        private const string CommentDeletedMessage = "Successfully deleted comment.";
+
         [HttpGet]
         [Route]
         public IHttpActionResult GetPigeonComments(int pigeonId)
@@ -26,7 +28,7 @@
 
             if (pigeonComments == null)
             {
-                return this.BadRequest("No such Pigeon.");
+                return this.NotFound();
             }
 
             return this.Ok(pigeonComments);
@@ -37,13 +39,12 @@
         public IHttpActionResult AddCommentToPigeon(int pigeonId, CommentBindingModel inputComment)
         {
             var loggedUserId = this.User.Identity.GetUserId();
-            var loggedUser = this.Data.Users.GetById(loggedUserId);
 
             var pigeon = this.Data.Pigeons.GetById(pigeonId);
 
             if (pigeon == null)
             {
-                return this.BadRequest("No such Pigeon.");
+                return this.NotFound();
             }
 
             if (!this.ModelState.IsValid)
@@ -78,7 +79,7 @@
 
             if (pigeon == null)
             {
-                return this.BadRequest("No such pigeon.");
+                return this.NotFound();
             }
 
             if (!this.ModelState.IsValid)
@@ -91,7 +92,7 @@
 
             if (commentToUpdate == null)
             {
-                return this.BadRequest("No such comment.");
+                return this.NotFound();
             }
 
             if (commentToUpdate.AuthorId != loggedUserId)
@@ -119,7 +120,7 @@
 
             if (pigeon == null)
             {
-                return this.BadRequest("No such pigeon.");
+                return this.NotFound();
             }
 
             var commentToDelete = pigeon.Comments
@@ -127,7 +128,7 @@
 
             if (commentToDelete == null)
             {
-                return this.BadRequest("No such comment.");
+                return this.NotFound();
             }
 
             if (commentToDelete.AuthorId != loggedUserId)
@@ -140,7 +141,7 @@
 
             return this.Ok(new
             {
-                message = "Successfully deleted comment."
+                message = CommentDeletedMessage
             });
         }
     }

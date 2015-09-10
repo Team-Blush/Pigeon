@@ -23,6 +23,19 @@
     {
         private readonly ApplicationUserManager userManager;
 
+        private const string UserAlreadyLoggedInMessage = "User is already logged in.";
+        private const string LogoutSuccessfulMessage = "Logout successful.";
+        private const string InvalidUserDataMessage = "Invalid user data.";
+        private const string EmailAlreadyTakenMessage = "Email is already taken.";
+        private const string UsernameAlreadyTakenMessage = "Username is already taken.";
+
+        private const string SelfFollowMessage = "Cannot follow yourself.";
+        private const string SelfUnfollowMessage = "Cannot unfollow yourself.";
+        private const string DuplicateFollowMessage = "Already following that user.";
+        private const string UnfollowNotFollowedMessage = "Cannot unfollow someone you havent followed.";
+        private const string UserFollowedSuccessfully = "Successfully followed user.";
+        private const string UserUnfollowedSuccessfully = "Successfully unfollowed user.";
+
         public UsersController()
         {
             this.userManager = new ApplicationUserManager(
@@ -47,12 +60,12 @@
         {
             if (this.User.Identity.GetUserId() != null)
             {
-                return this.BadRequest("User is already logged in.");
+                return this.BadRequest(UserAlreadyLoggedInMessage);
             }
 
             if (model == null)
             {
-                return this.BadRequest("Invalid user data.");
+                return this.BadRequest(InvalidUserDataMessage);
             }
 
             if (!this.ModelState.IsValid)
@@ -63,13 +76,13 @@
             var emailExists = this.Data.Users.GetAll().Any(u => u.Email == model.Email);
             if (emailExists)
             {
-                return this.BadRequest("Email is already taken.");
+                return this.BadRequest(EmailAlreadyTakenMessage);
             }
 
             var usernameExists = this.Data.Users.GetAll().Any(u => u.UserName == model.Username);
             if (usernameExists)
             {
-                return this.BadRequest("Username is already taken.");
+                return this.BadRequest(UsernameAlreadyTakenMessage);
             }
 
             var user = new User
@@ -104,12 +117,12 @@
         {
             if (this.User.Identity.GetUserId() != null)
             {
-                return this.BadRequest("User is already logged in.");
+                return this.BadRequest(UserAlreadyLoggedInMessage);
             }
 
             if (model == null)
             {
-                return this.BadRequest("Invalid user data");
+                return this.BadRequest(InvalidUserDataMessage);
             }
 
             var testServer = TestServer.Create<Startup>();
@@ -154,7 +167,7 @@
 
             return this.Ok(new
             {
-                message = "Logout successful."
+                message = LogoutSuccessfulMessage
             });
         }
 
@@ -260,13 +273,13 @@
 
             if (loggedUserUsername == username)
             {
-                return this.BadRequest("Cannot follow yourself.");
+                return this.BadRequest(SelfFollowMessage);
             }
 
-            if (loggedUser.Following.Contains(targetUser) &&
-                targetUser.Followers.Contains(loggedUser))
+            if (loggedUser.Following.Any(u => u.Id.Equals(targetUser.Id)) &&
+                targetUser.Followers.Any(u => u.Id.Equals(targetUser.Id)))
             {
-                return this.BadRequest("Already following that user.");
+                return this.BadRequest(DuplicateFollowMessage);
             }
 
             loggedUser.Following.Add(targetUser);
@@ -279,7 +292,7 @@
 
             return this.Ok(new
             {
-                message = "Successfully followed user."
+                message = UserFollowedSuccessfully
             });
         }
 
@@ -302,13 +315,13 @@
 
             if (loggedUserUsername == username)
             {
-                return this.BadRequest("Cannot unfollow yourself.");
+                return this.BadRequest(SelfUnfollowMessage);
             }
 
             if (!loggedUser.Following.Contains(targetUser) &&
                 !targetUser.Followers.Contains(loggedUser))
             {
-                return this.BadRequest("Cannot unfollow someone you havent followed.");
+                return this.BadRequest(UnfollowNotFollowedMessage);
             }
 
             loggedUser.Following.Remove(targetUser);
@@ -321,7 +334,7 @@
 
             return this.Ok(new
             {
-                message = "Successfully unfollowed user."
+                message = UserUnfollowedSuccessfully
             });
         }
     }
