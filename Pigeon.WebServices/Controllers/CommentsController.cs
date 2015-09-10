@@ -18,18 +18,19 @@
         [Route]
         public IHttpActionResult GetPigeonComments(int pigeonId)
         {
-            var pigeonComments = this.Data.Pigeons.GetAll()
-                .Where(p => p.Id == pigeonId)
-                .Select(p => p.Comments
-                    .AsQueryable()
-                    .OrderBy(c => c.CreatedOn)
-                    .Select(CommentViewModel.Create))
-                .FirstOrDefault();
+            var pigeon = this.Data.Pigeons.GetAll()
+                .FirstOrDefault(p => p.Id == pigeonId);
 
-            if (pigeonComments == null)
+            if (pigeon == null)
             {
                 return this.NotFound();
             }
+
+            var pigeonComments = this.Data.Comments.GetAll()
+                .Where(c => c.PigeonId == pigeonId)
+                .AsQueryable()
+                .OrderBy(c => c.CreatedOn)
+                .Select(CommentViewModel.Create);
 
             return this.Ok(pigeonComments);
         }

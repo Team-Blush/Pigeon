@@ -54,16 +54,14 @@
         public IHttpActionResult GetNewsPigeons()
         {
             var loggedUserId = this.User.Identity.GetUserId();
-            var loggedUser = this.Data.Users.GetById(loggedUserId);
 
-            var newsPigeons = loggedUser.Following
-                .Select(f => f.Pigeons
-                    .AsQueryable()
-                    .OrderByDescending(p => p.CreatedOn)
-                    .Take(3)
-                    .Select(PigeonViewModel.Create(loggedUserId)));
+            var news = this.Data.Pigeons.GetAll()
+                .Where(p => p.Author.Followers.Any(f => f.Id == loggedUserId))
+                .OrderByDescending(p => p.CreatedOn)
+                .Take(5)
+                .Select(PigeonViewModel.Create(loggedUserId));
 
-            return this.Ok(newsPigeons);
+            return this.Ok(news);
         }
 
         // GET api/pigeons/favourites
@@ -73,12 +71,10 @@
         public IHttpActionResult GetUserFavouritePigeons()
         {
             var loggedUserId = this.User.Identity.GetUserId();
-            var loggedUser = this.Data.Users.GetById(loggedUserId);
 
-            var favouritePigeons = loggedUser.FavouritePigeons
-                .AsQueryable()
+            var favouritePigeons = this.Data.Pigeons.GetAll()
+                .Where(p => p.FavouritedBy.Any(fb => fb.Id == loggedUserId))
                 .OrderByDescending(p => p.CreatedOn)
-                .Take(5)
                 .Select(PigeonViewModel.Create(loggedUserId));
 
             return this.Ok(favouritePigeons);
@@ -178,6 +174,8 @@
                     && voteModel.Value == VoteValue.Down)
                 {
                     existingVote.Value = VoteValue.Down;
+                    pigeon.DownVotesCount++;
+                    pigeon.UpVotesCount--;
                     this.Data.Votes.Update(existingVote);
                 }
 
@@ -185,6 +183,8 @@
                     && voteModel.Value == VoteValue.Up)
                 {
                     existingVote.Value = VoteValue.Up;
+                    pigeon.DownVotesCount--;
+                    pigeon.UpVotesCount++;
                     this.Data.Votes.Update(existingVote);
                 }
             }
@@ -200,6 +200,14 @@
 
                 this.Data.Votes.Add(vote);
                 pigeon.Votes.Add(vote);
+                if (voteModel.Value == VoteValue.Up)
+                {
+                    pigeon.UpVotesCount++;
+                }
+                else
+                {
+                    pigeon.DownVotesCount++;
+                }
             }
 
             this.Data.Pigeons.Update(pigeon);

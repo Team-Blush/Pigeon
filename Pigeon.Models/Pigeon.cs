@@ -55,6 +55,10 @@
             set { this.comments = value; }
         }
 
+        public int UpVotesCount { get; set; }
+
+        public int DownVotesCount { get; set; }
+
         public virtual ICollection<PigeonVote> Votes
         {
             get { return this.votes; }

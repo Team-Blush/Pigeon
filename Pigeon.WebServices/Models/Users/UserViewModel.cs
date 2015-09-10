@@ -34,8 +34,10 @@
                 FirstName = targetUser.FirstName,
                 LastName = targetUser.LastName,
                 Age = targetUser.Age,
-                ProfilePhotoData = targetUser.ProfilePhoto != null ? targetUser.ProfilePhoto.Base64Data : null,
-                CoverPhotoData = targetUser.CoverPhoto != null ? targetUser.CoverPhoto.Base64Data : null,
+                ProfilePhotoData = targetUser.ProfilePhoto != null ?
+                    targetUser.ProfilePhoto.Base64Data : null,
+                CoverPhotoData = targetUser.CoverPhoto != null ?
+                    targetUser.CoverPhoto.Base64Data : null,
                 IsFollower = targetUser.Following.Any(f => f.Id.Equals(loggedUserId)),
                 IsFollowed = targetUser.Followers.Any(f => f.Id.Equals(loggedUserId))
             };

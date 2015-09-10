@@ -37,6 +37,7 @@
         public IHttpActionResult GetProfileInfo()
         {
             var loggedUserId = this.User.Identity.GetUserId();
+
             var loggedUserView = this.Data.Users.GetAll()
                 .Where(u => u.Id == loggedUserId)
                 .Select(ProfileViewModel.Create)

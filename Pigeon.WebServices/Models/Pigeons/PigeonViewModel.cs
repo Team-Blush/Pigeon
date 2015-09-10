@@ -45,8 +45,8 @@
                 Voted = pigeon.Votes.Any(v => v.UserId == loggedUserId) ?
                         pigeon.Votes.FirstOrDefault(v => v.UserId == loggedUserId).Value :
                         VoteValue.None,
-                UpVotesCount = pigeon.Votes.Count(c => c.Value == VoteValue.Up),
-                DownVotesCount = pigeon.Votes.Count(c => c.Value == VoteValue.Down),
+                UpVotesCount = pigeon.UpVotesCount,
+                DownVotesCount = pigeon.DownVotesCount,
                 FavouritedCount = pigeon.FavouritedCount,
                 Favourited = pigeon.FavouritedBy.Any(u => u.Id == loggedUserId),
                 Author = new AuthorViewModel
@@ -55,7 +55,7 @@
                     ProfilePhotoData = pigeon.Author.ProfilePhoto != null ?
                         pigeon.Author.ProfilePhoto.Base64Data : null
                 },
-                CommentsCount = pigeon.Comments.Count
+                CommentsCount = pigeon.CommentsCount
             };
         }
 

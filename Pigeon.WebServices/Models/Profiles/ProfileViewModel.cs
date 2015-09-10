@@ -32,8 +32,10 @@
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Age = user.Age,
-                    ProfilePhotoData = user.ProfilePhoto != null ? user.ProfilePhoto.Base64Data : null,
-                    CoverPhotoData = user.CoverPhoto != null ? user.CoverPhoto.Base64Data : null
+                    ProfilePhotoData = user.ProfilePhoto != null ?
+                        user.ProfilePhoto.Base64Data : null,
+                    CoverPhotoData = user.CoverPhoto != null ?
+                        user.CoverPhoto.Base64Data : null
                 };
             }
         }

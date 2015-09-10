@@ -178,8 +178,7 @@
         {
             var loggedUserId = this.User.Identity.GetUserId();
 
-            var targetUser = this.Data.Users
-                .GetAll()
+            var targetUser = this.Data.Users.GetAll()
                 .Where(u => u.UserName == username)
                 .Select(UserViewModel.Create(loggedUserId))
                 .FirstOrDefault();

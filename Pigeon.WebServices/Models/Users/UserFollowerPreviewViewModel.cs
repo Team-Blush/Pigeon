@@ -23,7 +23,8 @@
                     Username = follower.UserName,
                     FirstName = follower.FirstName,
                     LastName = follower.LastName,
-                    ProfilePhotoData = follower.ProfilePhoto != null ? follower.ProfilePhoto.Base64Data : null
+                    ProfilePhotoData = follower.ProfilePhoto != null ? 
+                        follower.ProfilePhoto.Base64Data : null
                 };
             }
 

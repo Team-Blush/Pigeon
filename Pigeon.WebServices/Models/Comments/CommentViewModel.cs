@@ -28,7 +28,8 @@
                     {
                         Username = comment.Author.UserName,
                         ProfilePhotoData =
-                            comment.Author.ProfilePhoto != null ? comment.Author.ProfilePhoto.Base64Data : null
+                            comment.Author.ProfilePhoto != null ?
+                            comment.Author.ProfilePhoto.Base64Data : null
                     }
                 };
             }
