@@ -49,13 +49,13 @@
                 DownVotesCount = pigeon.DownVotesCount,
                 FavouritedCount = pigeon.FavouritedCount,
                 Favourited = pigeon.FavouritedBy.Any(u => u.Id == loggedUserId),
+                CommentsCount = pigeon.CommentsCount,
                 Author = new AuthorViewModel
                 {
                     Username = pigeon.Author.UserName,
                     ProfilePhotoData = pigeon.Author.ProfilePhoto != null ?
                         pigeon.Author.ProfilePhoto.Base64Data : null
-                },
-                CommentsCount = pigeon.CommentsCount
+                }
             };
         }
 
@@ -69,13 +69,13 @@
                 PhotoData = pigeonDbModel.Photo != null ? pigeonDbModel.Photo.Base64Data : null,
                 CreatedOn = pigeonDbModel.CreatedOn,
                 FavouritedCount = pigeonDbModel.FavouritedCount,
+                CommentsCount = 0,
                 Author = new AuthorViewModel
                 {
                     Username = pigeonDbModel.Author.UserName,
                     ProfilePhotoData = pigeonDbModel.Author.ProfilePhoto != null ?
                         pigeonDbModel.Author.ProfilePhoto.Base64Data : null
-                },
-                CommentsCount = 0
+                }
             };
         }
     }

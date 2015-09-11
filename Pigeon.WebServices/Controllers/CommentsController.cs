@@ -65,8 +65,11 @@
             };
 
             this.Data.Comments.Add(commentToAdd);
-            pigeon.Comments.Add(commentToAdd);
 
+            pigeon.Comments.Add(commentToAdd);
+            pigeon.CommentsCount++;
+
+            this.Data.Pigeons.Update(pigeon);
             this.Data.SaveChanges();
 
             var commentViewModel = CommentViewModel.CreateSingle(commentToAdd);
@@ -139,6 +142,9 @@
             {
                 return this.Unauthorized();
             }
+
+            pigeon.Comments.Remove(commentToDelete);
+            pigeon.CommentsCount--;
 
             this.Data.Comments.Delete(commentToDelete);
             this.Data.SaveChanges();
