@@ -13,6 +13,8 @@
     public class CommentsController : BaseApiController
     {
         private const string CommentDeletedMessage = "Successfully deleted comment.";
+        private const string CommentPostModelInvalidMessage = "Comment post model is null.";
+        private const string CommentEditModelInvalidMessage = "Comment update model is null.";
 
         [HttpGet]
         [Route]
@@ -39,6 +41,11 @@
         [Route]
         public IHttpActionResult AddCommentToPigeon(int pigeonId, CommentBindingModel inputComment)
         {
+            if (inputComment == null)
+            {
+                return this.BadRequest(CommentPostModelInvalidMessage);
+            }
+
             var loggedUserId = this.User.Identity.GetUserId();
             var loggedUser = this.Data.Users.GetById(loggedUserId);
 
@@ -81,6 +88,11 @@
         [Route("{commentId}")]
         public IHttpActionResult EditPigeonComment(int pigeonId, int commentId, CommentBindingModel inputComment)
         {
+            if (inputComment == null)
+            {
+                return this.BadRequest(CommentEditModelInvalidMessage);
+            }
+
             var loggedUserId = this.User.Identity.GetUserId();
             var pigeon = this.Data.Pigeons.GetById(pigeonId);
 

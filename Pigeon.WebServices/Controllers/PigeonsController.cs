@@ -16,6 +16,9 @@
     public class PigeonsController : BaseApiController
     {
         private const string InvalidVoteMessage = "You can vote positively or negatively once per Pigeon.";
+        private const string InvalidPigeonUpdateInputDataMessage = "Pigeon update model is null.";
+        private const string InvalidPigeonPostInputDataMessage = "Pigeon model is null.";
+        private const string InvalidPigeonVoteInputDataMessage = "Vote model is null.";
         private const string DuplicatingFavouritePigeonMessage = "Pigeon already favourited.";
         private const string FavouriteUnfavouritedPigeonMessage = "Cannot unfavourite a non-favourite Pigeon.";
         private const string PigeonFavouritedSuccessfullyMessage = "Successfully favourited Pigeon.";
@@ -106,6 +109,11 @@
         [Route]
         public IHttpActionResult AddPigeon(PigeonBindingModel inputPigeon)
         {
+            if (inputPigeon == null)
+            {
+                return this.BadRequest(InvalidPigeonPostInputDataMessage);
+            }
+
             var loggedUserId = this.User.Identity.GetUserId();
 
             if (!this.ModelState.IsValid)
@@ -145,6 +153,11 @@
         [Route("{id}/vote")]
         public IHttpActionResult VoteForPigeon(int id, PigeonVoteBindingModel voteModel)
         {
+            if (voteModel == null)
+            {
+                return this.BadRequest(InvalidPigeonVoteInputDataMessage);
+            }
+
             var loggedUserId = this.User.Identity.GetUserId();
             var pigeon = this.Data.Pigeons.GetById(id);
 
@@ -224,6 +237,11 @@
         [Route("{id}/edit")]
         public IHttpActionResult EditPigeon(int id, PigeonBindingModel updatedPigeon)
         {
+            if (updatedPigeon == null)
+            {
+                return this.BadRequest(InvalidPigeonUpdateInputDataMessage);
+            }
+
             var loggedUserId = this.User.Identity.GetUserId();
             var pigeonToUpdate = this.Data.Pigeons.GetById(id);
 
